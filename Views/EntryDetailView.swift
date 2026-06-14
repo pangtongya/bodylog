@@ -12,6 +12,7 @@ struct EntryDetailView: View {
 
     @State private var showEditSheet: Bool = false
     @State private var showDeleteAlert: Bool = false
+    @State private var showCompareSheet: Bool = false
     @State private var isPresented: Bool = false
 
     var body: some View {
@@ -28,6 +29,29 @@ struct EntryDetailView: View {
                         .scaledToFit()
                         .cornerRadius(16)
                         .padding(.horizontal, 20)
+                    
+                    // 对比按钮
+                    if appState.isPro {
+                        Button(action: {
+                            showCompareSheet = true
+                        }) {
+                            HStack {
+                                Image(systemName: "photo.stack.fill")
+                                Text("对比照片")
+                                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                            }
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(Color.bodylogPrimary)
+                            .cornerRadius(12)
+                        }
+                        .padding(.horizontal, 20)
+                        .sheet(isPresented: $showCompareSheet) {
+                            PhotoCompareView()
+                                .environmentObject(entryStore)
+                        }
+                    }
                 }
 
                 // 备注

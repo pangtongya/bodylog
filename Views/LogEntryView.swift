@@ -19,6 +19,7 @@ struct LogEntryView: View {
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var photoData: Data?
     @State private var showCamera: Bool = false
+    @State private var showPhotoSourceDialog: Bool = false
     @State private var showValidationError: Bool = false
     @State private var validationMessage: String = ""
 

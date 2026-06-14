@@ -7,6 +7,7 @@ import Charts
 struct TrendView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var entryStore: BodyEntryStore
+    @EnvironmentObject var goalStore: GoalStore
 
     @State private var selectedMetric: BodyMetricType = .weight
     @State private var timeRange: TimeRange = .month3
@@ -52,6 +53,12 @@ struct TrendView: View {
                     // Metric selector
                     metricPicker
                         .padding(.horizontal, 20)
+
+                    // Insights card
+                    if !displayData.isEmpty {
+                        insightsCard
+                            .padding(.horizontal, 20)
+                    }
 
                     // Summary stats
                     if !displayData.isEmpty {
@@ -151,6 +158,63 @@ struct TrendView: View {
         .padding(.vertical, 12)
         .background(Color.systemBackground)
         .cornerRadius(14)
+    }
+
+    // MARK: - Insights Card
+
+    private var insightsCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("数据洞察")
+                .font(.system(size: 16, weight: .bold))
+                .foregroundColor(.primary)
+
+            ForEach(Array(insights.enumerated()), id: \.element.text) { index, insight in
+                HStack(spacing: 12) {
+                    Image(systemName: insight.icon)
+                        .foregroundColor(.bodylogPrimary)
+                        .frame(width: 24)
+                    Text(insight.text)
+                        .font(.system(size: 14))
+                        .foregroundColor(.primary)
+                }
+            }
+        }
+        .padding(16)
+        .background(Color.systemBackground)
+        .cornerRadius(12)
+        .shadow(color: .black.opacity(0.04), radius: 6, x: 0, y: 1)
+    }
+
+    private var insights: [(icon: String, text: String)] {
+        var result: [(icon: String, text: String)] = []
+
+        // Insight 1: Recent change (30 days)
+        if let change30d = entryStore.change30Days(for: selectedMetric) {
+            let absChange = abs(change30d)
+            let sign = change30d >= 0 ? "+" : ""
+            let unit = (selectedMetric == .weight || selectedMetric == .muscleMass) ? appState.weightUnit.rawValue : selectedMetric.unit
+            let text = "30天变化：\(sign)\(String(format: "%.1f", absChange))\(unit)"
+            result.append((icon: "calendar.badge.clock", text: text))
+        }
+
+        // Insight 2: Streak
+        let streak = entryStore.currentStreak
+        if streak > 0 {
+            result.append((icon: "flame.fill", text: "连续记录\(streak)天"))
+        } else if let lastEntry = entryStore.latestEntry {
+            let days = Calendar.current.dateComponents([.day], from: lastEntry.recordedAt, to: Date()).day ?? 0
+            result.append((icon: "flame", text: "已\(days)天没有记录"))
+        }
+
+        // Insight 3: Goal progress (if has active goal)
+        if let goal = goalStore.activeGoal(for: selectedMetric), let current = entryStore.latestValue(for: selectedMetric) {
+            let remaining = abs(goal.targetValue - current)
+            let unit = (selectedMetric == .weight || selectedMetric == .muscleMass) ? appState.weightUnit.rawValue : selectedMetric.unit
+            let text = "距离目标还差\(String(format: "%.1f", remaining))\(unit)"
+            result.append((icon: "target", text: text))
+        }
+
+        return Array(result.prefix(3))
     }
 
     private func summaryStatCell(title: String, value: String, unit: String, color: Color) -> some View {
@@ -289,4 +353,5 @@ struct TrendView: View {
     TrendView()
         .environmentObject(AppState.shared)
         .environmentObject(BodyEntryStore())
+        .environmentObject(GoalStore())
 }

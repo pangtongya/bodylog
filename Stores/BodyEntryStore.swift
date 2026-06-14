@@ -56,16 +56,15 @@ class BodyEntryStore: ObservableObject {
     var groupedByDate: [(key: String, value: [BodyEntry])] {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy年M月d日"
-        let grouped = Dictionary(grouping: entries) { entry in
-            formatter.string(from: entry.recordedAt)
+        let calendar = Calendar.current
+        // Group by start-of-day Date to enable fast Date-based sorting
+        let grouped = Dictionary(grouping: entries) { entry -> Date in
+            calendar.startOfDay(for: entry.recordedAt)
         }
-        return grouped.sorted { a, b in
-            let fmt = DateFormatter()
-            fmt.dateFormat = "yyyy年M月d日"
-            let da = fmt.date(from: a.key) ?? Date.distantPast
-            let db = fmt.date(from: b.key) ?? Date.distantPast
-            return da > db
-        }
+        // Sort descending by date (newest first), then format key for display
+        return grouped
+            .sorted { $0.key > $1.key }
+            .map { (key: formatter.string(from: $0.key), value: $0.value) }
     }
 
     /// 某个指标最近 N 条记录，用于图表
@@ -166,16 +165,11 @@ class BodyEntryStore: ObservableObject {
     }
 
     // MARK: - Persistence
-
+    
     func save() {
-        saveWorkItem?.cancel()
-        let workItem = DispatchWorkItem { [weak self] in
-            self?.performSave()
-        }
-        saveWorkItem = workItem
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: workItem)
+        performSave()
     }
-
+    
     private func performSave() {
         do {
             let data = try JSONEncoder().encode(entries)

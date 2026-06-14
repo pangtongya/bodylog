@@ -28,6 +28,7 @@
 		D0536F1C8B5E681A1EAF2ECA /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 620491F6B6114319C7A1BD04 /* PaywallView.swift */; };
 		D76E3939F6906B42CAD81FEB /* BodyEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5C6874568C1D68F0930EAA /* BodyEntry.swift */; };
 		E514173A9D3601EBE52ED05C /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB712729C58FF7F90AD6749 /* HomeView.swift */; };
+		FEFA6476A8FA467E0CD08EBD /* PhotoCompareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C253D60F3845D9459EC0461E /* PhotoCompareView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,11 +64,19 @@
 		961BB4D4AC80FEC6FF63308A /* PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManager.swift; sourceTree = "<group>"; };
 		ABE549C4068A572DA51E1F87 /* GoalModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalModel.swift; sourceTree = "<group>"; };
 		BE2AF5B77A3332EEF1874546 /* TrendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrendView.swift; sourceTree = "<group>"; };
+		C253D60F3845D9459EC0461E /* PhotoCompareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCompareView.swift; sourceTree = "<group>"; };
 		EEE6E3A36E42A456FCFF33C7 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		FA5C6874568C1D68F0930EAA /* BodyEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyEntry.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		18EB865B2CF0D03E36BA1B9F /* .workbuddy */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = .workbuddy;
+			sourceTree = "<group>";
+		};
 		254A1E1D706F0AA4C5B2650D /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -82,6 +91,7 @@
 		3432E77AA27D1C3CF9D668B9 = {
 			isa = PBXGroup;
 			children = (
+				18EB865B2CF0D03E36BA1B9F /* .workbuddy */,
 				80FFA1DC19D88FC93F07C9C7 /* BodyLog */,
 				4F82287DE41E635B49A4E895 /* Managers */,
 				254A1E1D706F0AA4C5B2650D /* Models */,
@@ -162,6 +172,7 @@
 				30D5249C7C81212116E4B7D6 /* LogEntryView.swift */,
 				EEE6E3A36E42A456FCFF33C7 /* OnboardingView.swift */,
 				620491F6B6114319C7A1BD04 /* PaywallView.swift */,
+				C253D60F3845D9459EC0461E /* PhotoCompareView.swift */,
 				558D8CE0215BEA0AFB4C4197 /* SettingsView.swift */,
 				BE2AF5B77A3332EEF1874546 /* TrendView.swift */,
 			);
@@ -274,6 +285,7 @@
 				6B020D6EC55796628FAD6E47 /* NotificationManager.swift in Sources */,
 				101AD71580A26873E698CBD6 /* OnboardingView.swift in Sources */,
 				D0536F1C8B5E681A1EAF2ECA /* PaywallView.swift in Sources */,
+				FEFA6476A8FA467E0CD08EBD /* PhotoCompareView.swift in Sources */,
 				0D93573F59A23FDED68E0773 /* PurchaseManager.swift in Sources */,
 				07C28EDEFDA2EED766FCFA48 /* SettingsView.swift in Sources */,
 				8F5EEF60F2F31518F4A2B228 /* TrendView.swift in Sources */,

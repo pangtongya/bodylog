@@ -13,12 +13,13 @@ struct ContentView: View {
     @State private var showLogSheet: Bool = false
 
     enum Tab: String, CaseIterable {
-        case home, trend, goals, settings
+        case home, trend, photos, goals, settings
 
         var title: String {
             switch self {
             case .home: return "记录"
             case .trend: return "趋势"
+            case .photos: return "照片"
             case .goals: return "目标"
             case .settings: return "设置"
             }
@@ -27,6 +28,7 @@ struct ContentView: View {
             switch self {
             case .home: return "house"
             case .trend: return "chart.line.uptrend.xyaxis"
+            case .photos: return "photo.stack"
             case .goals: return "target"
             case .settings: return "gearshape"
             }
@@ -35,6 +37,7 @@ struct ContentView: View {
             switch self {
             case .home: return "house.fill"
             case .trend: return "chart.line.uptrend.xyaxis"
+            case .photos: return "photo.stack.fill"
             case .goals: return "target"
             case .settings: return "gearshape.fill"
             }
@@ -55,6 +58,12 @@ struct ContentView: View {
                         Label(Tab.trend.title, systemImage: Tab.trend.icon)
                     }
                     .tag(Tab.trend)
+
+                PhotoCompareView()
+                    .tabItem {
+                        Label(Tab.photos.title, systemImage: selectedTab == .photos ? Tab.photos.filledIcon : Tab.photos.icon)
+                    }
+                    .tag(Tab.photos)
 
                 GoalsView()
                     .tabItem {

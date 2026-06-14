@@ -34,8 +34,6 @@ class AppState: ObservableObject, @preconcurrency Codable {
     // MARK: - 追踪指标配置
     @Published var enabledMetrics: [BodyMetricType] = [.weight, .bodyFat]
 
-    private var saveWorkItem: DispatchWorkItem?
-
     private init() {
         load()
     }
@@ -120,12 +118,7 @@ class AppState: ObservableObject, @preconcurrency Codable {
     }()
 
     func save() {
-        saveWorkItem?.cancel()
-        let workItem = DispatchWorkItem { [weak self] in
-            self?.performSave()
-        }
-        saveWorkItem = workItem
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: workItem)
+        performSave()
     }
 
     private func performSave() {
