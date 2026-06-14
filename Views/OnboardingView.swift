@@ -73,8 +73,8 @@ struct OnboardingView: View {
 
     private var welcomeStep: some View {
         VStack(spacing: 24) {
-            Image(systemName: "figure.stand")
-                .font(.system(size: 72))
+            Image(systemName: "photo.stack.fill")
+                .font(.system(size: 56))
                 .foregroundColor(.bodylogPrimary)
                 .padding(.bottom, 8)
 
