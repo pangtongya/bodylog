@@ -96,7 +96,7 @@ struct OnboardingView: View {
             // Value proposition
             VStack(alignment: .leading, spacing: 16) {
                 featureBullet(icon: "lock.shield.fill", text: "隐私优先 - 数据只存在你的手机，不上云")
-                featureBullet(icon: "creditcard.fill", text: "¥12 买断 - 没有订阅，永久使用")
+                featureBullet(icon: "creditcard.fill", text: "¥6 买断 - 没有订阅，永久使用")
                 featureBullet(icon: "photo.stack.fill", text: "照片对比 - 见证形体变化（独家）")
                 featureBullet(icon: "chart.line.uptrend.xyaxis", text: "智能洞察 - 自动分析你的变化趋势")
             }
