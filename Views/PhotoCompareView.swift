@@ -12,6 +12,8 @@ struct PhotoCompareView: View {
     @State private var selectedEntries: [BodyEntry] = []
     @State private var showComparison: Bool = false
     @State private var showPaywall: Bool = false
+    @State private var showShareSheet: Bool = false
+    @State private var shareItems: [Any] = []
     
     private var entriesWithPhotos: [BodyEntry] {
         entryStore.entries.filter { $0.hasPhoto }
@@ -80,6 +82,9 @@ struct PhotoCompareView: View {
             PaywallView(isPresented: $showPaywall)
                 .environmentObject(appState)
                 .environmentObject(purchaseManager)
+        }
+        .sheet(isPresented: $showShareSheet) {
+            ShareSheet(items: shareItems)
         }
     }
     
@@ -236,11 +241,24 @@ struct PhotoCompareView: View {
                 
                 // Share button
                 Button(action: {
-                    // TODO: Add share functionality
+                    // Prepare share items: two photos
+                    var items: [Any] = []
+                    if let entry1 = selectedEntries.first,
+                       let data1 = entry1.loadedPhotoData,
+                       let image1 = UIImage(data: data1) {
+                        items.append(image1)
+                    }
+                    if let entry2 = selectedEntries.last,
+                       let data2 = entry2.loadedPhotoData,
+                       let image2 = UIImage(data: data2) {
+                        items.append(image2)
+                    }
+                    shareItems = items
+                    showShareSheet = true
                 }) {
                     HStack(spacing: 8) {
                         Image(systemName: "square.and.arrow.up")
-                        Text("分享对比结果")
+                        Text("分享对比")
                             .font(.system(size: 15, weight: .medium))
                     }
                     .foregroundColor(.white)
