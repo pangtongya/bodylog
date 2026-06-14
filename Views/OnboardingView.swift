@@ -78,21 +78,21 @@ struct OnboardingView: View {
                 .foregroundColor(.bodylogPrimary)
                 .padding(.bottom, 8)
 
-            Text("欢迎使用 BodyLog")
+            Text("你的身体变化\n值得被记录")
                 .font(.system(size: 28, weight: .bold, design: .rounded))
+                .multilineTextAlignment(.center)
 
-            Text("用数据记录身体变化\n见证每一点进步")
+            Text("BodyLog 帮你用数据见证每一次进步")
                 .font(.system(size: 16))
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
-                .lineSpacing(6)
 
-            // Feature bullets
+            // Value proposition
             VStack(alignment: .leading, spacing: 16) {
-                featureBullet(icon: "chart.line.uptrend.xyaxis", text: "体重、体脂、围度趋势图")
-                featureBullet(icon: "target", text: "设定目标，追踪进度")
-                featureBullet(icon: "camera.fill", text: "拍摄形体对比照片")
-                featureBullet(icon: "lock.fill", text: "数据完全存储在本机")
+                featureBullet(icon: "lock.shield.fill", text: "隐私优先 - 数据只存在你的手机")
+                featureBullet(icon: "creditcard.fill", text: "一次购买 - 永久使用，非订阅")
+                featureBullet(icon: "photo.stack.fill", text: "照片对比 - 见证形体变化（独有）")
+                featureBullet(icon: "chart.line.uptrend.xyaxis", text: "趋势分析 - 智能数据洞察")
             }
             .padding(.horizontal, 32)
             .padding(.top, 8)

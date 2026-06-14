@@ -13,6 +13,10 @@ struct HomeView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
+                    // 今日洞察卡片
+                    todayInsightsCard
+                        .padding(.horizontal, 20)
+
                     // 今日摘要卡片
                     summaryCard
                         .padding(.horizontal, 20)
@@ -44,6 +48,81 @@ struct HomeView: View {
                 }
             }
         }
+    }
+
+    // MARK: - Today Insights Card
+
+    private var todayInsightsCard: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            // Greeting + insights
+            VStack(alignment: .leading, spacing: 8) {
+                Text(greeting)
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .foregroundColor(.primary)
+
+                // Insights text
+                let insights = todaysInsights
+                if !insights.isEmpty {
+                    VStack(alignment: .leading, spacing: 6) {
+                        ForEach(insights, id: \.self) { insight in
+                            HStack(spacing: 8) {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(.bodylogPrimary)
+                                    .font(.system(size: 12))
+                                Text(insight)
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Quick action button
+            if entryStore.entries.isEmpty || !Calendar.current.isDateInToday(entryStore.latestEntry?.recordedAt ?? Date.distantPast) {
+                Button(action: { showLogSheet = true }) {
+                    HStack {
+                        Image(systemName: "plus.circle.fill")
+                        Text("记录今天")
+                            .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(Color.bodylogPrimary)
+                    .cornerRadius(10)
+                }
+                .contentShape(Rectangle())
+            }
+        }
+        .padding(20)
+        .background(Color.systemBackground)
+        .cornerRadius(16)
+        .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
+    }
+
+    private var todaysInsights: [String] {
+        var result: [String] = []
+
+        // Insight 1: Streak
+        let streak = entryStore.currentStreak
+        if streak > 0 {
+            result.append("已连续记录\(streak)天，继续保持！")
+        } else if let lastEntry = entryStore.latestEntry {
+            let days = Calendar.current.dateComponents([.day], from: lastEntry.recordedAt, to: Date()).day ?? 0
+            result.append("已\(days)天没有记录，今天开始吧")
+        } else {
+            result.append("开始记录你的身体变化吧")
+        }
+
+        // Insight 2: Goal progress (if has active goal)
+        if let goal = goalStore.activeGoals.first, let current = entryStore.latestValue(for: goal.metricType) {
+            let remaining = abs(goal.targetValue - current)
+            let unit = (goal.metricType == .weight || goal.metricType == .muscleMass) ? appState.weightUnit.rawValue : goal.metricType.unit
+            result.append("距离\(goal.metricType.displayName)目标还差\(String(format: "%.1f", remaining))\(unit)")
+        }
+
+        return Array(result.prefix(2))
     }
 
     // MARK: - Summary Card
