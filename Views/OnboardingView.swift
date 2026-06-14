@@ -82,12 +82,12 @@ struct OnboardingView: View {
                 .font(.system(size: 28, weight: .bold, design: .rounded))
                 .multilineTextAlignment(.center)
 
-            Text("BodyLog 帮你用数据见证每一次进步")
+            Text("用数据和照片，见证每一次进步")
                 .font(.system(size: 16))
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
 
-            Text("不同于 Apple 健康\n你的数据只属于你")
+            Text("不同于 Apple 健康 · 隐私优先 · 一次买断")
                 .font(.system(size: 16))
                 .foregroundColor(.bodylogPrimary)
                 .multilineTextAlignment(.center)
