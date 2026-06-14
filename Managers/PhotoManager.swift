@@ -53,7 +53,13 @@ final class PhotoManager: @unchecked Sendable {
     /// 删除指定照片文件
     func deletePhoto(filename: String) {
         let url = photosDirectory.appendingPathComponent(filename)
-        try? fileManager.removeItem(at: url)
+        do {
+            if fileManager.fileExists(atPath: url.path) {
+                try fileManager.removeItem(at: url)
+            }
+        } catch {
+            print("[PhotoManager] Delete error for \(filename): \(error)")
+        }
     }
     
     /// 迁移旧数据：把 photoData (Data?) 转换为 photoFilename (String?)
@@ -69,9 +75,13 @@ final class PhotoManager: @unchecked Sendable {
     
     private func ensureDirectoryExists() {
         if !fileManager.fileExists(atPath: photosDirectory.path) {
-            try? fileManager.createDirectory(at: photosDirectory,
+            do {
+                try fileManager.createDirectory(at: photosDirectory,
                                               withIntermediateDirectories: true,
                                               attributes: nil)
+            } catch {
+                print("[PhotoManager] Failed to create directory: \(error)")
+            }
         }
     }
 }
