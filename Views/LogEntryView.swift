@@ -19,6 +19,7 @@ struct LogEntryView: View {
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var photoData: Data?
     @State private var showCamera: Bool = false
+    @State private var showPhotoPicker: Bool = false
     @State private var showPhotoSourceDialog: Bool = false
     @State private var showValidationError: Bool = false
     @State private var validationMessage: String = ""
@@ -162,10 +163,13 @@ struct LogEntryView: View {
                     .padding(8)
                 }
             } else {
-                PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
+                // Photo source menu
+                Button(action: {
+                    showPhotoSourceDialog = true
+                }) {
                     HStack {
-                        Image(systemName: "photo.badge.plus")
-                        Text("从相册选取")
+                        Image(systemName: "camera.badge.plus")
+                        Text("添加照片")
                             .font(.system(size: 15))
                     }
                     .foregroundColor(.bodylogPrimary)
@@ -174,10 +178,22 @@ struct LogEntryView: View {
                     .background(Color.bodylogPrimary.opacity(0.1))
                     .cornerRadius(12)
                 }
+                .confirmationDialog("选择照片来源", isPresented: $showPhotoSourceDialog, titleVisibility: .visible) {
+                    Button("拍照") {
+                        showCamera = true
+                    }
+                    Button("从相册选取") {
+                        showPhotoPicker = true
+                    }
+                    Button("取消", role: .cancel) {}
+                }
+                .sheet(isPresented: $showCamera) {
+                    CameraPicker(imageData: $photoData)
+                }
+                .photosPicker(isPresented: $showPhotoPicker, selection: $selectedPhotoItem, matching: .images)
                 .onChange(of: selectedPhotoItem) { newItem in
                     Task {
                         if let data = try? await newItem?.loadTransferable(type: Data.self) {
-                            // Compress to reduce storage
                             if let image = UIImage(data: data) {
                                 photoData = image.jpegData(compressionQuality: 0.6)
                             }
@@ -238,14 +254,24 @@ struct LogEntryView: View {
             entry.metrics = parsedMetrics
             entry.note = note.isEmpty ? nil : note
             entry.recordedAt = recordDate
-            entry.photoData = photoData
+            // 保存照片到文件
+            if let data = photoData {
+                if let filename = PhotoManager.shared.savePhoto(data) {
+                    entry.photoFilename = filename
+                }
+            } else {
+                entry.photoFilename = nil
+            }
             entryStore.updateEntry(entry)
         } else {
+            // 保存照片到文件
+            let savedFilename: String? = photoData.flatMap { PhotoManager.shared.savePhoto($0) }
+            
             let entry = BodyEntry(
                 recordedAt: recordDate,
                 metrics: parsedMetrics,
                 note: note.isEmpty ? nil : note,
-                photoData: photoData
+                photoFilename: savedFilename
             )
             entryStore.addEntry(entry)
             // Check goals
@@ -259,7 +285,7 @@ struct LogEntryView: View {
         guard let entry = editingEntry else { return }
         recordDate = entry.recordedAt
         note = entry.note ?? ""
-        photoData = entry.photoData
+        photoData = entry.loadedPhotoData
         for metric in BodyMetricType.allCases {
             if let val = entry.value(for: metric) {
                 if metric == .weight || metric == .muscleMass {

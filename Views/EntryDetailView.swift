@@ -23,7 +23,7 @@ struct EntryDetailView: View {
                     .padding(.horizontal, 20)
 
                 // 照片
-                if let data = entry.photoData, let image = UIImage(data: data) {
+                if let data = entry.loadedPhotoData, let image = UIImage(data: data) {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFit()

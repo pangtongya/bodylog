@@ -184,8 +184,28 @@ class BodyEntryStore: ObservableObject {
             let data = try Data(contentsOf: Self.storeURL)
             entries = try JSONDecoder().decode([BodyEntry].self, from: data)
             sortEntries()
+            
+            // 迁移旧数据：photoData (Data?) → photoFilename (String?)
+            migrateLegacyPhotos()
         } catch {
             entries = []
+        }
+    }
+    
+    /// 迁移旧格式的照片数据到文件存储
+    private func migrateLegacyPhotos() {
+        var needsSave = false
+        for idx in entries.indices {
+            // 只迁移有photoData但没有photoFilename的entry
+            if entries[idx].photoData != nil && entries[idx].photoFilename == nil,
+               let filename = PhotoManager.shared.migrate(photoData: entries[idx].photoData) {
+                entries[idx].photoFilename = filename
+                entries[idx].photoData = nil  // 清除旧数据
+                needsSave = true
+            }
+        }
+        if needsSave {
+            performSave()
         }
     }
 

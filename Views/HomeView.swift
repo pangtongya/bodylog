@@ -420,7 +420,7 @@ struct EntryRowView: View {
                     .foregroundColor(.secondary)
             }
 
-            if entry.photoData != nil {
+            if entry.hasPhoto {
                 Image(systemName: "photo")
                     .font(.system(size: 12))
                     .foregroundColor(.secondary)

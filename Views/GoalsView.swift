@@ -58,9 +58,15 @@ struct GoalsView: View {
                             showAddGoal = true
                         }
                     }) {
-                        Image(systemName: "plus.circle.fill")
-                            .font(.system(size: 24))
-                            .foregroundColor(.bodylogPrimary)
+                        HStack(spacing: 4) {
+                            if !appState.isPro && goalStore.activeGoals.count >= 2 {
+                                Image(systemName: "lock.fill")
+                                    .font(.system(size: 11))
+                            }
+                            Image(systemName: "plus.circle.fill")
+                                .font(.system(size: 24))
+                        }
+                        .foregroundColor(.bodylogPrimary)
                     }
                 }
             }

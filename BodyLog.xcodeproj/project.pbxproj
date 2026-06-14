@@ -12,6 +12,7 @@
 		0D93573F59A23FDED68E0773 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961BB4D4AC80FEC6FF63308A /* PurchaseManager.swift */; };
 		0E6FDDDDC708806FD496A491 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 07AD365B1E64DAEFA107EE58 /* Assets.xcassets */; };
 		101AD71580A26873E698CBD6 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE6E3A36E42A456FCFF33C7 /* OnboardingView.swift */; };
+		1990DB58F2655D334D51B0EE /* PhotoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0E51EA8C57CD618CF05D67E /* PhotoManager.swift */; };
 		1D9760CBFAEC28F1D795E794 /* BodyEntryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A385D1D5B1E63974B1E5592 /* BodyEntryStore.swift */; };
 		25EADCAB284D86AE8598DD87 /* BodyMetricType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A07DB4474DE38DE3DB5739 /* BodyMetricType.swift */; };
 		406D91A14B1B36AE3FCAA098 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4203B04CB8E399CD416685FD /* AppState.swift */; };
@@ -21,10 +22,12 @@
 		6478454003E59CF28FA98A11 /* GoalStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D6C21CEC529CA8182FA5EB9 /* GoalStore.swift */; };
 		69ABCD3BC8F54C314463D2F0 /* EntryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465821592586EFCF87BE92B3 /* EntryDetailView.swift */; };
 		6B020D6EC55796628FAD6E47 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2753BC41D3B378971EC36F7E /* NotificationManager.swift */; };
+		84F4D6FF631D7FE34D88384A /* 2026-06-14.md in Resources */ = {isa = PBXBuildFile; fileRef = 3B528DB535114D9BA9F35EF3 /* 2026-06-14.md */; };
 		8F5EEF60F2F31518F4A2B228 /* TrendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2AF5B77A3332EEF1874546 /* TrendView.swift */; };
 		A924817F4E47CB8D4E9D776B /* BodyLogApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD430B8262B32BDA08F7687 /* BodyLogApp.swift */; };
 		BE1E96B0965FC1909D044669 /* BodyLogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB493D83E4EDC3DBF215628 /* BodyLogTests.swift */; };
 		C15087E33ADF5B53E91DB651 /* GoalModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABE549C4068A572DA51E1F87 /* GoalModel.swift */; };
+		C80EAA72F680445C79458A65 /* CameraPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4D8EB777EAA4AAB32BAC123 /* CameraPicker.swift */; };
 		D0536F1C8B5E681A1EAF2ECA /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 620491F6B6114319C7A1BD04 /* PaywallView.swift */; };
 		D76E3939F6906B42CAD81FEB /* BodyEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5C6874568C1D68F0930EAA /* BodyEntry.swift */; };
 		E514173A9D3601EBE52ED05C /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB712729C58FF7F90AD6749 /* HomeView.swift */; };
@@ -52,6 +55,7 @@
 		2A385D1D5B1E63974B1E5592 /* BodyEntryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyEntryStore.swift; sourceTree = "<group>"; };
 		30D5249C7C81212116E4B7D6 /* LogEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogEntryView.swift; sourceTree = "<group>"; };
 		37A07DB4474DE38DE3DB5739 /* BodyMetricType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyMetricType.swift; sourceTree = "<group>"; };
+		3B528DB535114D9BA9F35EF3 /* 2026-06-14.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "2026-06-14.md"; sourceTree = "<group>"; };
 		3CD430B8262B32BDA08F7687 /* BodyLogApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyLogApp.swift; sourceTree = "<group>"; };
 		4203B04CB8E399CD416685FD /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		465821592586EFCF87BE92B3 /* EntryDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryDetailView.swift; sourceTree = "<group>"; };
@@ -63,16 +67,27 @@
 		8FB712729C58FF7F90AD6749 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		961BB4D4AC80FEC6FF63308A /* PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManager.swift; sourceTree = "<group>"; };
 		ABE549C4068A572DA51E1F87 /* GoalModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalModel.swift; sourceTree = "<group>"; };
+		B0E51EA8C57CD618CF05D67E /* PhotoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoManager.swift; sourceTree = "<group>"; };
 		BE2AF5B77A3332EEF1874546 /* TrendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrendView.swift; sourceTree = "<group>"; };
 		C253D60F3845D9459EC0461E /* PhotoCompareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCompareView.swift; sourceTree = "<group>"; };
+		C4D8EB777EAA4AAB32BAC123 /* CameraPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPicker.swift; sourceTree = "<group>"; };
 		EEE6E3A36E42A456FCFF33C7 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		FA5C6874568C1D68F0930EAA /* BodyEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyEntry.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		18DE1A1D573883F9853902D0 /* memory */ = {
+			isa = PBXGroup;
+			children = (
+				3B528DB535114D9BA9F35EF3 /* 2026-06-14.md */,
+			);
+			path = memory;
+			sourceTree = "<group>";
+		};
 		18EB865B2CF0D03E36BA1B9F /* .workbuddy */ = {
 			isa = PBXGroup;
 			children = (
+				18DE1A1D573883F9853902D0 /* memory */,
 			);
 			path = .workbuddy;
 			sourceTree = "<group>";
@@ -116,6 +131,7 @@
 			isa = PBXGroup;
 			children = (
 				2753BC41D3B378971EC36F7E /* NotificationManager.swift */,
+				B0E51EA8C57CD618CF05D67E /* PhotoManager.swift */,
 				961BB4D4AC80FEC6FF63308A /* PurchaseManager.swift */,
 			);
 			path = Managers;
@@ -136,6 +152,7 @@
 				1F188AE224BF34A8B04CF9D0 /* .gitignore */,
 				07AD365B1E64DAEFA107EE58 /* Assets.xcassets */,
 				3CD430B8262B32BDA08F7687 /* BodyLogApp.swift */,
+				18EB865B2CF0D03E36BA1B9F /* .workbuddy */,
 				4F82287DE41E635B49A4E895 /* Managers */,
 				254A1E1D706F0AA4C5B2650D /* Models */,
 				4575244E5F5CE2F961308EDD /* Stores */,
@@ -165,6 +182,7 @@
 		DA48650B41FCAD6C746CA19A /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				C4D8EB777EAA4AAB32BAC123 /* CameraPicker.swift */,
 				5F8CBAD41C2D9D884F7A13BC /* ContentView.swift */,
 				465821592586EFCF87BE92B3 /* EntryDetailView.swift */,
 				12C504D899AE66B148B8F553 /* GoalsView.swift */,
@@ -258,6 +276,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84F4D6FF631D7FE34D88384A /* 2026-06-14.md in Resources */,
 				0E6FDDDDC708806FD496A491 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -274,6 +293,7 @@
 				1D9760CBFAEC28F1D795E794 /* BodyEntryStore.swift in Sources */,
 				A924817F4E47CB8D4E9D776B /* BodyLogApp.swift in Sources */,
 				25EADCAB284D86AE8598DD87 /* BodyMetricType.swift in Sources */,
+				C80EAA72F680445C79458A65 /* CameraPicker.swift in Sources */,
 				4B8A97CDA335F1EB215F4F47 /* ColorExtensions.swift in Sources */,
 				4A2C84CFA53CE1B8E264CD17 /* ContentView.swift in Sources */,
 				69ABCD3BC8F54C314463D2F0 /* EntryDetailView.swift in Sources */,
@@ -286,6 +306,7 @@
 				101AD71580A26873E698CBD6 /* OnboardingView.swift in Sources */,
 				D0536F1C8B5E681A1EAF2ECA /* PaywallView.swift in Sources */,
 				FEFA6476A8FA467E0CD08EBD /* PhotoCompareView.swift in Sources */,
+				1990DB58F2655D334D51B0EE /* PhotoManager.swift in Sources */,
 				0D93573F59A23FDED68E0773 /* PurchaseManager.swift in Sources */,
 				07C28EDEFDA2EED766FCFA48 /* SettingsView.swift in Sources */,
 				8F5EEF60F2F31518F4A2B228 /* TrendView.swift in Sources */,

@@ -14,7 +14,7 @@ struct PhotoCompareView: View {
     @State private var showPaywall: Bool = false
     
     private var entriesWithPhotos: [BodyEntry] {
-        entryStore.entries.filter { $0.photoData != nil }
+        entryStore.entries.filter { $0.hasPhoto }
     }
     
     var body: some View {
@@ -130,7 +130,7 @@ struct PhotoCompareView: View {
             }
         }) {
             ZStack(alignment: .topTrailing) {
-                if let data = entry.photoData, let image = UIImage(data: data) {
+                if let data = entry.loadedPhotoData, let image = UIImage(data: data) {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFill()
@@ -178,13 +178,13 @@ struct PhotoCompareView: View {
                 // Photos side by side
                 HStack(spacing: 12) {
                     if let entry1 = selectedEntries.first,
-                       let data1 = entry1.photoData,
+                       let data1 = entry1.loadedPhotoData,
                        let image1 = UIImage(data: data1) {
                         photoCard(image: image1, entry: entry1, tag: "之前")
                     }
                     
                     if let entry2 = selectedEntries.last,
-                       let data2 = entry2.photoData,
+                       let data2 = entry2.loadedPhotoData,
                        let image2 = UIImage(data: data2) {
                         photoCard(image: image2, entry: entry2, tag: "之后")
                     }
