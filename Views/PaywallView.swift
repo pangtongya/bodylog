@@ -49,6 +49,24 @@ struct PaywallView: View {
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 20)
                     }
+                    
+                    // Load Products Error
+                    if let loadErr = purchaseManager.loadProductsError {
+                        VStack(spacing: 8) {
+                            Text(loadErr)
+                                .font(.system(size: 13))
+                                .foregroundColor(.bodylogDanger)
+                                .multilineTextAlignment(.center)
+                            Button(action: {
+                                Task { await purchaseManager.retryLoadProducts() }
+                            }) {
+                                Text("重试")
+                                    .font(.system(size: 13, weight: .medium))
+                                    .foregroundColor(.bodylogPrimary)
+                            }
+                        }
+                        .padding(.horizontal, 20)
+                    }
 
                     // Buy button
                     VStack(spacing: 12) {
@@ -61,6 +79,10 @@ struct PaywallView: View {
                                     ProgressView()
                                         .progressViewStyle(.circular)
                                         .tint(.white)
+                                } else if purchaseManager.isLoadingProducts {
+                                    ProgressView()
+                                        .progressViewStyle(.circular)
+                                        .tint(.white)
                                 } else {
                                     Text("购买 \(purchaseManager.formattedPrice)")
                                         .font(.system(size: 17, weight: .bold, design: .rounded))
@@ -69,10 +91,10 @@ struct PaywallView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
-                            .background(purchaseManager.isPurchasing ? Color.secondary : Color.bodylogPrimary)
+                            .background(purchaseManager.isPurchasing || purchaseManager.isLoadingProducts ? Color.secondary : Color.bodylogPrimary)
                             .cornerRadius(14)
                         }
-                        .disabled(purchaseManager.isPurchasing)
+                        .disabled(!purchaseManager.canPurchase)
 
                         Button(action: {
                             Task { await purchaseManager.restorePurchases() }

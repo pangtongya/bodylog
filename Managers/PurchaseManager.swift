@@ -14,6 +14,8 @@ final class PurchaseManager: ObservableObject {
     @Published var proProduct: Product?
     @Published var isPurchasing: Bool = false
     @Published var purchaseError: String?
+    @Published var isLoadingProducts: Bool = false
+    @Published var loadProductsError: String?
 
     private var updateListenerTask: Task<Void, Never>?
 
@@ -32,12 +34,25 @@ final class PurchaseManager: ObservableObject {
     // MARK: - Load Products
 
     func loadProducts() async {
+        isLoadingProducts = true
+        loadProductsError = nil
+        
         do {
             let products = try await Product.products(for: [Self.proProductID])
             proProduct = products.first
+            if proProduct == nil {
+                loadProductsError = "无法找到商品，请检查配置。"
+            }
         } catch {
             print("[PurchaseManager] Load products error: \(error)")
+            loadProductsError = "加载商品失败：\(error.localizedDescription)"
         }
+        
+        isLoadingProducts = false
+    }
+    
+    func retryLoadProducts() async {
+        await loadProducts()
     }
 
     // MARK: - Purchase
@@ -126,6 +141,18 @@ final class PurchaseManager: ObservableObject {
     // MARK: - Formatted Price
 
     var formattedPrice: String {
-        proProduct?.displayPrice ?? "加载中..."
+        if let product = proProduct {
+            return product.displayPrice
+        } else if loadProductsError != nil {
+            return "加载失败，点击重试"
+        } else if isLoadingProducts {
+            return "加载中..."
+        } else {
+            return "加载中..."
+        }
+    }
+    
+    var canPurchase: Bool {
+        proProduct != nil && !isPurchasing
     }
 }
