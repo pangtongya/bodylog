@@ -189,8 +189,12 @@ class AppState: ObservableObject, @preconcurrency Codable {
     /// 解锁新成就（由外部调用，如BodyEntryStore.save后）
     func unlockAchievements(_ newAchievements: [Achievement]) {
         guard !newAchievements.isEmpty else { return }
-        achievements.append(contentsOf: newAchievements)
-        if let first = newAchievements.first {
+        // 去重：只添加未解锁的成就
+        let existingIds = Set(achievements.map { $0.id })
+        let filtered = newAchievements.filter { !existingIds.contains($0.id) }
+        guard !filtered.isEmpty else { return }
+        achievements.append(contentsOf: filtered)
+        if let first = filtered.first {
             latestUnlockedAchievement = first
             showAchievementNotification = true
         }

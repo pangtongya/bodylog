@@ -8,7 +8,7 @@ import UIKit
 /// 1. 把 Data 照片保存到 Documents/Photos/ 目录
 /// 2. 根据 filename 加载照片 Data
 /// 3. 删除指定照片文件
-final class PhotoManager {
+final class PhotoManager: @unchecked Sendable {
     
     static let shared = PhotoManager()
     private let fileManager = FileManager.default

@@ -189,13 +189,27 @@ struct PhotoCompareView: View {
                     if let entry1 = selectedEntries.first,
                        let data1 = entry1.loadedPhotoData,
                        let image1 = UIImage(data: data1) {
-                        photoCard(image: image1, entry: entry1, tag: "之前")
+                        photoCard(image: image1, entry: entry1, tag: "之前") {
+                            withAnimation {
+                                selectedEntries.removeAll { $0.id == entry1.id }
+                                if selectedEntries.count < 2 {
+                                    showComparison = false
+                                }
+                            }
+                        }
                     }
                     
                     if let entry2 = selectedEntries.last,
                        let data2 = entry2.loadedPhotoData,
                        let image2 = UIImage(data: data2) {
-                        photoCard(image: image2, entry: entry2, tag: "之后")
+                        photoCard(image: image2, entry: entry2, tag: "之后") {
+                            withAnimation {
+                                selectedEntries.removeAll { $0.id == entry2.id }
+                                if selectedEntries.count < 2 {
+                                    showComparison = false
+                                }
+                            }
+                        }
                     }
                 }
                 .padding(.horizontal, 16)
@@ -219,7 +233,7 @@ struct PhotoCompareView: View {
         .background(Color.systemGroupedBackground)
     }
     
-    private func photoCard(image: UIImage, entry: BodyEntry, tag: String) -> some View {
+    private func photoCard(image: UIImage, entry: BodyEntry, tag: String, onRemove: (() -> Void)? = nil) -> some View {
         VStack(spacing: 8) {
             Text(tag)
                 .font(.system(size: 12, weight: .bold))
@@ -229,10 +243,24 @@ struct PhotoCompareView: View {
                 .background(Color.bodylogPrimary.opacity(0.1))
                 .cornerRadius(8)
             
-            Image(uiImage: image)
-                .resizable()
-                .scaledToFit()
-                .cornerRadius(12)
+            ZStack(alignment: .topTrailing) {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+                    .cornerRadius(12)
+                
+                if let onRemove = onRemove {
+                    Button(action: onRemove) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 20))
+                            .foregroundStyle(.white)
+                            .background(Color.black.opacity(0.6))
+                            .clipShape(Circle())
+                    }
+                    .padding(8)
+                    .buttonStyle(.plain)
+                }
+            }
             
             Text(dateString(entry.recordedAt))
                 .font(.system(size: 13))

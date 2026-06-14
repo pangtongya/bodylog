@@ -124,8 +124,9 @@ class BodyEntryStore: ObservableObject {
     func change30Days(for type: BodyMetricType) -> Double? {
         let cutoff = Calendar.current.date(byAdding: .day, value: -30, to: Date()) ?? Date()
         guard let latest = latestValue(for: type) else { return nil }
+        // entries是倒序（最新在前），用.last取30天前最近的一条
         let old = entries.filter { $0.recordedAt <= cutoff }
-            .first { $0.value(for: type) != nil }
+            .last { $0.value(for: type) != nil }
         guard let oldVal = old?.value(for: type) else { return nil }
         return latest - oldVal
     }
