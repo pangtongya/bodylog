@@ -14,36 +14,38 @@ struct GoalsView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 20) {
-                    if goalStore.activeGoals.isEmpty && goalStore.achievedGoals.isEmpty {
-                        emptyState
-                            .padding(.horizontal, 20)
-                            .padding(.top, 40)
-                    } else {
-                        // Active Goals
-                        if !goalStore.activeGoals.isEmpty {
-                            sectionHeader("进行中的目标")
+            ZStack(alignment: .top) {
+                ScrollView {
+                    VStack(spacing: 20) {
+                        if goalStore.activeGoals.isEmpty && goalStore.achievedGoals.isEmpty {
+                            emptyState
                                 .padding(.horizontal, 20)
-                            ForEach(goalStore.activeGoals) { goal in
-                                GoalCardView(goal: goal)
+                                .padding(.top, 40)
+                        } else {
+                            // Active Goals
+                            if !goalStore.activeGoals.isEmpty {
+                                sectionHeader("进行中的目标")
                                     .padding(.horizontal, 20)
+                                ForEach(goalStore.activeGoals) { goal in
+                                    GoalCardView(goal: goal)
+                                        .padding(.horizontal, 20)
+                                }
                             }
-                        }
 
-                        // Achieved Goals
-                        if !goalStore.achievedGoals.isEmpty {
-                            sectionHeader("已达成")
-                                .padding(.horizontal, 20)
-                            ForEach(goalStore.achievedGoals) { goal in
-                                GoalCardView(goal: goal, isAchieved: true)
+                            // Achieved Goals
+                            if !goalStore.achievedGoals.isEmpty {
+                                sectionHeader("已达成")
                                     .padding(.horizontal, 20)
+                                ForEach(goalStore.achievedGoals) { goal in
+                                    GoalCardView(goal: goal, isAchieved: true)
+                                        .padding(.horizontal, 20)
+                                }
                             }
                         }
                     }
+                    .padding(.top, 8)
+                    .padding(.bottom, 100)
                 }
-                .padding(.top, 8)
-                .padding(.bottom, 40)
             }
             .background(Color.systemGroupedBackground)
             .navigationTitle("目标")

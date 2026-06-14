@@ -51,9 +51,9 @@
 		07AD365B1E64DAEFA107EE58 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0E6AB0AB87AE8766774C9182 /* ColorExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtensions.swift; sourceTree = "<group>"; };
 		12C504D899AE66B148B8F553 /* GoalsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsView.swift; sourceTree = "<group>"; };
-		1CFFE05EF045F6A915A05861 /* BodyLogTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BodyLogTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1CFFE05EF045F6A915A05861 /* BodyLogTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BodyLogTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D6C21CEC529CA8182FA5EB9 /* GoalStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalStore.swift; sourceTree = "<group>"; };
-		1F188AE224BF34A8B04CF9D0 /* .gitignore */ = {isa = PBXFileReference; path = .gitignore; sourceTree = "<group>"; };
+		1F188AE224BF34A8B04CF9D0 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		2753BC41D3B378971EC36F7E /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		2A385D1D5B1E63974B1E5592 /* BodyEntryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyEntryStore.swift; sourceTree = "<group>"; };
 		30D5249C7C81212116E4B7D6 /* LogEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogEntryView.swift; sourceTree = "<group>"; };
@@ -61,7 +61,7 @@
 		3CD430B8262B32BDA08F7687 /* BodyLogApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyLogApp.swift; sourceTree = "<group>"; };
 		4203B04CB8E399CD416685FD /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		465821592586EFCF87BE92B3 /* EntryDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryDetailView.swift; sourceTree = "<group>"; };
-		552C3244DD4E687076A2960D /* BodyLog.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = BodyLog.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		552C3244DD4E687076A2960D /* BodyLog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BodyLog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		558D8CE0215BEA0AFB4C4197 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		5AB493D83E4EDC3DBF215628 /* BodyLogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyLogTests.swift; sourceTree = "<group>"; };
 		5F8CBAD41C2D9D884F7A13BC /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -143,11 +143,6 @@
 				1F188AE224BF34A8B04CF9D0 /* .gitignore */,
 				07AD365B1E64DAEFA107EE58 /* Assets.xcassets */,
 				3CD430B8262B32BDA08F7687 /* BodyLogApp.swift */,
-				4F82287DE41E635B49A4E895 /* Managers */,
-				254A1E1D706F0AA4C5B2650D /* Models */,
-				4575244E5F5CE2F961308EDD /* Stores */,
-				A733C20A848E92737FFC219F /* Utilities */,
-				DA48650B41FCAD6C746CA19A /* Views */,
 			);
 			name = BodyLog;
 			path = .;
@@ -238,7 +233,6 @@
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					FDB05A47955AD7C42505E8BD = {
-						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -395,6 +389,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = 2ZNZRXNPWQ;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -417,7 +412,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 2ZNZRXNPWQ;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Info.plist;
@@ -442,7 +437,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 2ZNZRXNPWQ;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Info.plist;
@@ -521,6 +516,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = 2ZNZRXNPWQ;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
