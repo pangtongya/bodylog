@@ -142,7 +142,7 @@ class BodyEntryStore: ObservableObject {
         return streak
     }
 
-    // MARK: - Export
+    // MARK: - Export / Import
 
     /// 生成 CSV 字符串（所有已记录指标）
     func exportCSV() -> String {
@@ -162,6 +162,104 @@ class BodyEntryStore: ObservableObject {
             return ([date] + values + [note]).joined(separator: ",")
         }
         return ([header] + rows).joined(separator: "\n")
+    }
+    
+    /// 从 CSV 字符串导入数据
+    /// - Returns: (成功数, 失败原因)
+    func importCSV(_ csvString: String) -> (imported: Int, error: String?) {
+        let lines = csvString.components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+        
+        guard lines.count >= 2 else {
+            return (0, "CSV 文件格式不正确，至少需要标题行和一行数据")
+        }
+        
+        // Parse header to find column indices
+        let header = parseCSVLine(lines[0])
+        
+        // Find date column index (try common Chinese/English headers)
+        let dateColIndex = header.firstIndex(where: {
+            $0.contains("日期") || $0.contains("Date") || $0.contains("date")
+        }) ?? 0
+        
+        // Build metric type mapping from header columns
+        var metricMap: [Int: BodyMetricType] = [:]
+        for (idx, col) in header.enumerated() {
+            if idx == dateColIndex { continue }
+            for type in BodyMetricType.allCases where !type.unit.isEmpty {
+                if col.contains(type.displayName) || col.contains(type.rawValue) ||
+                   col.contains(type.unit) {
+                    metricMap[idx] = type
+                    break
+                }
+            }
+        }
+        
+        // Find note column
+        let noteColIndex = header.firstIndex(where: {
+            $0.contains("备注") || $0.contains("Note") || $0.contains("note")
+        })
+        
+        var importedCount = 0
+        var errors: [String] = []
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+        let shortDateFormatter = DateFormatter()
+        shortDateFormatter.dateFormat = "yyyy-MM-dd"
+        
+        for line in lines.dropFirst() {
+            let cols = parseCSVLine(line)
+            
+            guard cols.count > max(dateColIndex, 1) else { continue }
+            
+            // Parse date
+            let dateString = cols[dateColIndex].trimmingCharacters(in: .whitespaces)
+            guard let date = dateFormatter.date(from: dateString) ??
+                          shortDateFormatter.date(from: dateString) else {
+                errors.append("无法解析日期: \(dateString)")
+                continue
+            }
+            
+            // Parse metrics
+            var metrics: [String: Double] = [:]
+            for (colIdx, type) in metricMap where colIdx < cols.count {
+                let valStr = cols[colIdx].trimmingCharacters(in: .whitespaces)
+                guard !valStr.isEmpty, let val = Double(valStr) else { continue }
+                metrics[type.rawValue] = val
+            }
+            
+            guard !metrics.isEmpty else { continue }
+            
+            // Parse note
+            var note: String? = nil
+            if let nIdx = noteColIndex, nIdx < cols.count {
+                let noteStr = cols[nIdx].trimmingCharacters(in: .whitespaces)
+                if !noteStr.isEmpty { note = noteStr }
+            }
+            
+            // Create entry
+            let entry = BodyEntry(
+                recordedAt: date,
+                metrics: metrics,
+                note: note
+            )
+            addEntry(entry)
+            importedCount += 1
+        }
+        
+        save()
+        
+        if importedCount > 0 {
+            return (importedCount, errors.isEmpty ? nil : "\(errors.count) 行数据跳过")
+        } else {
+            return (0, errors.isEmpty ? "未找到有效数据" : errors.first)
+        }
+    }
+    
+    /// 简单的 CSV 行解析（处理逗号分隔，不支持引号包裹）
+    private func parseCSVLine(_ line: String) -> [String] {
+        line.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
     }
 
     // MARK: - Persistence

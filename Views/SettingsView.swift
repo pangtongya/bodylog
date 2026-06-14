@@ -11,8 +11,10 @@ struct SettingsView: View {
     @State private var showPaywall: Bool = false
     @State private var showExportSheet: Bool = false
     @State private var showRemindTimePicker: Bool = false
-    @State private var exportCSV: String = ""
     @State private var showMetricsPicker: Bool = false
+    @State private var showImportPicker: Bool = false
+    @State private var importResult: String? = nil
+    @State private var exportCSV: String = ""
 
     var body: some View {
         NavigationStack {
@@ -150,6 +152,21 @@ struct SettingsView: View {
                         }
                     }
                     .foregroundColor(appState.isPro ? .bodylogPrimary : .secondary)
+                    
+                    if appState.isPro {
+                        Button(action: { showImportPicker = true }) {
+                            Label("导入 CSV", systemImage: "arrow.up.doc.fill")
+                        }
+                        .foregroundColor(.bodylogPrimary)
+                        
+                        // Import result
+                        if let result = importResult {
+                            Text(result)
+                                .font(.system(size: 13))
+                                .foregroundColor(.secondary)
+                                .padding(.top, 4)
+                        }
+                    }
 
                     LabeledContent("总记录数") {
                         Text("\(entryStore.entries.count)")
@@ -183,6 +200,9 @@ struct SettingsView: View {
         .sheet(isPresented: $showMetricsPicker) {
             MetricsPickerView(isPresented: $showMetricsPicker)
                 .environmentObject(appState)
+        }
+        .fileImporter(isPresented: $showImportPicker, allowedContentTypes: [.commaSeparatedText], allowsMultipleSelection: false) { result in
+            handleImportResult(result)
         }
     }
 
@@ -223,6 +243,30 @@ struct SettingsView: View {
         }
         exportCSV = entryStore.exportCSV()
         showExportSheet = true
+    }
+    
+    private func handleImportResult(_ result: Result<[URL], Error>) {
+        switch result {
+        case .success(let urls):
+            guard let url = urls.first else { return }
+            do {
+                let data = try Data(contentsOf: url)
+                guard let csvString = String(data: data, encoding: .utf8) else {
+                    importResult = "导入失败：文件编码不支持"
+                    return
+                }
+                let (count, error) = entryStore.importCSV(csvString)
+                if error != nil && count == 0 {
+                    importResult = "导入失败：\(error!)"
+                } else {
+                    importResult = "成功导入 \(count) 条记录" + (error.map { "（\($0)）" } ?? "")
+                }
+            } catch {
+                importResult = "读取文件失败：\(error.localizedDescription)"
+            }
+        case .failure(let error):
+            importResult = "选择文件失败：\(error.localizedDescription)"
+        }
     }
 }
 
