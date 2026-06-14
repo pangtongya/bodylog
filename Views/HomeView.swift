@@ -223,20 +223,42 @@ struct HomeView: View {
     }
 
     private var emptyStateView: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "chart.line.uptrend.xyaxis")
-                .font(.system(size: 40))
-                .foregroundColor(.bodylogPrimary.opacity(0.5))
-            Text("还没有记录")
-                .font(.system(size: 15))
-                .foregroundColor(.secondary)
-            Text("点击下方按钮，记录第一条身体数据")
-                .font(.system(size: 13))
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
+        VStack(spacing: 20) {
+            // Icons row
+            HStack(spacing: 16) {
+                Image(systemName: "figure.stand")
+                    .font(.system(size: 32))
+                    .foregroundColor(.bodylogPrimary)
+                Image(systemName: "chart.line.uptrend.xyaxis")
+                    .font(.system(size: 32))
+                    .foregroundColor(.bodylogPrimary)
+                Image(systemName: "photo.stack")
+                    .font(.system(size: 32))
+                    .foregroundColor(.bodylogPrimary)
+            }
+            
+            VStack(spacing: 8) {
+                Text("开始记录你的身体变化")
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .foregroundColor(.primary)
+                Text("记录体重、体脂、围度，见证每一次进步")
+                    .font(.system(size: 14))
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+            
+            Button(action: { showLogSheet = true }) {
+                Text("开始记录")
+                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 32)
+                    .padding(.vertical, 12)
+                    .background(Color.bodylogPrimary)
+                    .cornerRadius(12)
+            }
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 20)
+        .padding(.vertical, 40)
     }
 
     // MARK: - Stats Row
