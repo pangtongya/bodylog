@@ -142,7 +142,7 @@ class BodyEntryStore: ObservableObject {
         return streak
     }
 
-    // MARK: - Export / Import
+    // MARK: - Export / Import / Backup
 
     /// 生成 CSV 字符串（所有已记录指标）
     func exportCSV() -> String {

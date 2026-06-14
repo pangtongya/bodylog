@@ -6,6 +6,7 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var entryStore: BodyEntryStore
+    @EnvironmentObject var goalStore: GoalStore
     @EnvironmentObject var purchaseManager: PurchaseManager
 
     @State private var showPaywall: Bool = false
@@ -13,8 +14,12 @@ struct SettingsView: View {
     @State private var showRemindTimePicker: Bool = false
     @State private var showMetricsPicker: Bool = false
     @State private var showImportPicker: Bool = false
+    @State private var showBackupSheet: Bool = false
+    @State private var showRestorePicker: Bool = false
     @State private var importResult: String? = nil
+    @State private var backupResult: String? = nil
     @State private var exportCSV: String = ""
+    @State private var backupData: Data = Data()
 
     var body: some View {
         NavigationStack {
@@ -158,14 +163,32 @@ struct SettingsView: View {
                             Label("导入 CSV", systemImage: "arrow.up.doc.fill")
                         }
                         .foregroundColor(.bodylogPrimary)
-                        
-                        // Import result
-                        if let result = importResult {
-                            Text(result)
-                                .font(.system(size: 13))
-                                .foregroundColor(.secondary)
-                                .padding(.top, 4)
-                        }
+                    }
+                    
+                    // Backup / Restore (all users)
+                    Button(action: createBackup) {
+                        Label("备份数据", systemImage: "square.and.arrow.up")
+                    }
+                    .foregroundColor(.bodylogPrimary)
+                    
+                    if let result = backupResult {
+                        Text(result)
+                            .font(.system(size: 13))
+                            .foregroundColor(.secondary)
+                            .padding(.top, 4)
+                    }
+                    
+                    Button(action: { showRestorePicker = true }) {
+                        Label("恢复数据", systemImage: "square.and.arrow.down")
+                    }
+                    .foregroundColor(.orange)
+
+                    // Import / Backup results
+                    if let result = importResult {
+                        Text(result)
+                            .font(.system(size: 13))
+                            .foregroundColor(.secondary)
+                            .padding(.top, 4)
                     }
 
                     LabeledContent("总记录数") {
@@ -203,6 +226,12 @@ struct SettingsView: View {
         }
         .fileImporter(isPresented: $showImportPicker, allowedContentTypes: [.commaSeparatedText], allowsMultipleSelection: false) { result in
             handleImportResult(result)
+        }
+        .sheet(isPresented: $showBackupSheet) {
+            ShareSheet(items: [backupData])
+        }
+        .fileImporter(isPresented: $showRestorePicker, allowedContentTypes: [.json], allowsMultipleSelection: false) { result in
+            handleRestoreResult(result)
         }
     }
 
@@ -266,6 +295,78 @@ struct SettingsView: View {
             }
         case .failure(let error):
             importResult = "选择文件失败：\(error.localizedDescription)"
+        }
+    }
+    
+    // MARK: - Backup / Restore
+    
+    private func createBackup() {
+        let backupDict: [String: Any] = [
+            "version": "1.0",
+            "exportDate": ISO8601DateFormatter().string(from: Date()),
+            "appState": try? JSONEncoder().encode(appState),
+            "entries": try? JSONEncoder().encode(entryStore.entries),
+            "goals": try? JSONEncoder().encode(goalStore.goals)
+        ]
+        
+        do {
+            let data = try JSONSerialization.data(withJSONObject: backupDict, options: [.prettyPrinted, .sortedKeys])
+            backupData = data
+            showBackupSheet = true
+            backupResult = "备份成功（\(String(format: "%.1f", Double(data.count)/1024))KB）"
+        } catch {
+            backupResult = "备份失败：\(error.localizedDescription)"
+        }
+    }
+    
+    private func handleRestoreResult(_ result: Result<[URL], Error>) {
+        switch result {
+        case .success(let urls):
+            guard let url = urls.first else { return }
+            do {
+                let data = try Data(contentsOf: url)
+                guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                      let version = json["version"] as? String else {
+                    backupResult = "恢复失败：无效的备份文件"
+                    return
+                }
+                
+                // Restore entries
+                if let entriesData = json["entries"] as? Data,
+                   let entries = try? JSONDecoder().decode([BodyEntry].self, from: entriesData) {
+                    entryStore.entries = entries
+                    entryStore.save()
+                }
+                
+                // Restore goals
+                if let goalsData = json["goals"] as? Data,
+                   let goals = try? JSONDecoder().decode([GoalModel].self, from: goalsData) {
+                    goalStore.goals = goals
+                    goalStore.save()
+                }
+                
+                // Restore app state
+                if let appStateData = json["appState"] as? Data,
+                   let restoredState = try? JSONDecoder().decode(AppState.self, from: appStateData) {
+                    appState.hasCompletedOnboarding = restoredState.hasCompletedOnboarding
+                    appState.userName = restoredState.userName
+                    appState.userHeight = restoredState.userHeight
+                    appState.userGender = restoredState.userGender
+                    appState.weightUnit = restoredState.weightUnit
+                    appState.theme = restoredState.theme
+                    appState.enabledMetrics = restoredState.enabledMetrics
+                    appState.reminderEnabled = restoredState.reminderEnabled
+                    appState.reminderHour = restoredState.reminderHour
+                    appState.reminderMinute = restoredState.reminderMinute
+                    appState.save()
+                }
+                
+                backupResult = "数据恢复成功！"
+            } catch {
+                backupResult = "恢复失败：\(error.localizedDescription)"
+            }
+        case .failure(let error):
+            backupResult = "选择文件失败：\(error.localizedDescription)"
         }
     }
 }
