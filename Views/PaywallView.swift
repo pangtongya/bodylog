@@ -14,28 +14,29 @@ struct PaywallView: View {
                 VStack(spacing: 28) {
                     // Header
                     VStack(spacing: 12) {
-                        Image(systemName: "star.fill")
+                        Image(systemName: "photo.stack.fill")
                             .font(.system(size: 56))
                             .foregroundStyle(LinearGradient.bodylogGradient)
                         Text("解锁 BodyLog Pro")
                             .font(.system(size: 26, weight: .bold, design: .rounded))
-                        Text("一次购买，永久使用，无订阅")
+                        Text("用数据和照片，见证你的身体变化")
                             .font(.system(size: 15))
                             .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
                     }
                     .padding(.top, 20)
 
                     // Features
                     VStack(spacing: 0) {
+                        proFeatureRow(icon: "photo.stack", title: "形体照片对比", desc: "拍照记录，见证身形变化")
+                        Divider().padding(.leading, 52)
+                        proFeatureRow(icon: "chart.line.uptrend.xyaxis", title: "完整趋势分析", desc: "智能分析你的变化趋势")
+                        Divider().padding(.leading, 52)
                         proFeatureRow(icon: "target", title: "无限目标", desc: "设置任意数量的健康目标")
                         Divider().padding(.leading, 52)
-                        proFeatureRow(icon: "arrow.down.doc.fill", title: "CSV 数据导出", desc: "随时导出所有数据，保存备份")
+                        proFeatureRow(icon: "arrow.down.doc.fill", title: "CSV 数据导出", desc: "随时导出数据，完全拥有")
                         Divider().padding(.leading, 52)
-                        proFeatureRow(icon: "chart.line.uptrend.xyaxis", title: "完整趋势分析", desc: "全部历史数据图表")
-                        Divider().padding(.leading, 52)
-                        proFeatureRow(icon: "bell.fill", title: "每日提醒", desc: "自定义时间提醒你记录数据")
-                        Divider().padding(.leading, 52)
-                        proFeatureRow(icon: "photo.stack", title: "形体照片对比", desc: "拍照记录，见证身形变化")
+                        proFeatureRow(icon: "bell.fill", title: "每日提醒", desc: "自定义时间提醒记录")
                     }
                     .background(Color.systemBackground)
                     .cornerRadius(14)
