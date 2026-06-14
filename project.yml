@@ -24,6 +24,7 @@ targets:
           - project.yml
           - README.md
           - .git
+          - .workbuddy
           - Info.plist
           - privacy-policy.html
           - Tests

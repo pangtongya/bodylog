@@ -126,6 +126,15 @@ struct PhotoCompareView: View {
             } else {
                 if selectedEntries.count < 2 {
                     selectedEntries.append(entry)
+                    // 自动进入对比模式：当选中第2张照片且是Pro用户
+                    if selectedEntries.count == 2 && appState.isPro {
+                        withAnimation {
+                            showComparison = true
+                        }
+                    } else if selectedEntries.count == 2 && !appState.isPro {
+                        // 非Pro用户弹出付费墙
+                        showPaywall = true
+                    }
                 }
             }
         }) {

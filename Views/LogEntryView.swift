@@ -23,6 +23,15 @@ struct LogEntryView: View {
     @State private var showPhotoSourceDialog: Bool = false
     @State private var showValidationError: Bool = false
     @State private var validationMessage: String = ""
+    @State private var showCancelConfirmation: Bool = false
+
+    /// 检查用户是否已输入任何内容
+    private var hasUserInput: Bool {
+        let hasMetrics = metricValues.values.contains { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+        let hasNote = !note.trimmingCharacters(in: .whitespaces).isEmpty
+        let hasPhoto = photoData != nil
+        return hasMetrics || hasNote || hasPhoto
+    }
 
     private var isEditing: Bool { editingEntry != nil }
 
@@ -52,8 +61,12 @@ struct LogEntryView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("取消") {
-                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                        isPresented = false
+                        if hasUserInput {
+                            showCancelConfirmation = true
+                        } else {
+                            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                            isPresented = false
+                        }
                     }
                     .foregroundColor(.secondary)
                 }
@@ -70,6 +83,12 @@ struct LogEntryView: View {
             Button("好的", role: .cancel) {}
         } message: {
             Text(validationMessage)
+        }
+        .confirmationDialog("放弃修改？", isPresented: $showCancelConfirmation, titleVisibility: .visible) {
+            Button("放弃修改", role: .destructive) {
+                isPresented = false
+            }
+            Button("继续编辑", role: .cancel) {}
         }
         .onAppear { prefillIfEditing() }
     }

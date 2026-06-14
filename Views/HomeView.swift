@@ -14,15 +14,6 @@ struct HomeView: View {
             ZStack(alignment: .top) {
                 ScrollView {
                     VStack(spacing: 20) {
-                        // Achievement notification banner
-                        if appState.showAchievementNotification,
-                           let achievement = appState.latestUnlockedAchievement {
-                            AchievementNotificationBanner(achievement: achievement, isPresented: $appState.showAchievementNotification)
-                                .padding(.horizontal, 16)
-                                .padding(.top, 8)
-                                .transition(.move(edge: .top).combined(with: .opacity))
-                        }
-
                         // 今日洞察卡片
                         todayInsightsCard
                             .padding(.horizontal, 20)
@@ -41,6 +32,15 @@ struct HomeView: View {
                     }
                     .padding(.top, 8)
                     .padding(.bottom, 100)
+                }
+
+                // Achievement notification banner (fixed position overlay)
+                if appState.showAchievementNotification,
+                   let achievement = appState.latestUnlockedAchievement {
+                    AchievementNotificationBanner(achievement: achievement, isPresented: $appState.showAchievementNotification)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 8)
+                        .transition(.move(edge: .top).combined(with: .opacity))
                 }
             }
             .background(Color.systemGroupedBackground)

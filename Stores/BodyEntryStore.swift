@@ -38,11 +38,24 @@ class BodyEntryStore: ObservableObject {
     }
 
     func deleteEntry(id: UUID) {
+        // 先找到要删除的记录，获取照片文件名
+        if let entry = entries.first(where: { $0.id == id }) {
+            if let filename = entry.photoFilename {
+                PhotoManager.shared.deletePhoto(filename: filename)
+            }
+        }
         entries.removeAll { $0.id == id }
         save()
     }
 
     func deleteEntries(at offsets: IndexSet) {
+        // 先获取要删除的记录，删除对应照片文件
+        let entriesToDelete = offsets.compactMap { idx in idx < entries.count ? entries[idx] : nil }
+        for entry in entriesToDelete {
+            if let filename = entry.photoFilename {
+                PhotoManager.shared.deletePhoto(filename: filename)
+            }
+        }
         entries.remove(atOffsets: offsets)
         save()
     }
