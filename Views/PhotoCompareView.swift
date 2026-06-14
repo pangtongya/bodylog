@@ -183,8 +183,13 @@ struct PhotoCompareView: View {
     
     private var comparisonView: some View {
         ScrollView {
-            VStack(spacing: 24) {
-                // Photos side by side
+            VStack(spacing: 20) {
+                // Title - more emotional
+                Text("见证你的变化 💪")
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .frame(maxWidth: .infinity, alignment: .center)
+                
+                // Photos side by side - bigger and more prominent
                 HStack(spacing: 12) {
                     if let entry1 = selectedEntries.first,
                        let data1 = entry1.loadedPhotoData,
@@ -214,21 +219,39 @@ struct PhotoCompareView: View {
                 }
                 .padding(.horizontal, 16)
                 
-                // Time difference
+                // Time difference - more prominent
                 if let entry1 = selectedEntries.first, let entry2 = selectedEntries.last {
                     let days = Calendar.current.dateComponents([.day], from: entry1.recordedAt, to: entry2.recordedAt).day ?? 0
-                    Text("相差 \(abs(days)) 天")
-                        .font(.system(size: 14))
+                    Text("📅 相差 \(abs(days)) 天")
+                        .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.secondary)
+                        .padding(.horizontal, 16)
                 }
                 
-                // Metric changes
+                // Metric changes - improved layout with larger fonts
                 if let entry1 = selectedEntries.first, let entry2 = selectedEntries.last {
                     metricChangesView(entry1: entry1, entry2: entry2)
                         .padding(.horizontal, 16)
                 }
+                
+                // Share button
+                Button(action: {
+                    // TODO: Add share functionality
+                }) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "square.and.arrow.up")
+                        Text("分享对比结果")
+                            .font(.system(size: 15, weight: .medium))
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(Color.bodylogPrimary)
+                    .cornerRadius(12)
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 20)
             }
-            .padding(.vertical, 16)
         }
         .background(Color.systemGroupedBackground)
     }
@@ -270,10 +293,10 @@ struct PhotoCompareView: View {
     
     private func metricChangesView(entry1: BodyEntry, entry2: BodyEntry) -> some View {
         VStack(spacing: 0) {
-            Text("指标变化")
-                .font(.system(size: 16, weight: .semibold))
+            Text("📊 指标变化")
+                .font(.system(size: 18, weight: .bold))
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom, 12)
+                .padding(.bottom, 16)
             
             let allMetrics = BodyMetricType.allCases.filter { type in
                 entry1.value(for: type) != nil || entry2.value(for: type) != nil
@@ -284,30 +307,47 @@ struct PhotoCompareView: View {
                 let value2 = entry2.value(for: type) ?? 0
                 let change = value2 - value1
                 
-                HStack {
+                HStack(spacing: 12) {
+                    // Icon
                     Image(systemName: type.icon)
                         .foregroundColor(.bodylogPrimary)
-                        .frame(width: 24)
+                        .frame(width: 28)
+                        .font(.system(size: 16))
+                    
+                    // Metric name
                     Text(type.displayName)
-                        .font(.system(size: 14))
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundColor(.primary)
+                    
                     Spacer()
-                    Text("\(String(format: "%.1f", value1)) → \(String(format: "%.1f", value2))")
-                        .font(.system(size: 14, design: .rounded).monospacedDigit())
-                        .foregroundColor(.secondary)
+                    
+                    // Values
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Text("\(String(format: "%.1f", value1))")
+                            .font(.system(size: 13, design: .rounded))
+                            .foregroundColor(.secondary)
+                        Text("\(String(format: "%.1f", value2))")
+                            .font(.system(size: 15, weight: .semibold, design: .rounded))
+                            .foregroundColor(.primary)
+                    }
+                    
+                    // Change
                     Text(change >= 0 ? "+" : "")
-                        + Text(String(format: "%.1f", change))
-                            .foregroundColor(changeColor(change, type: type))
+                    + Text(String(format: "%.1f", change))
+                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                        .foregroundColor(changeColor(change, type: type))
                 }
-                .padding(.vertical, 8)
+                .padding(.vertical, 12)
                 
                 if type != allMetrics.last {
                     Divider()
                 }
             }
         }
-        .padding(16)
+        .padding(20)
         .background(Color.systemBackground)
-        .cornerRadius(12)
+        .cornerRadius(16)
+        .shadow(color: .black.opacity(0.05), radius: 8, y: 2)
     }
     
     private func changeColor(_ change: Double, type: BodyMetricType) -> Color {
