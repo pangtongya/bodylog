@@ -34,6 +34,11 @@ class AppState: ObservableObject, @preconcurrency Codable {
     // MARK: - 追踪指标配置
     @Published var enabledMetrics: [BodyMetricType] = [.weight, .bodyFat]
 
+    // MARK: - 成就系统
+    @Published var achievements: [Achievement] = []
+    @Published var showAchievementNotification: Bool = false
+    @Published var latestUnlockedAchievement: Achievement?
+
     private init() {
         load()
     }
@@ -75,7 +80,7 @@ class AppState: ObservableObject, @preconcurrency Codable {
     enum CodingKeys: String, CodingKey {
         case hasCompletedOnboarding, userName, userHeight, userBirthYear, userGender
         case weightUnit, theme, reminderEnabled, reminderHour, reminderMinute
-        case isPro, enabledMetrics
+        case isPro, enabledMetrics, achievements
     }
 
     func encode(to encoder: Encoder) throws {
@@ -92,6 +97,7 @@ class AppState: ObservableObject, @preconcurrency Codable {
         try c.encode(reminderMinute, forKey: .reminderMinute)
         try c.encode(isPro, forKey: .isPro)
         try c.encode(enabledMetrics, forKey: .enabledMetrics)
+        try c.encode(achievements, forKey: .achievements)
     }
 
     required init(from decoder: Decoder) throws {
@@ -108,6 +114,7 @@ class AppState: ObservableObject, @preconcurrency Codable {
         reminderMinute = (try? c.decode(Int.self, forKey: .reminderMinute)) ?? 0
         isPro = (try? c.decode(Bool.self, forKey: .isPro)) ?? false
         enabledMetrics = (try? c.decode([BodyMetricType].self, forKey: .enabledMetrics)) ?? [.weight, .bodyFat]
+        achievements = (try? c.decode([Achievement].self, forKey: .achievements)) ?? []
     }
 
     // MARK: - Persistence
@@ -146,6 +153,7 @@ class AppState: ObservableObject, @preconcurrency Codable {
             reminderMinute = decoded.reminderMinute
             isPro = decoded.isPro
             enabledMetrics = decoded.enabledMetrics
+            achievements = decoded.achievements
         } catch {
             // 首次启动，使用默认值
         }
@@ -174,5 +182,23 @@ class AppState: ObservableObject, @preconcurrency Codable {
         guard userHeight > 0 else { return nil }
         let heightM = userHeight / 100.0
         return weightKg / (heightM * heightM)
+    }
+
+    // MARK: - Achievement Helpers
+
+    /// 解锁新成就（由外部调用，如BodyEntryStore.save后）
+    func unlockAchievements(_ newAchievements: [Achievement]) {
+        guard !newAchievements.isEmpty else { return }
+        achievements.append(contentsOf: newAchievements)
+        if let first = newAchievements.first {
+            latestUnlockedAchievement = first
+            showAchievementNotification = true
+        }
+        save()
+    }
+
+    /// 检查某成就是否已解锁
+    func isAchievementUnlocked(_ type: AchievementType) -> Bool {
+        achievements.contains { $0.id == type.id }
     }
 }

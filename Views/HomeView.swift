@@ -11,26 +11,37 @@ struct HomeView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 20) {
-                    // 今日洞察卡片
-                    todayInsightsCard
-                        .padding(.horizontal, 20)
+            ZStack(alignment: .top) {
+                ScrollView {
+                    VStack(spacing: 20) {
+                        // Achievement notification banner
+                        if appState.showAchievementNotification,
+                           let achievement = appState.latestUnlockedAchievement {
+                            AchievementNotificationBanner(achievement: achievement, isPresented: $appState.showAchievementNotification)
+                                .padding(.horizontal, 16)
+                                .padding(.top, 8)
+                                .transition(.move(edge: .top).combined(with: .opacity))
+                        }
 
-                    // 今日摘要卡片
-                    summaryCard
-                        .padding(.horizontal, 20)
+                        // 今日洞察卡片
+                        todayInsightsCard
+                            .padding(.horizontal, 20)
 
-                    // 快速统计
-                    statsRow
-                        .padding(.horizontal, 20)
+                        // 今日摘要卡片
+                        summaryCard
+                            .padding(.horizontal, 20)
 
-                    // 历史记录
-                    historySection
-                        .padding(.horizontal, 20)
+                        // 快速统计
+                        statsRow
+                            .padding(.horizontal, 20)
+
+                        // 历史记录
+                        historySection
+                            .padding(.horizontal, 20)
+                    }
+                    .padding(.top, 8)
+                    .padding(.bottom, 100)
                 }
-                .padding(.top, 8)
-                .padding(.bottom, 100)
             }
             .background(Color.systemGroupedBackground)
             .navigationTitle(greeting)

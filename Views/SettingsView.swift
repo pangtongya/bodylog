@@ -18,6 +18,8 @@ struct SettingsView: View {
     @State private var showRestorePicker: Bool = false
     @State private var importResult: String? = nil
     @State private var backupResult: String? = nil
+    @State private var showAchievementView: Bool = false
+    @State private var showShareCardView: Bool = false
     @State private var exportCSV: String = ""
     @State private var backupData: Data = Data()
 
@@ -201,6 +203,28 @@ struct SettingsView: View {
                     }
                 }
 
+                // Achievements
+                Section("成就") {
+                    Button(action: { showAchievementView = true }) {
+                        HStack {
+                            Label("查看成就", systemImage: "trophy.fill")
+                            Spacer()
+                            Text("\(appState.achievements.count)/\(AchievementType.allCases.count)")
+                                .foregroundColor(.secondary)
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 12))
+                                .foregroundColor(.systemGray3)
+                        }
+                    }
+                    .foregroundColor(.primary)
+                }
+
+                    // Share progress (all users)
+                    Button(action: { showShareCardView = true }) {
+                        Label("分享进度", systemImage: "square.and.arrow.up")
+                    }
+                    .foregroundColor(.bodylogPrimary)
+
                 // About
                 Section("关于") {
                     LabeledContent("版本", value: "1.0.0")
@@ -232,6 +256,17 @@ struct SettingsView: View {
         }
         .fileImporter(isPresented: $showRestorePicker, allowedContentTypes: [.json], allowsMultipleSelection: false) { result in
             handleRestoreResult(result)
+        }
+        .sheet(isPresented: $showAchievementView) {
+            AchievementView()
+                .environmentObject(appState)
+                .environmentObject(entryStore)
+                .environmentObject(goalStore)
+        }
+        .sheet(isPresented: $showShareCardView) {
+            ShareCardView()
+                .environmentObject(appState)
+                .environmentObject(entryStore)
         }
     }
 

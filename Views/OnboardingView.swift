@@ -87,15 +87,20 @@ struct OnboardingView: View {
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
 
+            Text("不同于 Apple 健康\n你的数据只属于你")
+                .font(.system(size: 16))
+                .foregroundColor(.bodylogPrimary)
+                .multilineTextAlignment(.center)
+                .padding(.bottom, 8)
+
             // Value proposition
             VStack(alignment: .leading, spacing: 16) {
-                featureBullet(icon: "lock.shield.fill", text: "隐私优先 - 数据只存在你的手机")
-                featureBullet(icon: "creditcard.fill", text: "一次购买 - 永久使用，非订阅")
-                featureBullet(icon: "photo.stack.fill", text: "照片对比 - 见证形体变化（独有）")
-                featureBullet(icon: "chart.line.uptrend.xyaxis", text: "趋势分析 - 智能数据洞察")
+                featureBullet(icon: "lock.shield.fill", text: "隐私优先 - 数据只存在你的手机，不上云")
+                featureBullet(icon: "creditcard.fill", text: "¥12 买断 - 没有订阅，永久使用")
+                featureBullet(icon: "photo.stack.fill", text: "照片对比 - 见证形体变化（独家）")
+                featureBullet(icon: "chart.line.uptrend.xyaxis", text: "智能洞察 - 自动分析你的变化趋势")
             }
             .padding(.horizontal, 32)
-            .padding(.top, 8)
         }
         .padding(.horizontal, 24)
     }

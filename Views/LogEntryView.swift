@@ -266,7 +266,7 @@ struct LogEntryView: View {
         } else {
             // 保存照片到文件
             let savedFilename: String? = photoData.flatMap { PhotoManager.shared.savePhoto($0) }
-            
+
             let entry = BodyEntry(
                 recordedAt: recordDate,
                 metrics: parsedMetrics,
@@ -274,9 +274,13 @@ struct LogEntryView: View {
                 photoFilename: savedFilename
             )
             entryStore.addEntry(entry)
-            // Check goals
-            goalStore.checkAndMarkAchieved(using: entryStore)
+
+            // 检查成就解锁
+            checkAchievements()
         }
+
+        // Check goals
+        goalStore.checkAndMarkAchieved(using: entryStore)
 
         isPresented = false
     }
@@ -295,6 +299,18 @@ struct LogEntryView: View {
                     metricValues[metric] = String(format: "%.1f", val)
                 }
             }
+        }
+    }
+
+    /// 检查并解锁成就
+    private func checkAchievements() {
+        let newAchievements = AchievementManager.shared.checkAndUnlockAchievements(
+            entryStore: entryStore,
+            goalStore: goalStore,
+            existingAchievements: appState.achievements
+        )
+        if !newAchievements.isEmpty {
+            appState.unlockAchievements(newAchievements)
         }
     }
 }
