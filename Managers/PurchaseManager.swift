@@ -126,6 +126,6 @@ final class PurchaseManager: ObservableObject {
     // MARK: - Formatted Price
 
     var formattedPrice: String {
-        proProduct?.displayPrice ?? "¥12"
+        proProduct?.displayPrice ?? "加载中..."
     }
 }
