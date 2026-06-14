@@ -22,6 +22,7 @@ struct SettingsView: View {
     @State private var showShareCardView: Bool = false
     @State private var exportCSV: String = ""
     @State private var backupData: Data = Data()
+    @State private var isImporting: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -235,6 +236,22 @@ struct SettingsView: View {
             }
             .navigationTitle("设置")
             .navigationBarTitleDisplayMode(.inline)
+            .overlay {
+                if isImporting {
+                    ZStack {
+                        Color.black.opacity(0.3)
+                            .ignoresSafeArea()
+                        VStack(spacing: 16) {
+                            ProgressView()
+                                .scaleEffect(1.2)
+                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                            Text("导入中...")
+                                .font(.system(size: 15, weight: .medium))
+                                .foregroundColor(.white)
+                        }
+                    }
+                }
+            }
         }
         .sheet(isPresented: $showPaywall) {
             PaywallView(isPresented: $showPaywall)
@@ -310,26 +327,36 @@ struct SettingsView: View {
     }
     
     private func handleImportResult(_ result: Result<[URL], Error>) {
-        switch result {
-        case .success(let urls):
-            guard let url = urls.first else { return }
-            do {
-                let data = try Data(contentsOf: url)
-                guard let csvString = String(data: data, encoding: .utf8) else {
-                    importResult = "导入失败：文件编码不支持"
-                    return
+        isImporting = true
+        Task {
+            let message: String
+            switch result {
+            case .success(let urls):
+                guard let url = urls.first else {
+                    message = "未选择文件"
+                    break
                 }
-                let (count, error) = entryStore.importCSV(csvString)
-                if error != nil && count == 0 {
-                    importResult = "导入失败：\(error!)"
-                } else {
-                    importResult = "成功导入 \(count) 条记录" + (error.map { "（\($0)）" } ?? "")
+                do {
+                    let data = try Data(contentsOf: url)
+                    guard let csvString = String(data: data, encoding: .utf8) else {
+                        message = "导入失败：文件编码不支持"
+                        break
+                    }
+                    let (count, error) = entryStore.importCSV(csvString)
+                    if error != nil && count == 0 {
+                        message = "导入失败：\(error!)"
+                    } else {
+                        message = "成功导入 \(count) 条记录" + (error.map { "（\($0)）" } ?? "")
+                    }
+                } catch {
+                    message = "读取文件失败：\(error.localizedDescription)"
                 }
-            } catch {
-                importResult = "读取文件失败：\(error.localizedDescription)"
+            case .failure(let error):
+                message = "选择文件失败：\(error.localizedDescription)"
             }
-        case .failure(let error):
-            importResult = "选择文件失败：\(error.localizedDescription)"
+            
+            importResult = message
+            isImporting = false
         }
     }
     
