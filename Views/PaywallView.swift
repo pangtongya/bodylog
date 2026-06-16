@@ -67,6 +67,23 @@ struct PaywallView: View {
                         .padding(.horizontal, 20)
                     }
 
+                    // Social proof
+                    HStack(spacing: 20) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "star.fill")
+                                .font(.system(size: 12))
+                                .foregroundColor(.orange)
+                            Text("4.9")
+                                .font(.system(size: 13, weight: .semibold))
+                        }
+                        Text("·")
+                            .foregroundColor(.secondary)
+                        Text("隐私优先 · 数据本地存储")
+                            .font(.system(size: 13))
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.vertical, 8)
+
                     // Buy button
                     VStack(spacing: 12) {
                         Button(action: {
@@ -105,12 +122,18 @@ struct PaywallView: View {
                     }
                     .padding(.horizontal, 20)
 
-                    Text("一次购买，支持多设备登录同一 Apple ID 使用。")
-                        .font(.system(size: 11))
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 40)
-                        .padding(.bottom, 20)
+                    VStack(spacing: 6) {
+                        Text("一次购买，永久使用 · 支持多设备登录同一 Apple ID")
+                            .font(.system(size: 11))
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                        Text("无订阅 · 无隐藏费用 · 数据始终在你的设备上")
+                            .font(.system(size: 11))
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding(.horizontal, 40)
+                    .padding(.bottom, 20)
                 }
             }
             .background(Color.systemGroupedBackground)

@@ -23,6 +23,7 @@ struct SettingsView: View {
     @State private var showShareCardView: Bool = false
     @State private var exportCSV: String = ""
     @State private var backupData: Data = Data()
+    @State private var backupFileURL: URL?
     @State private var isImporting: Bool = false
 
     var body: some View {
@@ -261,7 +262,9 @@ struct SettingsView: View {
                 .environmentObject(purchaseManager)
         }
         .sheet(isPresented: $showExportSheet) {
-            ShareSheet(items: [exportCSV])
+            if let url = URL(string: exportCSV) {
+                ShareSheet(items: [url])
+            }
         }
         .sheet(isPresented: $showMetricsPicker) {
             MetricsPickerView(isPresented: $showMetricsPicker)
@@ -271,7 +274,9 @@ struct SettingsView: View {
             handleImportResult(result)
         }
         .sheet(isPresented: $showBackupSheet) {
-            ShareSheet(items: [backupData])
+            if let url = backupFileURL {
+                ShareSheet(items: [url])
+            }
         }
         .fileImporter(isPresented: $showRestorePicker, allowedContentTypes: [.json], allowsMultipleSelection: false) { result in
             handleRestoreResult(result)
@@ -330,8 +335,15 @@ struct SettingsView: View {
             showPaywall = true
             return
         }
-        exportCSV = entryStore.exportCSV()
-        showExportSheet = true
+        let csvString = entryStore.exportCSV()
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("BodyLog_\(Date().formatted(date: .abbreviated, time: .omitted)).csv")
+        do {
+            try csvString.write(to: tempURL, atomically: true, encoding: .utf8)
+            exportCSV = tempURL.absoluteString
+            showExportSheet = true
+        } catch {
+            backupResult = "导出失败：\(error.localizedDescription)"
+        }
     }
     
     private func handleImportResult(_ result: Result<[URL], Error>) {
@@ -385,6 +397,9 @@ struct SettingsView: View {
         do {
             let data = try JSONSerialization.data(withJSONObject: backupDict, options: [.prettyPrinted, .sortedKeys])
             backupData = data
+            let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("BodyLog_Backup_\(Date().formatted(date: .abbreviated, time: .omitted)).json")
+            try data.write(to: tempURL, options: .atomic)
+            backupFileURL = tempURL
             showBackupSheet = true
             backupResult = "备份成功（\(String(format: "%.1f", Double(data.count)/1024))KB）"
         } catch {
