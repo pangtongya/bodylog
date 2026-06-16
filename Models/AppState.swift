@@ -124,8 +124,15 @@ class AppState: ObservableObject, @preconcurrency Codable {
             .appendingPathComponent("app_state.json")
     }()
 
+    private var saveWorkItem: DispatchWorkItem?
+
     func save() {
-        performSave()
+        saveWorkItem?.cancel()
+        let workItem = DispatchWorkItem { [weak self] in
+            self?.performSave()
+        }
+        saveWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: workItem)
     }
 
     private func performSave() {

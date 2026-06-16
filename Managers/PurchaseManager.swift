@@ -122,7 +122,7 @@ final class PurchaseManager: ObservableObject {
     // MARK: - Listen
 
     private func listenForTransactions() -> Task<Void, Never> {
-        Task(priority: .background) { [weak self] in
+        Task(priority: .background) {
             for await result in Transaction.updates {
                 if case .verified(let transaction) = result {
                     await transaction.finish()

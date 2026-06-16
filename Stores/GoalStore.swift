@@ -73,7 +73,12 @@ class GoalStore: ObservableObject {
     // MARK: - Persistence
     
     func save() {
-        performSave()
+        saveWorkItem?.cancel()
+        let workItem = DispatchWorkItem { [weak self] in
+            self?.performSave()
+        }
+        saveWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: workItem)
     }
     
     private func performSave() {

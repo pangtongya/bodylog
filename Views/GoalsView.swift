@@ -87,27 +87,42 @@ struct GoalsView: View {
     }
 
     private var emptyState: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "target")
-                .font(.system(size: 56))
-                .foregroundColor(.bodylogPrimary.opacity(0.4))
-            Text("还没有设置目标")
-                .font(.system(size: 18, weight: .semibold))
-            Text("设定一个减重、减脂或增肌目标\n每次记录后自动追踪进度")
-                .font(.system(size: 14))
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .lineSpacing(6)
+        VStack(spacing: 20) {
+            ZStack {
+                Circle()
+                    .fill(Color.bodylogPrimary.opacity(0.1))
+                    .frame(width: 100, height: 100)
+                Image(systemName: "target")
+                    .font(.system(size: 44))
+                    .foregroundColor(.bodylogPrimary)
+            }
+            
+            VStack(spacing: 8) {
+                Text("设定你的第一个目标")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundColor(.primary)
+                Text("有了目标，改变更有方向\n让数据见证你的进步 ✨")
+                    .font(.system(size: 15))
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(4)
+            }
+            
             Button(action: { showAddGoal = true }) {
-                Text("设置目标")
-                    .font(.system(size: 15, weight: .semibold, design: .rounded))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 32)
-                    .padding(.vertical, 12)
-                    .background(Color.bodylogPrimary)
-                    .cornerRadius(20)
+                HStack(spacing: 8) {
+                    Image(systemName: "plus.circle.fill")
+                    Text("设置目标")
+                }
+                .font(.system(size: 16, weight: .semibold, design: .rounded))
+                .foregroundColor(.white)
+                .padding(.horizontal, 36)
+                .padding(.vertical, 14)
+                .background(Color.bodylogPrimary)
+                .cornerRadius(25)
+                .shadow(color: .bodylogPrimary.opacity(0.3), radius: 8, x: 0, y: 4)
             }
         }
+        .padding(.horizontal, 40)
     }
 
     private func sectionHeader(_ title: String) -> some View {
@@ -128,6 +143,9 @@ struct GoalCardView: View {
     var isAchieved: Bool = false
 
     @State private var showDeleteAlert: Bool = false
+    @State private var showShareSheet: Bool = false
+    @State private var shareItems: [Any] = []
+    @State private var showCelebration: Bool = false
 
     private var currentValue: Double? { entryStore.latestValue(for: goal.metricType) }
     private var startValue: Double? { entryStore.startValue(for: goal.metricType) }
@@ -138,76 +156,138 @@ struct GoalCardView: View {
     }
 
     var body: some View {
-        VStack(spacing: 14) {
-            // Header
-            HStack {
-                Image(systemName: goal.metricType.icon)
-                    .foregroundColor(isAchieved ? .bodylogDecrease : .bodylogPrimary)
-                Text(goal.metricType.displayName)
-                    .font(.system(size: 15, weight: .semibold))
-                Spacer()
-                if isAchieved {
-                    Label("已达成", systemImage: "checkmark.seal.fill")
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(.bodylogDecrease)
-                } else {
-                    Image(systemName: goal.direction.icon)
-                        .foregroundColor(.bodylogPrimary.opacity(0.7))
+        VStack(spacing: 0) {
+            // Celebration banner (when achieved)
+            if isAchieved {
+                HStack(spacing: 6) {
+                    Image(systemName: "party.popper.fill")
+                    Text("目标已达成！")
+                        .font(.system(size: 13, weight: .bold))
+                    Image(systemName: "party.popper.fill")
                 }
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+                .background(
+                    LinearGradient(
+                        colors: [.bodylogDecrease, .bodylogDecrease.opacity(0.8)],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
             }
-
-            // Target
-            HStack(alignment: .lastTextBaseline) {
-                Text(goal.direction.displayName)
-                    .font(.system(size: 13))
-                    .foregroundColor(.secondary)
-                let targetDisplay = formattedTarget
-                Text(targetDisplay.0)
-                    .font(.system(size: 24, weight: .bold, design: .rounded).monospacedDigit())
-                    .foregroundColor(isAchieved ? .bodylogDecrease : .bodylogPrimary)
-                Text(targetDisplay.1)
-                    .font(.system(size: 14))
-                    .foregroundColor(.secondary)
-                Spacer()
-                if let current = currentValue {
-                    VStack(alignment: .trailing, spacing: 2) {
-                        Text("当前")
-                            .font(.system(size: 11))
-                            .foregroundColor(.secondary)
-                        let cd = formattedCurrent(current)
-                        HStack(alignment: .lastTextBaseline, spacing: 2) {
-                            Text(cd.0)
-                                .font(.system(size: 18, weight: .semibold, design: .rounded).monospacedDigit())
-                            Text(cd.1)
-                                .font(.system(size: 12))
-                                .foregroundColor(.secondary)
+            
+            // Card content
+            VStack(spacing: 14) {
+                // Header
+                HStack {
+                    Image(systemName: goal.metricType.icon)
+                        .foregroundColor(isAchieved ? .bodylogDecrease : .bodylogPrimary)
+                    Text(goal.metricType.displayName)
+                        .font(.system(size: 15, weight: .semibold))
+                    Spacer()
+                    if isAchieved {
+                        Label("已达成", systemImage: "checkmark.seal.fill")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(.bodylogDecrease)
+                    } else {
+                        Image(systemName: goal.direction.icon)
+                            .foregroundColor(.bodylogPrimary.opacity(0.7))
+                    }
+                    
+                    // Share button (when achieved)
+                    if isAchieved {
+                        Button(action: {
+                            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                            shareGoal()
+                        }) {
+                            Image(systemName: "square.and.arrow.up")
+                                .font(.system(size: 14))
+                                .foregroundColor(.bodylogDecrease)
+                        }
+                        .sheet(isPresented: $showShareSheet) {
+                            ShareSheet(items: shareItems)
                         }
                     }
                 }
-            }
-
-            // Progress bar
-            if !isAchieved {
-                VStack(alignment: .leading, spacing: 4) {
-                    GeometryReader { geo in
-                        ZStack(alignment: .leading) {
-                            RoundedRectangle(cornerRadius: 4)
-                                .fill(Color.systemGray5)
-                                .frame(height: 8)
-                            RoundedRectangle(cornerRadius: 4)
-                                .fill(Color.bodylogPrimary)
-                                .frame(width: geo.size.width * progress, height: 8)
-                                .animation(.easeOut(duration: 0.8), value: progress)
-                        }
-                    }
-                    .frame(height: 8)
-                    Text("\(Int(progress * 100))%")
-                        .font(.system(size: 12, design: .rounded).monospacedDigit())
+                
+                // Target
+                HStack(alignment: .lastTextBaseline) {
+                    Text(goal.direction.displayName)
+                        .font(.system(size: 13))
                         .foregroundColor(.secondary)
+                    let targetDisplay = formattedTarget
+                    Text(targetDisplay.0)
+                        .font(.system(size: 24, weight: .bold, design: .rounded).monospacedDigit())
+                        .foregroundColor(isAchieved ? .bodylogDecrease : .bodylogPrimary)
+                    Text(targetDisplay.1)
+                        .font(.system(size: 14))
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    if let current = currentValue {
+                        VStack(alignment: .trailing, spacing: 2) {
+                            Text("当前")
+                                .font(.system(size: 11))
+                                .foregroundColor(.secondary)
+                            let cd = formattedCurrent(current)
+                            HStack(alignment: .lastTextBaseline, spacing: 2) {
+                                Text(cd.0)
+                                    .font(.system(size: 18, weight: .semibold, design: .rounded).monospacedDigit())
+                                Text(cd.1)
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+                }
+                
+                // Progress bar
+                if !isAchieved {
+                    VStack(alignment: .leading, spacing: 6) {
+                        GeometryReader { geo in
+                            ZStack(alignment: .leading) {
+                                RoundedRectangle(cornerRadius: 6)
+                                    .fill(Color.systemGray5)
+                                    .frame(height: 10)
+                                RoundedRectangle(cornerRadius: 6)
+                                    .fill(
+                                        LinearGradient(
+                                            colors: [.bodylogPrimary, .bodylogPrimary.opacity(0.7)],
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    )
+                                    .frame(width: geo.size.width * min(progress, 1.0), height: 10)
+                                    .animation(.easeOut(duration: 0.8), value: progress)
+                            }
+                        }
+                        .frame(height: 10)
+                        HStack {
+                            Text("\(Int(min(progress, 1.0) * 100))%")
+                                .font(.system(size: 12, design: .rounded).monospacedDigit())
+                                .foregroundColor(.secondary)
+                            Spacer()
+                            if progress >= 0.8 && progress < 1.0 {
+                                Text("马上就要达成了！💪")
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.bodylogPrimary)
+                            }
+                        }
+                    }
+                } else {
+                    // Achieved celebration message
+                    HStack {
+                        Image(systemName: "star.fill")
+                            .foregroundColor(.yellow)
+                        Text("恭喜你达成了目标，继续保持良好的状态！")
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
+                        Spacer()
+                    }
                 }
             }
+            .padding(16)
         }
-        .padding(16)
         .background(isAchieved ? Color.bodylogDecrease.opacity(0.06) : Color.systemBackground)
         .cornerRadius(14)
         .overlay(
@@ -226,6 +306,26 @@ struct GoalCardView: View {
         } message: {
             Text("确定要删除这个目标吗？")
         }
+        .onAppear {
+            // Show celebration animation when view appears (if achieved)
+            if isAchieved {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    showCelebration = true
+                }
+            }
+        }
+    }
+    
+    private func shareGoal() {
+        let message = """
+        🎉 我在BodyLog达成了身体数据目标！
+        
+        \(goal.metricType.displayName): \(formattedTarget.0)\(formattedTarget.1)
+        
+        用数据记录身体变化，见证每一次进步 💪
+        """
+        shareItems = [message]
+        showShareSheet = true
     }
 
     private var formattedTarget: (String, String) {

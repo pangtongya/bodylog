@@ -92,6 +92,14 @@ struct TrendView: View {
                     Button(action: {
                         UIImpactFeedbackGenerator(style: .light).impactOccurred()
                         selectedMetric = metric
+                        // Reset time range if new metric has sparse data
+                        if let days = timeRange.days {
+                            let cutoff = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
+                            let count = entryStore.recentValues(for: metric, limit: 500).filter { $0.date >= cutoff }.count
+                            if count < 2 {
+                                withAnimation(.easeInOut(duration: 0.2)) { timeRange = .all }
+                            }
+                        }
                     }) {
                         HStack(spacing: 6) {
                             Image(systemName: metric.icon)
@@ -118,102 +126,205 @@ struct TrendView: View {
     }
 
     // MARK: - Stats Summary
-
+    
     private var statsSummary: some View {
         let latest = displayData.last?.value
         let first = displayData.first?.value
         let change = (latest != nil && first != nil) ? latest! - first! : nil
+        let changePercent = (latest != nil && first != nil && first! != 0) ? (latest! - first!) / abs(first!) * 100 : nil
         let unitStr = (selectedMetric == .weight || selectedMetric == .muscleMass)
             ? appState.weightUnit.rawValue : selectedMetric.unit
-
-        return HStack(spacing: 0) {
-            summaryStatCell(
-                title: "当前",
-                value: latest.map { String(format: "%.1f", $0) } ?? "--",
-                unit: unitStr,
-                color: .bodylogPrimary
-            )
-            Divider().frame(height: 40)
-            summaryStatCell(
-                title: "最低",
-                value: displayData.map(\.value).min().map { String(format: "%.1f", $0) } ?? "--",
-                unit: unitStr,
-                color: .bodylogDecrease
-            )
-            Divider().frame(height: 40)
-            summaryStatCell(
-                title: "变化",
-                value: change.map { (($0 >= 0 ? "+" : "") + String(format: "%.1f", $0)) } ?? "--",
-                unit: unitStr,
-                color: (change ?? 0) < 0 ? .bodylogDecrease : .bodylogDanger
-            )
-            Divider().frame(height: 40)
-            summaryStatCell(
-                title: "记录",
-                value: "\(displayData.count)",
-                unit: "次",
-                color: .secondary
-            )
+        
+        return VStack(spacing: 12) {
+            // Title
+            HStack {
+                Image(systemName: "chart.bar.fill")
+                    .foregroundColor(.bodylogPrimary)
+                Text("数据概览")
+                    .font(.system(size: 16, weight: .bold))
+                Spacer()
+            }
+            
+            // Stats grid
+            HStack(spacing: 0) {
+                statCell(
+                    icon: "circle.fill",
+                    iconColor: .bodylogPrimary,
+                    title: "当前值",
+                    value: latest.map { String(format: "%.1f", $0) } ?? "--",
+                    unit: unitStr,
+                    trend: nil
+                )
+                
+                Divider().frame(height: 50)
+                
+                statCell(
+                    icon: "arrow.up.arrow.down",
+                    iconColor: (change ?? 0) >= 0 ? .bodylogDanger : .bodylogDecrease,
+                    title: "总变化",
+                    value: change.map { ($0 >= 0 ? "+" : "") + String(format: "%.1f", $0) } ?? "--",
+                    unit: unitStr,
+                    trend: change.map { $0 >= 0 ? "up" : "down" }
+                )
+                
+                Divider().frame(height: 50)
+                
+                statCell(
+                    icon: "percent",
+                    iconColor: (changePercent ?? 0) >= 0 ? .bodylogDanger : .bodylogDecrease,
+                    title: "变化率",
+                    value: changePercent.map { ($0 >= 0 ? "+" : "") + String(format: "%.1f", $0) } ?? "--",
+                    unit: "%",
+                    trend: changePercent.map { $0 >= 0 ? "up" : "down" }
+                )
+                
+                Divider().frame(height: 50)
+                
+                statCell(
+                    icon: "number",
+                    iconColor: .purple,
+                    title: "记录次数",
+                    value: "\(displayData.count)",
+                    unit: "次",
+                    trend: nil
+                )
+            }
         }
-        .padding(.vertical, 12)
+        .padding(16)
         .background(Color.systemBackground)
-        .cornerRadius(14)
+        .cornerRadius(16)
+        .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
+    }
+    
+    private func statCell(icon: String, iconColor: Color, title: String, value: String, unit: String, trend: String?) -> some View {
+        VStack(spacing: 6) {
+            Image(systemName: icon)
+                .font(.system(size: 12))
+                .foregroundColor(iconColor)
+            
+            Text(title)
+                .font(.system(size: 11))
+                .foregroundColor(.secondary)
+            
+            HStack(alignment: .lastTextBaseline, spacing: 2) {
+                if let trend = trend {
+                    Image(systemName: trend == "up" ? "arrow.up" : "arrow.down")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundColor(trend == "up" ? .bodylogDanger : .bodylogDecrease)
+                }
+                Text(value)
+                    .font(.system(size: 16, weight: .bold, design: .rounded).monospacedDigit())
+                    .foregroundColor(iconColor)
+                if !unit.isEmpty {
+                    Text(unit)
+                        .font(.system(size: 10))
+                        .foregroundColor(.secondary)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity)
     }
 
     // MARK: - Insights Card
-
+    
     private var insightsCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("数据洞察")
-                .font(.system(size: 16, weight: .bold))
-                .foregroundColor(.primary)
-
-            ForEach(Array(insights.enumerated()), id: \.element.text) { index, insight in
+        VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                Image(systemName: "lightbulb.fill")
+                    .foregroundColor(.orange)
+                Text("数据洞察")
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundColor(.primary)
+            }
+            
+            ForEach(Array(insights.enumerated()), id: \.element.id) { index, insight in
                 HStack(spacing: 12) {
-                    Image(systemName: insight.icon)
-                        .foregroundColor(.bodylogPrimary)
-                        .frame(width: 24)
-                    Text(insight.text)
-                        .font(.system(size: 14))
-                        .foregroundColor(.primary)
+                    ZStack {
+                        Circle()
+                            .fill(insight.color.opacity(0.1))
+                            .frame(width: 32, height: 32)
+                        Image(systemName: insight.icon)
+                            .font(.system(size: 14))
+                            .foregroundColor(insight.color)
+                    }
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(insight.text)
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.primary)
+                        if let subtitle = insight.subtitle {
+                            Text(subtitle)
+                                .font(.system(size: 12))
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    Spacer()
+                }
+                .padding(.vertical, 4)
+                
+                if index < insights.count - 1 {
+                    Divider()
                 }
             }
         }
         .padding(16)
         .background(Color.systemBackground)
-        .cornerRadius(12)
-        .shadow(color: .black.opacity(0.04), radius: 6, x: 0, y: 1)
+        .cornerRadius(16)
+        .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
     }
-
-    private var insights: [(icon: String, text: String)] {
-        var result: [(icon: String, text: String)] = []
-
+    
+    private var insights: [(id: UUID, icon: String, text: String, subtitle: String?, color: Color)] {
+        var result: [(id: UUID, icon: String, text: String, subtitle: String?, color: Color)] = []
+        
         // Insight 1: Recent change (30 days)
         if let change30d = entryStore.change30Days(for: selectedMetric) {
             let absChange = abs(change30d)
             let sign = change30d >= 0 ? "+" : ""
             let unit = (selectedMetric == .weight || selectedMetric == .muscleMass) ? appState.weightUnit.rawValue : selectedMetric.unit
-            let text = "30天变化：\(sign)\(String(format: "%.1f", absChange))\(unit)"
-            result.append((icon: "calendar.badge.clock", text: text))
+            
+            let (text, subtitle, color): (String, String?, Color) = if change30d > 0 {
+                ("30天增长了\(sign)\(String(format: "%.1f", absChange))\(unit)", "继续保持，进步明显 💪", .bodylogDanger)
+            } else if change30d < 0 {
+                ("30天减少了\(sign)\(String(format: "%.1f", absChange))\(unit)", "做得好，继续坚持 🎯", .bodylogDecrease)
+            } else {
+                ("30天无变化", "保持现状也很重要 😊", .secondary)
+            }
+            
+            result.append((id: UUID(), icon: "calendar.badge.clock", text: text, subtitle: subtitle, color: color))
         }
-
+        
         // Insight 2: Streak
         let streak = entryStore.currentStreak
         if streak > 0 {
-            result.append((icon: "flame.fill", text: "连续记录\(streak)天"))
+            let (text, subtitle, color): (String, String?, Color) = if streak >= 7 {
+                ("已连续记录\(streak)天", "习惯正在养成，太棒了 🔥", .orange)
+            } else if streak >= 3 {
+                ("已连续记录\(streak)天", "继续保持这个节奏 👍", .bodylogPrimary)
+            } else {
+                ("已连续记录\(streak)天", "好的开始 💪", .bodylogPrimary)
+            }
+            result.append((id: UUID(), icon: "flame.fill", text: text, subtitle: subtitle, color: color))
         } else if let lastEntry = entryStore.latestEntry {
             let days = Calendar.current.dateComponents([.day], from: lastEntry.recordedAt, to: Date()).day ?? 0
-            result.append((icon: "flame", text: "已\(days)天没有记录"))
+            result.append((id: UUID(), icon: "flame", text: "已\(days)天没有记录", subtitle: "别忘了记录今天的身体数据哦 😊", color: .secondary))
         }
-
+        
         // Insight 3: Goal progress (if has active goal)
-        if let goal = goalStore.activeGoal(for: selectedMetric), let current = entryStore.latestValue(for: selectedMetric) {
+        if let goal = goalStore.activeGoal(for: selectedMetric), let current = entryStore.latestValue(for: goal.metricType) {
             let remaining = abs(goal.targetValue - current)
             let unit = (selectedMetric == .weight || selectedMetric == .muscleMass) ? appState.weightUnit.rawValue : selectedMetric.unit
-            let text = "距离目标还差\(String(format: "%.1f", remaining))\(unit)"
-            result.append((icon: "target", text: text))
+            let progress = goal.progress(currentValue: current, startValue: entryStore.startValue(for: goal.metricType) ?? current)
+            
+            let (text, subtitle, color): (String, String?, Color) = if progress >= 1.0 {
+                ("目标已达成 🎉", "恭喜你，继续保持良好的状态", .bodylogDecrease)
+            } else if progress >= 0.8 {
+                ("距离目标还差\(String(format: "%.1f", remaining))\(unit)", "马上就要达成了，加油！💪", .bodylogPrimary)
+            } else {
+                ("距离目标还差\(String(format: "%.1f", remaining))\(unit)", "一步一步来，你可以的 ✨", .bodylogPrimary)
+            }
+            
+            result.append((id: UUID(), icon: "target", text: text, subtitle: subtitle, color: color))
         }
-
+        
         return Array(result.prefix(3))
     }
 
@@ -237,23 +348,32 @@ struct TrendView: View {
     }
 
     // MARK: - Chart
-
+    
     private var chartCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             if displayData.isEmpty {
-                VStack(spacing: 12) {
-                    Image(systemName: "chart.line.uptrend.xyaxis")
-                        .font(.system(size: 36))
-                        .foregroundColor(.bodylogPrimary.opacity(0.4))
-                    Text("还没有\(selectedMetric.displayName)的记录")
-                        .font(.system(size: 14))
-                        .foregroundColor(.secondary)
-                    Text("在首页点击，点【记录】添加数据")
-                        .font(.system(size: 13))
-                        .foregroundColor(.secondary)
+                VStack(spacing: 16) {
+                    ZStack {
+                        Circle()
+                            .fill(Color.bodylogPrimary.opacity(0.1))
+                            .frame(width: 80, height: 80)
+                        Image(systemName: "chart.line.uptrend.xyaxis")
+                            .font(.system(size: 36))
+                            .foregroundColor(.bodylogPrimary)
+                    }
+                    VStack(spacing: 6) {
+                        Text("还没有\(selectedMetric.displayName)的记录")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.primary)
+                        Text("开始记录你的身体数据\n用图表见证你的变化 ✨")
+                            .font(.system(size: 14))
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                            .lineSpacing(4)
+                    }
                 }
                 .frame(maxWidth: .infinity)
-                .frame(height: 200)
+                .frame(height: 220)
             } else {
                 Chart {
                     ForEach(displayData, id: \.date) { point in

@@ -19,6 +19,7 @@ struct SettingsView: View {
     @State private var importResult: String? = nil
     @State private var backupResult: String? = nil
     @State private var showAchievementView: Bool = false
+    @State private var showPhotoCompare: Bool = false
     @State private var showShareCardView: Bool = false
     @State private var exportCSV: String = ""
     @State private var backupData: Data = Data()
@@ -90,15 +91,16 @@ struct SettingsView: View {
                             appState.save()
                             if enabled {
                                 if appState.isPro {
+                                    let hour = appState.reminderHour
+                                    let minute = appState.reminderMinute
                                     NotificationManager.shared.requestAuthorization { granted in
                                         if granted {
-                                            NotificationManager.shared.scheduleDailyReminder(
-                                                hour: appState.reminderHour,
-                                                minute: appState.reminderMinute
-                                            )
+                                            NotificationManager.shared.scheduleDailyReminder(hour: hour, minute: minute)
                                         } else {
-                                            appState.reminderEnabled = false
-                                            appState.save()
+                                            Task { @MainActor in
+                                                appState.reminderEnabled = false
+                                                appState.save()
+                                            }
                                         }
                                     }
                                 } else {
@@ -274,6 +276,12 @@ struct SettingsView: View {
         .fileImporter(isPresented: $showRestorePicker, allowedContentTypes: [.json], allowsMultipleSelection: false) { result in
             handleRestoreResult(result)
         }
+        .sheet(isPresented: $showPhotoCompare) {
+            PhotoCompareView()
+                .environmentObject(appState)
+                .environmentObject(entryStore)
+                .environmentObject(purchaseManager)
+        }
         .sheet(isPresented: $showAchievementView) {
             AchievementView()
                 .environmentObject(appState)
@@ -366,9 +374,9 @@ struct SettingsView: View {
         let backupDict: [String: Any] = [
             "version": "1.0",
             "exportDate": ISO8601DateFormatter().string(from: Date()),
-            "appState": try? JSONEncoder().encode(appState),
-            "entries": try? JSONEncoder().encode(entryStore.entries),
-            "goals": try? JSONEncoder().encode(goalStore.goals)
+            "appState": (try? JSONEncoder().encode(appState)) as Any,
+            "entries": (try? JSONEncoder().encode(entryStore.entries)) as Any,
+            "goals": (try? JSONEncoder().encode(goalStore.goals)) as Any
         ]
         
         do {
@@ -388,7 +396,7 @@ struct SettingsView: View {
             do {
                 let data = try Data(contentsOf: url)
                 guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-                      let version = json["version"] as? String else {
+                      let _ = json["version"] as? String else {
                     backupResult = "恢复失败：无效的备份文件"
                     return
                 }

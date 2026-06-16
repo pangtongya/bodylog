@@ -70,39 +70,67 @@ struct OnboardingView: View {
     }
 
     // MARK: - Steps
-
+    
     private var welcomeStep: some View {
         VStack(spacing: 24) {
-            Image(systemName: "photo.stack.fill")
-                .font(.system(size: 56))
-                .foregroundColor(.bodylogPrimary)
-                .padding(.bottom, 8)
-
-            Text("你的身体变化\n值得被记录")
-                .font(.system(size: 28, weight: .bold, design: .rounded))
-                .multilineTextAlignment(.center)
-
-            Text("用数据和照片，见证每一次进步")
-                .font(.system(size: 16))
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-
-            Text("不同于 Apple 健康 · 隐私优先 · 一次买断")
-                .font(.system(size: 16))
-                .foregroundColor(.bodylogPrimary)
-                .multilineTextAlignment(.center)
-                .padding(.bottom, 8)
-
-            // Value proposition
-            VStack(alignment: .leading, spacing: 16) {
-                featureBullet(icon: "lock.shield.fill", text: "隐私优先 - 数据只存在你的手机，不上云")
-                featureBullet(icon: "creditcard.fill", text: "¥6 买断 - 没有订阅，永久使用")
-                featureBullet(icon: "photo.stack.fill", text: "照片对比 - 见证形体变化（独家）")
-                featureBullet(icon: "chart.line.uptrend.xyaxis", text: "智能洞察 - 自动分析你的变化趋势")
+            // Animated icon
+            ZStack {
+                Circle()
+                    .fill(Color.bodylogPrimary.opacity(0.1))
+                    .frame(width: 120, height: 120)
+                Image(systemName: "photo.stack.fill")
+                    .font(.system(size: 56))
+                    .foregroundColor(.bodylogPrimary)
+                    .scaleEffect(1.0 + (step == 0 ? 0.05 : 0.0))
+                    .animation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true), value: step)
             }
-            .padding(.horizontal, 32)
+            .padding(.bottom, 8)
+            
+            VStack(spacing: 12) {
+                Text("你的身体变化\n值得被记录")
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(.primary)
+                
+                Text("用数据和照片，见证每一次进步 💪")
+                    .font(.system(size: 17))
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+            
+            // Differentiators
+            VStack(alignment: .leading, spacing: 14) {
+                differenceBullet(icon: "lock.shield.fill", title: "隐私优先", description: "数据只存在你的手机，不上云")
+                differenceBullet(icon: "creditcard.fill", title: "¥6 买断", description: "没有订阅，永久使用")
+                differenceBullet(icon: "photo.stack.fill", title: "照片对比", description: "见证形体变化（独家功能）")
+                differenceBullet(icon: "chart.line.uptrend.xyaxis", title: "智能洞察", description: "自动分析你的变化趋势")
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 8)
         }
         .padding(.horizontal, 24)
+    }
+    
+    private func differenceBullet(icon: String, title: String, description: String) -> some View {
+        HStack(spacing: 14) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.bodylogPrimary.opacity(0.1))
+                    .frame(width: 40, height: 40)
+                Image(systemName: icon)
+                    .font(.system(size: 18))
+                    .foregroundColor(.bodylogPrimary)
+            }
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundColor(.primary)
+                Text(description)
+                    .font(.system(size: 13))
+                    .foregroundColor(.secondary)
+            }
+            Spacer()
+        }
     }
 
     private var profileStep: some View {

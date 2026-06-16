@@ -271,15 +271,56 @@ class BodyEntryStore: ObservableObject {
         }
     }
     
-    /// 简单的 CSV 行解析（处理逗号分隔，不支持引号包裹）
+    /// CSV 行解析（支持引号包裹字段，处理逗号转义）
     private func parseCSVLine(_ line: String) -> [String] {
-        line.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+        let quote: Character = "\u{0022}"
+        var result: [String] = []
+        var current = ""
+        var inQuotes = false
+        var chars = line.makeIterator()
+        
+        while let ch = chars.next() {
+            if inQuotes {
+                if ch == quote {
+                    // Check for escaped quote ("")
+                    if let next = chars.peek() {
+                        if next == quote {
+                            current.append(quote)
+                            _ = chars.next() // consume second quote
+                        } else {
+                            inQuotes = false
+                        }
+                    } else {
+                        inQuotes = false
+                    }
+                } else {
+                    current.append(ch)
+                }
+            } else {
+                if ch == quote {
+                    inQuotes = true
+                } else if ch == "," {
+                    result.append(current.trimmingCharacters(in: .whitespacesAndNewlines))
+                    current = ""
+                } else {
+                    current.append(ch)
+                }
+            }
+        }
+        // Append last field
+        result.append(current.trimmingCharacters(in: .whitespacesAndNewlines))
+        return result
     }
 
     // MARK: - Persistence
     
     func save() {
-        performSave()
+        saveWorkItem?.cancel()
+        let workItem = DispatchWorkItem { [weak self] in
+            self?.performSave()
+        }
+        saveWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: workItem)
     }
     
     private func performSave() {
@@ -331,5 +372,14 @@ private extension Calendar {
     func startOfWeek(for date: Date) -> Date {
         let components = dateComponents([.yearForWeekOfYear, .weekOfYear], from: date)
         return self.date(from: components) ?? date
+    }
+}
+
+// MARK: - Character Iterator Extension
+private extension IteratorProtocol {
+    /// Peek at next element without consuming it
+    mutating func peek() -> Element? {
+        var copy = self
+        return copy.next()
     }
 }

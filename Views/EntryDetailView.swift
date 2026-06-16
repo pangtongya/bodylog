@@ -2,6 +2,7 @@
 // 单条记录详情页
 
 import SwiftUI
+import StoreKit
 
 struct EntryDetailView: View {
     @EnvironmentObject var appState: AppState
@@ -13,6 +14,7 @@ struct EntryDetailView: View {
     @State private var showEditSheet: Bool = false
     @State private var showDeleteAlert: Bool = false
     @State private var showCompareSheet: Bool = false
+    @State private var showPaywall: Bool = false
     @State private var isPresented: Bool = false
 
     var body: some View {
@@ -51,6 +53,23 @@ struct EntryDetailView: View {
                             PhotoCompareView()
                                 .environmentObject(entryStore)
                         }
+                    } else {
+                        // Non-Pro: show locked hint
+                        Button(action: { showPaywall = true }) {
+                            HStack {
+                                Image(systemName: "photo.stack.fill")
+                                Text("对比照片")
+                                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                                Image(systemName: "lock.fill")
+                                    .font(.system(size: 12))
+                            }
+                            .foregroundColor(.bodylogPrimary)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(Color.bodylogPrimary.opacity(0.1))
+                            .cornerRadius(12)
+                        }
+                        .padding(.horizontal, 20)
                     }
                 }
 
@@ -94,6 +113,11 @@ struct EntryDetailView: View {
                 .environmentObject(appState)
                 .environmentObject(entryStore)
                 .environmentObject(GoalStore())
+        }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView(isPresented: $showPaywall)
+                .environmentObject(appState)
+                .environmentObject(PurchaseManager.shared)
         }
     }
 
