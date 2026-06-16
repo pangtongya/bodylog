@@ -44,6 +44,9 @@ class GoalStore: ObservableObject {
         guard let idx = goals.firstIndex(where: { $0.id == id }) else { return }
         goals[idx].achievedAt = Date()
         save()
+        // Send achievement notification
+        let metricName = goals[idx].metricType.displayName
+        NotificationManager.shared.sendGoalAchievedNotification(metricName: metricName)
     }
 
     // MARK: - Queries

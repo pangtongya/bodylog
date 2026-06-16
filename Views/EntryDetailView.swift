@@ -15,7 +15,6 @@ struct EntryDetailView: View {
     @State private var showDeleteAlert: Bool = false
     @State private var showCompareSheet: Bool = false
     @State private var showPaywall: Bool = false
-    @State private var isPresented: Bool = false
 
     var body: some View {
         ScrollView {

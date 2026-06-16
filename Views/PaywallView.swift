@@ -28,15 +28,13 @@ struct PaywallView: View {
 
                     // Features
                     VStack(spacing: 0) {
-                        proFeatureRow(icon: "photo.stack", title: "形体照片对比", desc: "拍照记录，见证身形变化")
+                        proFeatureRow(icon: "photo.stack", title: "形体照片对比", desc: "拍照记录，对比身形变化")
                         Divider().padding(.leading, 52)
-                        proFeatureRow(icon: "chart.line.uptrend.xyaxis", title: "完整趋势分析", desc: "智能分析你的变化趋势")
-                        Divider().padding(.leading, 52)
-                        proFeatureRow(icon: "target", title: "无限目标", desc: "设置任意数量的健康目标")
-                        Divider().padding(.leading, 52)
-                        proFeatureRow(icon: "arrow.down.doc.fill", title: "CSV 数据导出", desc: "随时导出数据，完全拥有")
+                        proFeatureRow(icon: "arrow.down.doc.fill", title: "CSV 数据导出/导入", desc: "随时导出导入数据")
                         Divider().padding(.leading, 52)
                         proFeatureRow(icon: "bell.fill", title: "每日提醒", desc: "自定义时间提醒记录")
+                        Divider().padding(.leading, 52)
+                        proFeatureRow(icon: "target", title: "无限目标", desc: "设置任意数量的健康目标")
                     }
                     .background(Color.systemBackground)
                     .cornerRadius(14)

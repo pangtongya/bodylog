@@ -5,17 +5,10 @@ import SwiftUI
 
 @main
 struct BodyLogApp: App {
-    @StateObject private var appState: AppState
-    @StateObject private var entryStore: BodyEntryStore
-    @StateObject private var goalStore: GoalStore
-    @StateObject private var purchaseManager: PurchaseManager
-
-    init() {
-        _appState = StateObject(wrappedValue: AppState.shared)
-        _entryStore = StateObject(wrappedValue: BodyEntryStore())
-        _goalStore = StateObject(wrappedValue: GoalStore())
-        _purchaseManager = StateObject(wrappedValue: PurchaseManager.shared)
-    }
+    @State private var appState = AppState.shared
+    @State private var entryStore = BodyEntryStore()
+    @State private var goalStore = GoalStore()
+    @State private var purchaseManager = PurchaseManager.shared
 
     var body: some Scene {
         WindowGroup {

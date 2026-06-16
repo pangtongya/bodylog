@@ -51,13 +51,13 @@ struct ContentView: View {
 
                 TrendView()
                     .tabItem {
-                        Label(Tab.trend.title, systemImage: Tab.trend.icon)
+                        Label(Tab.trend.title, systemImage: selectedTab == .trend ? Tab.trend.filledIcon : Tab.trend.icon)
                     }
                     .tag(Tab.trend)
 
                 GoalsView()
                     .tabItem {
-                        Label(Tab.goals.title, systemImage: Tab.goals.icon)
+                        Label(Tab.goals.title, systemImage: selectedTab == .goals ? Tab.goals.filledIcon : Tab.goals.icon)
                     }
                     .tag(Tab.goals)
 

@@ -371,12 +371,15 @@ struct SettingsView: View {
     // MARK: - Backup / Restore
     
     private func createBackup() {
+        let appStateData = (try? JSONEncoder().encode(appState)) ?? Data()
+        let entriesData = (try? JSONEncoder().encode(entryStore.entries)) ?? Data()
+        let goalsData = (try? JSONEncoder().encode(goalStore.goals)) ?? Data()
         let backupDict: [String: Any] = [
             "version": "1.0",
             "exportDate": ISO8601DateFormatter().string(from: Date()),
-            "appState": (try? JSONEncoder().encode(appState)) as Any,
-            "entries": (try? JSONEncoder().encode(entryStore.entries)) as Any,
-            "goals": (try? JSONEncoder().encode(goalStore.goals)) as Any
+            "appState": appStateData,
+            "entries": entriesData,
+            "goals": goalsData
         ]
         
         do {
