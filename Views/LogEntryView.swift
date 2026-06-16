@@ -293,10 +293,10 @@ struct LogEntryView: View {
                 photoFilename: savedFilename
             )
             entryStore.addEntry(entry)
-
-            // 检查成就解锁
-            checkAchievements()
         }
+
+        // 检查成就解锁（新增和编辑都检查）
+        checkAchievements()
 
         // Check goals
         goalStore.checkAndMarkAchieved(using: entryStore)

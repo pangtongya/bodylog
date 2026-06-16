@@ -5,7 +5,7 @@ import SwiftUI
 import Foundation
 
 @MainActor
-class AppState: ObservableObject, @preconcurrency Codable {
+class AppState: ObservableObject, Codable {
     static let shared = AppState()
 
     // MARK: - Onboarding

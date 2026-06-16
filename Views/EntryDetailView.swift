@@ -7,6 +7,7 @@ import StoreKit
 struct EntryDetailView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var entryStore: BodyEntryStore
+    @EnvironmentObject var goalStore: GoalStore
     @Environment(\.dismiss) private var dismiss
 
     let entry: BodyEntry
@@ -111,7 +112,7 @@ struct EntryDetailView: View {
             LogEntryView(isPresented: $showEditSheet, editingEntry: entry)
                 .environmentObject(appState)
                 .environmentObject(entryStore)
-                .environmentObject(GoalStore())
+                .environmentObject(goalStore)
         }
         .sheet(isPresented: $showPaywall) {
             PaywallView(isPresented: $showPaywall)

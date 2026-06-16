@@ -350,7 +350,8 @@ struct HomeView: View {
                         ForEach(group.value) { entry in
                             NavigationLink(destination: EntryDetailView(entry: entry)
                                 .environmentObject(appState)
-                                .environmentObject(entryStore)) {
+                                .environmentObject(entryStore)
+                                .environmentObject(goalStore)) {
                                 EntryRowView(entry: entry)
                             }
                             .buttonStyle(.plain)
