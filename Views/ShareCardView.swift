@@ -211,8 +211,9 @@ struct ShareCardView: View {
         view?.backgroundColor = .white
         view?.bounds = CGRect(origin: .zero, size: CGSize(width: 350, height: 400))
 
-        let renderer = UIGraphicsImageRenderer(size: view?.bounds.size ?? .zero)
-        return renderer.image { _ in view?.drawHierarchy(in: view!.bounds, afterScreenUpdates: true) }
+        guard let view = view else { return nil }
+        let renderer = UIGraphicsImageRenderer(size: view.bounds.size)
+        return renderer.image { _ in view.drawHierarchy(in: view.bounds, afterScreenUpdates: true) }
     }
 
     private func formatDate(_ date: Date) -> String {

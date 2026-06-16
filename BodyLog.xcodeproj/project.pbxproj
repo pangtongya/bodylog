@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		135A34AD898F971B69FA650B /* StoreKitTest.configuration in Resources */ = {isa = PBXBuildFile; fileRef = F4569235B5DACCCB153154E0 /* StoreKitTest.configuration */; };
+		9B3F2012F950EB1EC855FB48 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 55454EBC1DB75077D7560466 /* PrivacyInfo.xcprivacy */; };
 		BE1E96B0965FC1909D044669 /* BodyLogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB493D83E4EDC3DBF215628 /* BodyLogTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -24,6 +25,7 @@
 /* Begin PBXFileReference section */
 		1CFFE05EF045F6A915A05861 /* BodyLogTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BodyLogTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		552C3244DD4E687076A2960D /* BodyLog.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = BodyLog.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		55454EBC1DB75077D7560466 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		5AB493D83E4EDC3DBF215628 /* BodyLogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyLogTests.swift; sourceTree = "<group>"; };
 		F4569235B5DACCCB153154E0 /* StoreKitTest.configuration */ = {isa = PBXFileReference; path = StoreKitTest.configuration; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -50,6 +52,7 @@
 		80FFA1DC19D88FC93F07C9C7 /* BodyLog */ = {
 			isa = PBXGroup;
 			children = (
+				55454EBC1DB75077D7560466 /* PrivacyInfo.xcprivacy */,
 				B0AA8B4D349DEACB267D9B98 /* StoreKit */,
 			);
 			path = BodyLog;
@@ -150,6 +153,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9B3F2012F950EB1EC855FB48 /* PrivacyInfo.xcprivacy in Resources */,
 				135A34AD898F971B69FA650B /* StoreKitTest.configuration in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -285,7 +289,6 @@
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pangtong.bodylog;
 				SDKROOT = iphoneos;
-				STOREKIT_CONFIGURATION_FILE = BodyLog/StoreKit/StoreKitTest.configuration;
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -311,7 +314,6 @@
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pangtong.bodylog;
 				SDKROOT = iphoneos;
-				STOREKIT_CONFIGURATION_FILE = BodyLog/StoreKit/StoreKitTest.configuration;
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
