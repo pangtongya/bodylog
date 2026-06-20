@@ -160,7 +160,7 @@ struct TrendView: View {
                 
                 statCell(
                     icon: "arrow.up.arrow.down",
-                    iconColor: (change ?? 0) >= 0 ? .bodylogDanger : .bodylogDecrease,
+                    iconColor: isGoodChange(change ?? 0, for: selectedMetric) ? .bodylogDecrease : .bodylogDanger,
                     title: "总变化",
                     value: change.map { ($0 >= 0 ? "+" : "") + String(format: "%.1f", $0) } ?? "--",
                     unit: unitStr,
@@ -171,7 +171,7 @@ struct TrendView: View {
                 
                 statCell(
                     icon: "percent",
-                    iconColor: (changePercent ?? 0) >= 0 ? .bodylogDanger : .bodylogDecrease,
+                    iconColor: isGoodChange(changePercent ?? 0, for: selectedMetric) ? .bodylogDecrease : .bodylogDanger,
                     title: "变化率",
                     value: changePercent.map { ($0 >= 0 ? "+" : "") + String(format: "%.1f", $0) } ?? "--",
                     unit: "%",
@@ -441,6 +441,15 @@ struct TrendView: View {
         let minVal = (values.min() ?? 0) - 2
         let maxVal = (values.max() ?? 100) + 2
         return minVal...maxVal
+    }
+
+    /// 变化对于该指标是否是"好的"（区分指标类型）
+    private func isGoodChange(_ change: Double, for type: BodyMetricType) -> Bool {
+        switch type {
+        case .weight, .bodyFat, .waist, .hip: return change < 0  // 减少是好事
+        case .muscleMass: return change > 0  // 增加是好事
+        default: return false
+        }
     }
 
     // MARK: - Time Range Picker
