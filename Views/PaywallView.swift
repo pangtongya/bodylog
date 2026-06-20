@@ -67,19 +67,13 @@ struct PaywallView: View {
                         .padding(.horizontal, 20)
                     }
 
-                    // Social proof
-                    HStack(spacing: 20) {
-                        HStack(spacing: 4) {
-                            Image(systemName: "star.fill")
-                                .font(.system(size: 12))
-                                .foregroundColor(.orange)
-                            Text("4.9")
-                                .font(.system(size: 13, weight: .semibold))
-                        }
-                        Text("·")
-                            .foregroundColor(.secondary)
-                        Text("隐私优先 · 数据本地存储")
+                    // Trust badge (真实卖点，不使用虚假评分)
+                    HStack(spacing: 8) {
+                        Image(systemName: "lock.shield.fill")
                             .font(.system(size: 13))
+                            .foregroundColor(.bodylogPrimary)
+                        Text("100% 隐私优先 · 数据本地存储 · 无订阅")
+                            .font(.system(size: 13, weight: .medium))
                             .foregroundColor(.secondary)
                     }
                     .padding(.vertical, 8)
