@@ -7,6 +7,7 @@ struct HomeView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var entryStore: BodyEntryStore
     @EnvironmentObject var goalStore: GoalStore
+    @EnvironmentObject var purchaseManager: PurchaseManager
     @Binding var showLogSheet: Bool
 
     var body: some View {
@@ -351,7 +352,8 @@ struct HomeView: View {
                             NavigationLink(destination: EntryDetailView(entry: entry)
                                 .environmentObject(appState)
                                 .environmentObject(entryStore)
-                                .environmentObject(goalStore)) {
+                                .environmentObject(goalStore)
+                                .environmentObject(purchaseManager)) {
                                 EntryRowView(entry: entry)
                             }
                             .buttonStyle(.plain)
@@ -495,4 +497,5 @@ struct EntryRowView: View {
         .environmentObject(AppState.shared)
         .environmentObject(BodyEntryStore())
         .environmentObject(GoalStore())
+        .environmentObject(PurchaseManager.shared)
 }
