@@ -26,6 +26,13 @@ struct SettingsView: View {
     @State private var backupFileURL: URL?
     @State private var isImporting: Bool = false
 
+    /// 从 Bundle 动态读取版本号
+    private var appVersion: String {
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
+        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
+        return "\(version) (\(build))"
+    }
+
     var body: some View {
         NavigationStack {
             List {
@@ -231,7 +238,7 @@ struct SettingsView: View {
 
                 // About
                 Section("关于") {
-                    LabeledContent("版本", value: "1.0.0")
+                    LabeledContent("版本", value: appVersion)
                     Link(destination: URL(string: "https://pangtongya.github.io/bodylog-privacy/privacy-policy.html")!) {
                         Label("隐私政策", systemImage: "hand.raised.fill")
                     }
