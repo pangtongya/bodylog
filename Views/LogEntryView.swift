@@ -26,6 +26,7 @@ struct LogEntryView: View {
     @State private var showCancelConfirmation: Bool = false
     /// 标记用户是否主动删除了照片（编辑模式下用于区分"没碰照片"和"主动删除"）
     @State private var photoWasRemoved: Bool = false
+    @State private var prefillCompleted: Bool = false
 
     /// 检查用户是否已输入任何内容
     private var hasUserInput: Bool {
@@ -58,7 +59,7 @@ struct LogEntryView: View {
                 .padding(.bottom, 40)
             }
             .background(Color.systemGroupedBackground)
-            .navigationTitle(isEditing ? "编辑记录" : "记录数据")
+            .navigationTitle(isEditing ? L10n.string("编辑记录") : L10n.string("记录数据"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -73,7 +74,7 @@ struct LogEntryView: View {
                     .foregroundColor(.secondary)
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(isEditing ? "保存" : "记录") {
+                    Button(isEditing ? L10n.string("保存") : L10n.string("记录")) {
                         saveEntry()
                     }
                     .font(.system(size: 15, weight: .semibold))
@@ -92,7 +93,7 @@ struct LogEntryView: View {
             }
             Button(L10n.string("继续编辑"), role: .cancel) {}
         }
-        .onAppear { prefillIfEditing() }
+        .onAppear { if !prefillCompleted { prefillIfEditing(); prefillCompleted = true } }
     }
 
     // MARK: - Sections

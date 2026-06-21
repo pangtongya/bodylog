@@ -288,5 +288,11 @@
 "加载失败，点击重试" = "Load failed, tap to retry";
 "加载中..." = "Loading...";
 
+// MARK: - CSV Import Errors
+"CSV 文件格式不正确，至少需要标题行和一行数据" = "Invalid CSV format: need header and at least one data row";
+"无法解析日期: %@" = "Unable to parse date: %@";
+"%d 行数据跳过" = "%d rows skipped";
+"未找到有效数据" = "No valid data found";
+
 // MARK: - Share Text
 "🎉 我在FormLog达成了身体数据目标！\n\n%@: %@%@\n用数据记录身体变化，见证每一次进步 💪" = "🎉 I reached my body data goal in FormLog!\n\n%@: %@%@\nTrack your body changes with data, witness every progress 💪";

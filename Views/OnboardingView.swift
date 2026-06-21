@@ -9,7 +9,6 @@ struct OnboardingView: View {
     @State private var step: Int = 0
     @State private var name: String = ""
     @State private var heightStr: String = ""
-    @State private var birthYear: Int = Calendar.current.component(.year, from: Date()) - 25
     @State private var gender: AppState.Gender = .notSet
     @State private var weightUnit: AppState.WeightUnit = .kg
     @State private var selectedMetrics: Set<BodyMetricType> = [.weight, .bodyFat]

@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		08371FB880EE3475248823E5 /* BodyLog.xcodeproj in Resources */ = {isa = PBXBuildFile; fileRef = 8191A542F6E4F844C7954CB9 /* BodyLog.xcodeproj */; };
 		109606EA217022D236FAF298 /* PhotoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB18649030D56EA4060E38E /* PhotoManager.swift */; };
 		15F1571F482A287AC1006930 /* FormLogApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CAFD16DF1FDAB50BB3470B /* FormLogApp.swift */; };
 		15FC5E6586BB8BEAF391F48E /* PhotoCompareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62566E2677DCF479B0A39430 /* PhotoCompareView.swift */; };
@@ -62,7 +61,7 @@
 		3238E12E456AFFD06A085060 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		4BB18649030D56EA4060E38E /* PhotoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoManager.swift; sourceTree = "<group>"; };
 		4E6D584AB16D01F290EAF4D2 /* GoalModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalModel.swift; sourceTree = "<group>"; };
-		50B7985ABCFD348B74A166F9 /* FormLogTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = FormLogTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		50B7985ABCFD348B74A166F9 /* FormLogTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FormLogTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5A96829F033735A92AAB4653 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		62566E2677DCF479B0A39430 /* PhotoCompareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCompareView.swift; sourceTree = "<group>"; };
 		690FB2279E32CC081DD14CC3 /* AchievementManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementManager.swift; sourceTree = "<group>"; };
@@ -73,16 +72,15 @@
 		7CB184B4BE29045A41AAAB6B /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		7CD129CF83C10E3D34D05319 /* GoalStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalStore.swift; sourceTree = "<group>"; };
 		7CD89E91674748EBED1C82C2 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		8191A542F6E4F844C7954CB9 /* BodyLog.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = BodyLog.xcodeproj; sourceTree = "<group>"; };
 		82C683AD4D92FDE59AFDF512 /* TrendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrendView.swift; sourceTree = "<group>"; };
-		8407F8DFDED7BA5115DC7C6F /* FormLog.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = FormLog.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8407F8DFDED7BA5115DC7C6F /* FormLog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FormLog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8569AF5A84A1D19327EAA6E6 /* GoalsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsView.swift; sourceTree = "<group>"; };
 		8A4F21A471C0EF1C0862852F /* LogEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogEntryView.swift; sourceTree = "<group>"; };
 		910EDED48779780CAFFFE0EE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		9F649D34577ED99CD8B3A527 /* Achievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Achievement.swift; sourceTree = "<group>"; };
 		B6CAFD16DF1FDAB50BB3470B /* FormLogApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormLogApp.swift; sourceTree = "<group>"; };
 		CB85886ABFCA4F09ED0403F6 /* ColorExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtensions.swift; sourceTree = "<group>"; };
-		CE9A63BF502AE201401437AA /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		CE9A63BF502AE201401437AA /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		CEB4AD9C72DCC8FA2B1CA5CC /* ShareCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareCardView.swift; sourceTree = "<group>"; };
 		D2B03E575041A21AFE1FBD72 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		D7007316D319456A4377AAE1 /* EntryDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryDetailView.swift; sourceTree = "<group>"; };
@@ -90,7 +88,7 @@
 		E6CC7247B7313F7A62BF6418 /* AchievementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementView.swift; sourceTree = "<group>"; };
 		ED2D2D4372295FCCC3DF7651 /* CameraPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPicker.swift; sourceTree = "<group>"; };
 		FB601B15E1B0871F5E538345 /* BodyMetricType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyMetricType.swift; sourceTree = "<group>"; };
-		FD228588F9BF38D4FFC42E42 /* .gitignore */ = {isa = PBXFileReference; path = .gitignore; sourceTree = "<group>"; };
+		FD228588F9BF38D4FFC42E42 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -189,15 +187,8 @@
 			children = (
 				FD228588F9BF38D4FFC42E42 /* .gitignore */,
 				6E1ECCFF5859D82D9486EB0A /* Assets.xcassets */,
-				8191A542F6E4F844C7954CB9 /* BodyLog.xcodeproj */,
 				B6CAFD16DF1FDAB50BB3470B /* FormLogApp.swift */,
 				CE9A63BF502AE201401437AA /* PrivacyInfo.xcprivacy */,
-				7DF70FE292CA9BD118AF1A30 /* Managers */,
-				EDE62BFBF877CD4AE295CA3A /* Models */,
-				A3378F6F4932D405434C3CA2 /* Resources */,
-				08B1359C3341ED23714771E3 /* Stores */,
-				3A1B0BC7D2E6ECBB66819E2D /* Utilities */,
-				678152164BA20B47B7AE7A8B /* Views */,
 			);
 			name = BodyLog;
 			path = .;
@@ -264,7 +255,6 @@
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					5E3A06574CE8FA3102707C13 = {
-						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -296,7 +286,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				283960134E0F06A38176CFD5 /* Assets.xcassets in Resources */,
-				08371FB880EE3475248823E5 /* BodyLog.xcodeproj in Resources */,
 				D398B7E46A0756205E80AC28 /* InfoPlist.strings in Resources */,
 				A6B61EC5895A2DAC05017742 /* Localizable.strings in Resources */,
 				EF591613137CC9387FCB48E8 /* PrivacyInfo.xcprivacy in Resources */,
@@ -384,6 +373,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = 2ZNZRXNPWQ;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -406,7 +396,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 2ZNZRXNPWQ;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Info.plist;
@@ -432,7 +422,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 2ZNZRXNPWQ;
 				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Info.plist;
@@ -455,6 +445,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = 2ZNZRXNPWQ;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (

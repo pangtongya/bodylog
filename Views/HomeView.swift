@@ -124,8 +124,7 @@ struct HomeView: View {
     }
     
     private var greetingSuffix: String {
-        let name = appState.userName.isEmpty ? "" : "，\(appState.userName)"
-        return name
+        appState.userName.isEmpty ? "" : "\(L10n.string("，"))\(appState.userName)"
     }
 
     private var todaysInsights: [String] {
@@ -201,7 +200,7 @@ struct HomeView: View {
             }) {
                 HStack {
                     Image(systemName: "plus.circle.fill")
-                    Text(entryStore.entries.isEmpty ? "记录第一条数据" : "记录今天数据")
+                    Text(entryStore.entries.isEmpty ? L10n.string("记录第一条数据") : L10n.string("记录今天数据"))
                         .font(.system(size: 15, weight: .semibold, design: .rounded))
                 }
                 .foregroundColor(.white)
@@ -305,7 +304,7 @@ struct HomeView: View {
     // MARK: - Photo Compare Entry
 
     private var photoCompareEntry: some View {
-        let photoCount = entryStore.entries.filter { $0.hasPhoto }.count
+        let photoCount = entryStore.entries.reduce(0) { $0 + ($1.hasPhoto ? 1 : 0) }
         let titleText = photoCount > 0
             ? String(format: L10n.string("已记录 %d 张形体照片"), photoCount)
             : L10n.string("用照片见证你的形体变化")
@@ -362,18 +361,18 @@ struct HomeView: View {
 
     private var statsRow: some View {
         HStack(spacing: 12) {
-            statCell(value: "\(entryStore.totalRecordDays)", label: "记录天数")
-            statCell(value: "\(entryStore.currentStreak)", label: "连续天数")
-            statCell(value: "\(entryStore.thisWeekCount)", label: "本周记录")
+            statCell(value: "\(entryStore.totalRecordDays)", labelKey: "记录天数")
+            statCell(value: "\(entryStore.currentStreak)", labelKey: "连续天数")
+            statCell(value: "\(entryStore.thisWeekCount)", labelKey: "本周记录")
         }
     }
 
-    private func statCell(value: String, label: String) -> some View {
+    private func statCell(value: String, labelKey: String) -> some View {
         VStack(spacing: 4) {
             Text(value)
                 .font(.system(size: 22, weight: .bold, design: .rounded))
                 .foregroundColor(.formlogPrimary)
-            Text(label)
+            Text(L10n.string(labelKey))
                 .font(.system(size: 12))
                 .foregroundColor(.secondary)
         }
@@ -426,7 +425,7 @@ struct HomeView: View {
 
     private var greeting: String {
         let hour = Calendar.current.component(.hour, from: Date())
-        let name = appState.userName.isEmpty ? "" : "，\(appState.userName)"
+        let name = appState.userName.isEmpty ? "" : "\(L10n.string("，"))\(appState.userName)"
         switch hour {
         case 5..<12: return L10n.string("早上好") + name
         case 12..<18: return L10n.string("下午好") + name
@@ -434,22 +433,30 @@ struct HomeView: View {
         }
     }
 
+    // MARK: - Shared DateFormatters (cached)
+    fileprivate static let relativeDateFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "M月d日"
+        return f
+    }()
+
+    fileprivate static let timeFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "HH:mm"
+        return f
+    }()
+
     private func relativeDate(_ date: Date) -> String {
         let calendar = Calendar.current
         if calendar.isDateInToday(date) { return L10n.string("今天") }
         if calendar.isDateInYesterday(date) { return L10n.string("昨天") }
-        let formatter = DateFormatter()
-        formatter.dateFormat = "M月d日"
-        return formatter.string(from: date)
+        return Self.relativeDateFormatter.string(from: date)
     }
 
     private func displayValue(_ value: Double, for type: BodyMetricType) -> (value: String, unit: String) {
         if type == .weight || type == .muscleMass {
             let display = appState.displayWeight(value)
             return (String(format: "%.1f", display.value), display.unit)
-        }
-        if type == .bodyFat || type == .bmi {
-            return (String(format: "%.1f", value), type.unit)
         }
         return (String(format: "%.1f", value), type.unit)
     }
@@ -536,9 +543,7 @@ struct EntryRowView: View {
     }
 
     private var timeString: String {
-        let f = DateFormatter()
-        f.dateFormat = "HH:mm"
-        return f.string(from: entry.recordedAt)
+        HomeView.timeFormatter.string(from: entry.recordedAt)
     }
 
     private func formattedValue(_ value: Double, type: BodyMetricType) -> String {

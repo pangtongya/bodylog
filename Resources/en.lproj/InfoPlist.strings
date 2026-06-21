@@ -2,3 +2,8 @@
 /* App display name */
 CFBundleDisplayName = "FormLog";
 CFBundleName = "FormLog";
+
+/* Permission descriptions */
+NSCameraUsageDescription = "Used to capture body comparison photos, recording your physical changes.";
+NSPhotoLibraryUsageDescription = "Used to select body comparison photos from your library.";
+NSPhotoLibraryAddUsageDescription = "Used to save exported charts and comparison photos to your album.";

@@ -12,43 +12,36 @@ struct BodyEntry: Identifiable, Codable, Equatable {
     
     // MARK: - Photo Storage
     
-    /// 新格式：照片文件名（存储在 Documents/FormLogPhotos/ 目录）
+    /// 照片文件名（存储在 Documents/FormLogPhotos/ 目录）
     var photoFilename: String?
-    
-    /// 旧格式：照片数据（向后兼容，新代码不再使用此字段写入，仅在迁移时读取）
-    var photoData: Data?
 
     init(
         id: UUID = UUID(),
         recordedAt: Date = Date(),
         metrics: [String: Double] = [:],
         note: String? = nil,
-        photoData: Data? = nil,
         photoFilename: String? = nil
     ) {
         self.id = id
         self.recordedAt = recordedAt
         self.metrics = metrics
         self.note = note
-        self.photoData = photoData
         self.photoFilename = photoFilename
     }
 
     // MARK: - Photo Access
     
-    /// 获取照片数据（优先从文件加载，兼容旧格式）
+    /// 获取照片数据
     var loadedPhotoData: Data? {
-        // 新格式：从文件加载
         if let filename = photoFilename {
             return PhotoManager.shared.loadPhoto(filename: filename)
         }
-        // 旧格式：返回内存中的数据（用于迁移）
-        return photoData
+        return nil
     }
     
     /// 是否有照片
     var hasPhoto: Bool {
-        photoFilename != nil || (photoData != nil && (photoData?.count ?? 0) > 1000)
+        photoFilename != nil
     }
 
     // MARK: - Helpers

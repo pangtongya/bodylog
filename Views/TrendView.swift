@@ -33,7 +33,7 @@ struct TrendView: View {
     }
 
     private var chartData: [(date: Date, value: Double)] {
-        let all = entryStore.recentValues(for: selectedMetric, limit: 500)
+        let all = entryStore.recentValues(for: selectedMetric, limit: Int.max)
         guard let days = timeRange.days else { return all }
         let cutoff = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
         return all.filter { $0.date >= cutoff }
@@ -99,7 +99,7 @@ struct TrendView: View {
                         // Reset time range if new metric has sparse data
                         if let days = timeRange.days {
                             let cutoff = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
-                            let count = entryStore.recentValues(for: metric, limit: 500).filter { $0.date >= cutoff }.count
+                            let count = entryStore.recentValues(for: metric, limit: Int.max).filter { $0.date >= cutoff }.count
                             if count < 2 {
                                 withAnimation(.easeInOut(duration: 0.2)) { timeRange = .all }
                             }
@@ -144,7 +144,7 @@ struct TrendView: View {
             HStack {
                 Image(systemName: "chart.bar.fill")
                     .foregroundColor(.formlogPrimary)
-                Text("数据概览")
+                Text(L10n.string("数据概览"))
                     .font(.system(size: 16, weight: .bold))
                 Spacer()
             }
@@ -154,7 +154,7 @@ struct TrendView: View {
                 statCell(
                     icon: "circle.fill",
                     iconColor: .formlogPrimary,
-                    title: "当前值",
+                    titleKey: "当前值",
                     value: latest.map { String(format: "%.1f", $0) } ?? "--",
                     unit: unitStr,
                     trend: nil
@@ -165,7 +165,7 @@ struct TrendView: View {
                 statCell(
                     icon: "arrow.up.arrow.down",
                     iconColor: isGoodChange(change ?? 0, for: selectedMetric) ? .formlogDecrease : .formlogDanger,
-                    title: "总变化",
+                    titleKey: "总变化",
                     value: change.map { ($0 >= 0 ? "+" : "") + String(format: "%.1f", $0) } ?? "--",
                     unit: unitStr,
                     trend: change.map { $0 >= 0 ? "up" : "down" }
@@ -176,7 +176,7 @@ struct TrendView: View {
                 statCell(
                     icon: "percent",
                     iconColor: isGoodChange(changePercent ?? 0, for: selectedMetric) ? .formlogDecrease : .formlogDanger,
-                    title: "变化率",
+                    titleKey: "变化率",
                     value: changePercent.map { ($0 >= 0 ? "+" : "") + String(format: "%.1f", $0) } ?? "--",
                     unit: "%",
                     trend: changePercent.map { $0 >= 0 ? "up" : "down" }
@@ -187,9 +187,9 @@ struct TrendView: View {
                 statCell(
                     icon: "number",
                     iconColor: .purple,
-                    title: "记录次数",
+                    titleKey: "记录次数",
                     value: "\(displayData.count)",
-                    unit: "次",
+                    unit: L10n.string("次"),
                     trend: nil
                 )
             }
@@ -200,13 +200,13 @@ struct TrendView: View {
         .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
     }
     
-    private func statCell(icon: String, iconColor: Color, title: String, value: String, unit: String, trend: String?) -> some View {
+    private func statCell(icon: String, iconColor: Color, titleKey: String, value: String, unit: String, trend: String?) -> some View {
         VStack(spacing: 6) {
             Image(systemName: icon)
                 .font(.system(size: 12))
                 .foregroundColor(iconColor)
             
-            Text(title)
+            Text(L10n.string(titleKey))
                 .font(.system(size: 11))
                 .foregroundColor(.secondary)
             
@@ -276,8 +276,8 @@ struct TrendView: View {
         .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
     }
     
-    private var insights: [(id: UUID, icon: String, text: String, subtitle: String?, color: Color)] {
-        var result: [(id: UUID, icon: String, text: String, subtitle: String?, color: Color)] = []
+    private var insights: [(id: String, icon: String, text: String, subtitle: String?, color: Color)] {
+        var result: [(id: String, icon: String, text: String, subtitle: String?, color: Color)] = []
 
         // Insight 1: Recent change (30 days)
         if let change30d = entryStore.change30Days(for: selectedMetric) {
@@ -293,7 +293,7 @@ struct TrendView: View {
                 (L10n.string("30天无变化"), L10n.string("保持现状也很重要 😊"), .secondary)
             }
 
-            result.append((id: UUID(), icon: "calendar.badge.clock", text: text, subtitle: subtitle, color: color))
+            result.append((id: "insight_30d", icon: "calendar.badge.clock", text: text, subtitle: subtitle, color: color))
         }
 
         // Insight 2: Streak
@@ -306,10 +306,10 @@ struct TrendView: View {
             } else {
                 (String(format: L10n.string("已连续记录%d天"), streak), L10n.string("好的开始 💪"), .formlogPrimary)
             }
-            result.append((id: UUID(), icon: "flame.fill", text: text, subtitle: subtitle, color: color))
+            result.append((id: "insight_streak", icon: "flame.fill", text: text, subtitle: subtitle, color: color))
         } else if let lastEntry = entryStore.latestEntry {
             let days = Calendar.current.dateComponents([.day], from: lastEntry.recordedAt, to: Date()).day ?? 0
-            result.append((id: UUID(), icon: "flame", text: String(format: L10n.string("已%d天没有记录"), days), subtitle: L10n.string("别忘了记录今天的身体数据哦 😊"), color: .secondary))
+            result.append((id: "insight_streak", icon: "flame", text: String(format: L10n.string("已%d天没有记录"), days), subtitle: L10n.string("别忘了记录今天的身体数据哦 😊"), color: .secondary))
         }
 
         // Insight 3: Goal progress (if has active goal)
@@ -326,7 +326,7 @@ struct TrendView: View {
                 (String(format: L10n.string("距离目标还差%.1f%@"), remaining, unit), L10n.string("一步一步来，你可以的 ✨"), .formlogPrimary)
             }
 
-            result.append((id: UUID(), icon: "target", text: text, subtitle: subtitle, color: color))
+            result.append((id: "insight_goal", icon: "target", text: text, subtitle: subtitle, color: color))
         }
 
         return Array(result.prefix(3))
