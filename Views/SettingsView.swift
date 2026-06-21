@@ -124,15 +124,22 @@ struct SettingsView: View {
                             L10n.string("提醒时间"),
                             selection: Binding(
                                 get: {
-                                    Calendar.current.date(bySettingHour: appState.reminderHour, minute: appState.reminderMinute, second: 0, of: Date())!
+                                    Calendar.current.date(
+                                        bySettingHour: appState.reminderHour,
+                                        minute: appState.reminderMinute,
+                                        second: 0,
+                                        of: Date()
+                                    ) ?? Date()
                                 },
                                 set: { newValue in
                                     let components = Calendar.current.dateComponents([.hour, .minute], from: newValue)
-                                    appState.reminderHour = components.hour!
-                                    appState.reminderMinute = components.minute!
+                                    let hour = components.hour ?? 8
+                                    let minute = components.minute ?? 0
+                                    appState.reminderHour = hour
+                                    appState.reminderMinute = minute
                                     appState.save()
                                     if appState.reminderEnabled {
-                                        NotificationManager.shared.scheduleDailyReminder(hour: components.hour!, minute: components.minute!)
+                                        NotificationManager.shared.scheduleDailyReminder(hour: hour, minute: minute)
                                     }
                                 }
                             ),
@@ -233,8 +240,10 @@ struct SettingsView: View {
                 // About
                 Section(L10n.string("关于")) {
                     LabeledContent(L10n.string("版本"), value: appVersion)
-                    Link(destination: URL(string: "https://pangtongya.github.io/formlog-privacy/privacy-policy.html")!) {
-                        Label(L10n.string("隐私政策"), systemImage: "hand.raised.fill")
+                    if let privacyURL = URL(string: "https://pangtongya.github.io/formlog-privacy/privacy-policy.html") {
+                        Link(destination: privacyURL) {
+                            Label(L10n.string("隐私政策"), systemImage: "hand.raised.fill")
+                        }
                     }
                 }
             }

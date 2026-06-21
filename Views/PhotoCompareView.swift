@@ -381,10 +381,14 @@ struct PhotoCompareView: View {
         }
     }
     
+    private static let dateFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.setLocalizedDateFormatFromTemplate("yyyyMd")
+        return f
+    }()
+
     private func dateString(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy年M月d日"
-        return formatter.string(from: date)
+        Self.dateFormatter.string(from: date)
     }
 }
 

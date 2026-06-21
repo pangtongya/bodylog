@@ -226,10 +226,14 @@ struct ShareCardView: View {
         return renderer.image { _ in view.drawHierarchy(in: view.bounds, afterScreenUpdates: true) }
     }
 
-    private func formatDate(_ date: Date) -> String {
+    private static let dateFormatter: DateFormatter = {
         let f = DateFormatter()
-        f.dateFormat = "yyyy年M月d日"
-        return f.string(from: date)
+        f.setLocalizedDateFormatFromTemplate("yyyyMd")
+        return f
+    }()
+
+    private func formatDate(_ date: Date) -> String {
+        Self.dateFormatter.string(from: date)
     }
 }
 

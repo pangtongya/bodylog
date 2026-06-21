@@ -171,10 +171,14 @@ struct EntryDetailView: View {
         .cornerRadius(12)
     }
 
-    private var dateTitle: String {
+    private static let dateFormatter: DateFormatter = {
         let f = DateFormatter()
-        f.dateFormat = "M月d日 HH:mm"
-        return f.string(from: entry.recordedAt)
+        f.setLocalizedDateFormatFromTemplate("MdHHmm")
+        return f
+    }()
+
+    private var dateTitle: String {
+        Self.dateFormatter.string(from: entry.recordedAt)
     }
 
     private func formattedValue(_ value: Double, type: BodyMetricType) -> (String, String) {

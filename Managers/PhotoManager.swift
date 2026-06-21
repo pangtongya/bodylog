@@ -61,16 +61,7 @@ final class PhotoManager: @unchecked Sendable {
             print("[PhotoManager] Delete error for \(filename): \(error)")
         }
     }
-    
-    /// 迁移旧数据：把 photoData (Data?) 转换为 photoFilename (String?)
-    /// 返回迁移后的文件名，或 nil 如果无需迁移
-    func migrate(photoData: Data?) -> String? {
-        guard let data = photoData else { return nil }
-        // 数据太小，可能是无效数据
-        guard data.count > 1000 else { return nil }
-        return savePhoto(data)
-    }
-    
+
     // MARK: - Private
     
     private func ensureDirectoryExists() {

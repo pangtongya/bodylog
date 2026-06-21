@@ -436,13 +436,13 @@ struct HomeView: View {
     // MARK: - Shared DateFormatters (cached)
     fileprivate static let relativeDateFormatter: DateFormatter = {
         let f = DateFormatter()
-        f.dateFormat = "M月d日"
+        f.setLocalizedDateFormatFromTemplate("Md")
         return f
     }()
 
     fileprivate static let timeFormatter: DateFormatter = {
         let f = DateFormatter()
-        f.dateFormat = "HH:mm"
+        f.setLocalizedDateFormatFromTemplate("HHmm")
         return f
     }()
 

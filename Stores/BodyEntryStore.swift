@@ -17,7 +17,7 @@ class BodyEntryStore: ObservableObject {
     // MARK: - Shared DateFormatters (cached)
     private static let dateDisplayFormatter: DateFormatter = {
         let f = DateFormatter()
-        f.dateFormat = "yyyy年M月d日"
+        f.setLocalizedDateFormatFromTemplate("yyyyMd")
         return f
     }()
 
@@ -133,11 +133,14 @@ class BodyEntryStore: ObservableObject {
         entries.last { $0.value(for: type) != nil }?.value(for: type)
     }
 
-    /// 变化量（最新 - 最早）
+    /// 变化量（最新 - 最早）— 没有数据返回 nil，有变化但值相同返回 0
     func totalChange(for type: BodyMetricType) -> Double? {
         guard let latest = latestValue(for: type),
-              let start = startValue(for: type),
-              latest != start else { return nil }
+              let start = startValue(for: type) else { return nil }
+        // 如果只有一条记录（latest 和 start 来自同一条），返回 nil 表示"没有变化可比较"
+        let firstEntry = entries.first { $0.value(for: type) != nil }
+        let lastEntry = entries.last { $0.value(for: type) != nil }
+        if let f = firstEntry, let l = lastEntry, f.id == l.id { return nil }
         return latest - start
     }
 
@@ -201,7 +204,18 @@ class BodyEntryStore: ObservableObject {
                 }
                 return ""
             }
-            let note = entry.note?.replacingOccurrences(of: ",", with: "，") ?? ""
+            // 标准 CSV：如 note 含逗号、引号或换行符，用双引号包裹
+            let note: String
+            if let rawNote = entry.note, !rawNote.isEmpty {
+                if rawNote.contains(",") || rawNote.contains("\"") || rawNote.contains("\n") {
+                    let escaped = rawNote.replacingOccurrences(of: "\"", with: "\"\"")
+                    note = "\"\(escaped)\""
+                } else {
+                    note = rawNote
+                }
+            } else {
+                note = ""
+            }
             return ([date] + values + [note]).joined(separator: ",")
         }
         return ([header] + rows).joined(separator: "\n")
