@@ -27,11 +27,11 @@ struct ShareCardView: View {
                 .padding(.vertical, 20)
             }
             .background(Color.systemGroupedBackground)
-            .navigationTitle("分享进度")
+            .navigationTitle(L10n.string("分享进度"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("取消") { dismiss() }
+                    Button(L10n.string("取消")) { dismiss() }
                         .foregroundColor(.secondary)
                 }
             }
@@ -79,17 +79,17 @@ struct ShareCardView: View {
             HStack(spacing: 16) {
                 statItem(
                     value: "\(entryStore.totalRecordDays)",
-                    label: "记录天数",
+                    label: L10n.string("记录天数"),
                     icon: "calendar"
                 )
                 statItem(
                     value: "\(entryStore.currentStreak)",
-                    label: "连续天数",
+                    label: L10n.string("连续天数"),
                     icon: "flame.fill"
                 )
                 statItem(
                     value: "\(entryStore.entries.count)",
-                    label: "总记录",
+                    label: L10n.string("总记录"),
                     icon: "chart.bar.fill"
                 )
             }
@@ -99,7 +99,7 @@ struct ShareCardView: View {
                 Divider()
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("最近记录")
+                    Text(L10n.string("最近记录"))
                         .font(.system(size: 14, weight: .semibold))
 
                     let displayMetrics = Array(latest.metrics.prefix(4))
@@ -131,7 +131,7 @@ struct ShareCardView: View {
             Divider()
 
             HStack {
-                Text("🔒 隐私优先 · 数据本地存储")
+                Text(L10n.string("🔒 隐私优先 · 数据本地存储"))
                     .font(.system(size: 11))
                     .foregroundColor(.secondary)
                 Spacer()
@@ -166,7 +166,7 @@ struct ShareCardView: View {
             Button(action: generateAndShare) {
                 HStack {
                     Image(systemName: "square.and.arrow.up")
-                    Text("分享这张卡片")
+                    Text(L10n.string("分享这张卡片"))
                         .font(.system(size: 15, weight: .semibold, design: .rounded))
                 }
                 .foregroundColor(.white)
@@ -180,7 +180,7 @@ struct ShareCardView: View {
             Button(action: saveToPhotos) {
                 HStack {
                     Image(systemName: "photo.on.rectangle")
-                    Text("保存到相册")
+                    Text(L10n.string("保存到相册"))
                         .font(.system(size: 15, weight: .regular, design: .rounded))
                 }
                 .foregroundColor(.formlogPrimary)

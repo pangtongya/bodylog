@@ -19,7 +19,7 @@ struct PaywallView: View {
                             .foregroundStyle(LinearGradient.formlogGradient)
                         Text(L10n.string("解锁 FormLog Pro"))
                             .font(.system(size: 26, weight: .bold, design: .rounded))
-                        Text("用数据和照片，见证你的身体变化")
+                        Text(L10n.string("用数据和照片，见证你的身体变化"))
                             .font(.system(size: 15))
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)
@@ -28,13 +28,13 @@ struct PaywallView: View {
 
                     // Features
                     VStack(spacing: 0) {
-                        proFeatureRow(icon: "photo.stack", title: "形体照片对比", desc: "拍照记录，对比身形变化")
+                        proFeatureRow(icon: "photo.stack", title: L10n.string("形体照片对比"), desc: L10n.string("拍照记录，对比身形变化"))
                         Divider().padding(.leading, 52)
-                        proFeatureRow(icon: "arrow.down.doc.fill", title: "CSV 数据导出/导入", desc: "随时导出导入数据")
+                        proFeatureRow(icon: "arrow.down.doc.fill", title: L10n.string("CSV 数据导出/导入"), desc: L10n.string("随时导出导入数据"))
                         Divider().padding(.leading, 52)
-                        proFeatureRow(icon: "bell.fill", title: "每日提醒", desc: "自定义时间提醒记录")
+                        proFeatureRow(icon: "bell.fill", title: L10n.string("每日提醒"), desc: L10n.string("自定义时间提醒记录"))
                         Divider().padding(.leading, 52)
-                        proFeatureRow(icon: "target", title: "无限目标", desc: "设置任意数量的健康目标")
+                        proFeatureRow(icon: "target", title: L10n.string("无限目标"), desc: L10n.string("设置任意数量的健康目标"))
                     }
                     .background(Color.systemBackground)
                     .cornerRadius(14)
@@ -59,7 +59,7 @@ struct PaywallView: View {
                             Button(action: {
                                 Task { await purchaseManager.retryLoadProducts() }
                             }) {
-                                Text("重试")
+                                Text(L10n.string("重试"))
                                     .font(.system(size: 13, weight: .medium))
                                     .foregroundColor(.formlogPrimary)
                             }
@@ -72,7 +72,7 @@ struct PaywallView: View {
                         Image(systemName: "lock.shield.fill")
                             .font(.system(size: 13))
                             .foregroundColor(.formlogPrimary)
-                        Text("100% 隐私优先 · 数据本地存储 · 无订阅")
+                        Text(L10n.string("100% 隐私优先 · 数据本地存储 · 无订阅"))
                             .font(.system(size: 13, weight: .medium))
                             .foregroundColor(.secondary)
                     }
@@ -94,7 +94,7 @@ struct PaywallView: View {
                                         .progressViewStyle(.circular)
                                         .tint(.white)
                                 } else {
-                                    Text("购买 \(purchaseManager.formattedPrice)")
+                                    Text(String(format: L10n.string("购买 %@"), purchaseManager.formattedPrice))
                                         .font(.system(size: 17, weight: .bold, design: .rounded))
                                 }
                             }
@@ -109,7 +109,7 @@ struct PaywallView: View {
                         Button(action: {
                             Task { await purchaseManager.restorePurchases() }
                         }) {
-                            Text("恢复购买")
+                            Text(L10n.string("恢复购买"))
                                 .font(.system(size: 14))
                                 .foregroundColor(.secondary)
                         }
@@ -117,11 +117,11 @@ struct PaywallView: View {
                     .padding(.horizontal, 20)
 
                     VStack(spacing: 6) {
-                        Text("一次购买，永久使用 · 支持多设备登录同一 Apple ID")
+                        Text(L10n.string("一次购买，永久使用 · 支持多设备登录同一 Apple ID"))
                             .font(.system(size: 11))
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)
-                        Text("无订阅 · 无隐藏费用 · 数据始终在你的设备上")
+                        Text(L10n.string("无订阅 · 无隐藏费用 · 数据始终在你的设备上"))
                             .font(.system(size: 11))
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)

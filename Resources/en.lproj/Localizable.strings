@@ -296,3 +296,14 @@
 
 // MARK: - Share Text
 "🎉 我在FormLog达成了身体数据目标！\n\n%@: %@%@\n用数据记录身体变化，见证每一次进步 💪" = "🎉 I reached my body data goal in FormLog!\n\n%@: %@%@\nTrack your body changes with data, witness every progress 💪";
+
+// MARK: - New Keys
+"还没有%@的记录" = "No %@ entries yet";
+"对比 (%d/2)" = "Compare (%d/2)";
+"📅 相差 %d 天" = "📅 %d days apart";
+"开始记录你的身体数据\n用图表见证你的变化 ✨" = "Start tracking your body data\nLet charts show your progress ✨";
+"%d 个" = "%d items";
+"%d 天" = "%d days";
+"购买 %@" = "Buy %@";
+"目标值 (%@)" = "Target (%@)";
+"当前：%@ %@" = "Current: %@ %@";

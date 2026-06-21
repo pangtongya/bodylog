@@ -26,11 +26,11 @@ struct AchievementView: View {
                 .padding(.vertical, 16)
             }
             .background(Color.systemGroupedBackground)
-            .navigationTitle("成就")
+            .navigationTitle(L10n.string("成就"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("完成") { dismiss() }
+                    Button(L10n.string("完成")) { dismiss() }
                         .foregroundColor(.formlogPrimary)
                 }
             }
@@ -64,7 +64,7 @@ struct AchievementView: View {
                 }
             }
 
-            Text("已解锁成就")
+            Text(L10n.string("已解锁成就"))
                 .font(.system(size: 15, weight: .medium))
                 .foregroundColor(.secondary)
         }
@@ -123,7 +123,7 @@ struct AchievementView: View {
                 HStack(spacing: 2) {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 10))
-                    Text("已解锁")
+                    Text(L10n.string("已解锁"))
                         .font(.system(size: 11))
                 }
                 .foregroundColor(.formlogPrimary)
@@ -145,7 +145,7 @@ struct AchievementView: View {
                     .font(.system(size: 10))
                     .foregroundColor(.secondary)
             } else {
-                Text("未开始")
+                Text(L10n.string("未开始"))
                     .font(.system(size: 11))
                     .foregroundColor(.secondary)
             }
@@ -181,7 +181,7 @@ struct AchievementNotificationBanner: View {
                     }
 
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("🎉 成就解锁！")
+                        Text(L10n.string("🎉 成就解锁！"))
                             .font(.system(size: 14, weight: .bold))
                         Text(achievement.type.displayName)
                             .font(.system(size: 15, weight: .semibold))

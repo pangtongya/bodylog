@@ -30,12 +30,12 @@ struct PhotoCompareView: View {
                     photoGrid
                 }
             }
-            .navigationTitle(showComparison ? "对比" : "照片对比")
+            .navigationTitle(showComparison ? L10n.string("对比") : L10n.string("照片对比"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     if showComparison {
-                        Button("返回") {
+                        Button(L10n.string("返回")) {
                             withAnimation {
                                 showComparison = false
                                 selectedEntries.removeAll()
@@ -43,7 +43,7 @@ struct PhotoCompareView: View {
                         }
                         .foregroundColor(.formlogPrimary)
                     } else {
-                        Button("完成") {
+                        Button(L10n.string("完成")) {
                             dismiss()
                         }
                         .foregroundColor(.formlogPrimary)
@@ -68,7 +68,7 @@ struct PhotoCompareView: View {
                                     Image(systemName: "lock.fill")
                                         .font(.system(size: 11))
                                 }
-                                Text("对比 (\(selectedEntries.count)/2)")
+                                Text(String(format: L10n.string("对比 (%d/2)"), selectedEntries.count))
                                     .font(.system(size: 15, weight: .semibold))
                             }
                             .foregroundColor(selectedEntries.count >= 2 ? .formlogPrimary : .secondary)
@@ -95,9 +95,9 @@ struct PhotoCompareView: View {
             Image(systemName: "photo.stack")
                 .font(.system(size: 56))
                 .foregroundColor(.formlogPrimary.opacity(0.4))
-            Text("还没有照片")
+            Text(L10n.string("还没有照片"))
                 .font(.system(size: 18, weight: .semibold))
-            Text("在记录数据时拍摄形体照片\n之后可以在这里对比变化")
+            Text(L10n.string("在记录数据时拍摄形体照片\n之后可以在这里对比变化"))
                 .font(.system(size: 14))
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -192,7 +192,7 @@ struct PhotoCompareView: View {
         ScrollView {
             VStack(spacing: 20) {
                 // Title - more emotional
-                Text("见证你的变化 💪")
+                Text(L10n.string("见证你的变化 💪"))
                     .font(.system(size: 22, weight: .bold, design: .rounded))
                     .frame(maxWidth: .infinity, alignment: .center)
                 
@@ -229,7 +229,7 @@ struct PhotoCompareView: View {
                 // Time difference - more prominent
                 if let entry1 = selectedEntries.first, let entry2 = selectedEntries.last {
                     let days = Calendar.current.dateComponents([.day], from: entry1.recordedAt, to: entry2.recordedAt).day ?? 0
-                    Text("📅 相差 \(abs(days)) 天")
+                    Text(String(format: L10n.string("📅 相差 %d 天"), abs(days)))
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.secondary)
                         .padding(.horizontal, 16)
@@ -260,7 +260,7 @@ struct PhotoCompareView: View {
                 }) {
                     HStack(spacing: 8) {
                         Image(systemName: "square.and.arrow.up")
-                        Text("分享对比")
+                        Text(L10n.string("分享对比"))
                             .font(.system(size: 15, weight: .medium))
                     }
                     .foregroundColor(.white)
@@ -313,7 +313,7 @@ struct PhotoCompareView: View {
     
     private func metricChangesView(entry1: BodyEntry, entry2: BodyEntry) -> some View {
         VStack(spacing: 0) {
-            Text("📊 指标变化")
+            Text(L10n.string("📊 指标变化"))
                 .font(.system(size: 18, weight: .bold))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.bottom, 16)

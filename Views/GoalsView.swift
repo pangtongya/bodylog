@@ -21,7 +21,7 @@ struct GoalsView: View {
                     } else {
                         // Active Goals
                         if !goalStore.activeGoals.isEmpty {
-                            sectionHeader("进行中的目标")
+                            sectionHeader(L10n.string("进行中的目标"))
                             ForEach(goalStore.activeGoals) { goal in
                                 GoalCardView(goal: goal)
                             }
@@ -29,7 +29,7 @@ struct GoalsView: View {
 
                         // Achieved Goals
                         if !goalStore.achievedGoals.isEmpty {
-                            sectionHeader("已达成")
+                            sectionHeader(L10n.string("已达成"))
                             ForEach(goalStore.achievedGoals) { goal in
                                 GoalCardView(goal: goal, isAchieved: true)
                             }
@@ -41,7 +41,7 @@ struct GoalsView: View {
                 .padding(.bottom, 100)
             }
             .background(Color.systemGroupedBackground)
-            .navigationTitle("目标")
+            .navigationTitle(L10n.string("目标"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -88,12 +88,12 @@ struct GoalsView: View {
                         Image(systemName: "lock.fill")
                             .font(.system(size: 12))
                             .foregroundColor(.orange)
-                        Text("免费版最多 2 个目标")
+                        Text(L10n.string("免费版最多 2 个目标"))
                             .font(.system(size: 13))
                             .foregroundColor(.secondary)
                     }
                     Button(action: { showPaywall = true }) {
-                        Text("升级到 Pro，无限目标")
+                        Text(L10n.string("升级到 Pro，无限目标"))
                             .font(.system(size: 13, weight: .medium))
                             .foregroundColor(.formlogPrimary)
                     }
@@ -111,10 +111,10 @@ struct GoalsView: View {
             }
 
             VStack(spacing: 8) {
-                Text("设定你的第一个目标")
+                Text(L10n.string("设定你的第一个目标"))
                     .font(.system(size: 20, weight: .bold))
                     .foregroundColor(.primary)
-                Text("有了目标，改变更有方向\n让数据见证你的进步 ✨")
+                Text(L10n.string("有了目标，改变更有方向\n让数据见证你的进步 ✨"))
                     .font(.system(size: 15))
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
@@ -124,7 +124,7 @@ struct GoalsView: View {
             Button(action: { showAddGoal = true }) {
                 HStack(spacing: 8) {
                     Image(systemName: "plus.circle.fill")
-                    Text("设置目标")
+                    Text(L10n.string("设置目标"))
                 }
                 .font(.system(size: 16, weight: .semibold, design: .rounded))
                 .foregroundColor(.white)
@@ -175,7 +175,7 @@ struct GoalCardView: View {
             if isAchieved {
                 HStack(spacing: 6) {
                     Image(systemName: "party.popper.fill")
-                    Text("目标已达成！")
+                    Text(L10n.string("目标已达成！"))
                         .font(.system(size: 13, weight: .bold))
                     Image(systemName: "party.popper.fill")
                 }
@@ -201,7 +201,7 @@ struct GoalCardView: View {
                         .font(.system(size: 15, weight: .semibold))
                     Spacer()
                     if isAchieved {
-                        Label("已达成", systemImage: "checkmark.seal.fill")
+                        Label(L10n.string("已达成"), systemImage: "checkmark.seal.fill")
                             .font(.system(size: 12, weight: .medium))
                             .foregroundColor(.formlogDecrease)
                     } else {
@@ -240,7 +240,7 @@ struct GoalCardView: View {
                     Spacer()
                     if let current = currentValue {
                         VStack(alignment: .trailing, spacing: 2) {
-                            Text("当前")
+                            Text(L10n.string("当前"))
                                 .font(.system(size: 11))
                                 .foregroundColor(.secondary)
                             let cd = formattedCurrent(current)
@@ -270,7 +270,7 @@ struct GoalCardView: View {
                                 .foregroundColor(.secondary)
                             Spacer()
                             if progress >= 0.8 && progress < 1.0 {
-                                Text("马上就要达成了！💪")
+                                Text(L10n.string("马上就要达成了！💪"))
                                     .font(.system(size: 11))
                                     .foregroundColor(.formlogPrimary)
                             }
@@ -281,7 +281,7 @@ struct GoalCardView: View {
                     HStack {
                         Image(systemName: "star.fill")
                             .foregroundColor(.yellow)
-                        Text("恭喜你达成了目标，继续保持良好的状态！")
+                        Text(L10n.string("恭喜你达成了目标，继续保持良好的状态！"))
                             .font(.system(size: 12))
                             .foregroundColor(.secondary)
                         Spacer()
@@ -302,14 +302,14 @@ struct GoalCardView: View {
             Button(role: .destructive) {
                 showDeleteAlert = true
             } label: {
-                Label("删除目标", systemImage: "trash")
+                Label(L10n.string("删除目标"), systemImage: "trash")
             }
         }
-        .alert("删除目标", isPresented: $showDeleteAlert) {
-            Button("删除", role: .destructive) { goalStore.deleteGoal(id: goal.id) }
-            Button("取消", role: .cancel) {}
+        .alert(L10n.string("删除目标"), isPresented: $showDeleteAlert) {
+            Button(L10n.string("删除"), role: .destructive) { goalStore.deleteGoal(id: goal.id) }
+            Button(L10n.string("取消"), role: .cancel) {}
         } message: {
-            Text("确定要删除这个目标吗？")
+            Text(L10n.string("确定要删除这个目标吗？"))
         }
     }
 
@@ -356,16 +356,16 @@ struct AddGoalView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("指标") {
-                    Picker("追踪指标", selection: $selectedMetric) {
+                Section(L10n.string("指标")) {
+                    Picker(L10n.string("追踪指标"), selection: $selectedMetric) {
                         ForEach(appState.enabledMetrics) { m in
                             Label(m.displayName, systemImage: m.icon).tag(m)
                         }
                     }
                 }
 
-                Section("方向") {
-                    Picker("目标方向", selection: $direction) {
+                Section(L10n.string("方向")) {
+                    Picker(L10n.string("目标方向"), selection: $direction) {
                         ForEach([GoalModel.Direction.decrease, .increase, .maintain], id: \.self) { d in
                             Text(d.displayName).tag(d)
                         }
@@ -376,33 +376,33 @@ struct AddGoalView: View {
                 let unitStr = (selectedMetric == .weight || selectedMetric == .muscleMass)
                     ? appState.weightUnit.rawValue : selectedMetric.unit
 
-                Section("目标值 (\(unitStr))") {
-                    TextField("例如 70", text: $targetStr)
+                Section(String(format: L10n.string("目标值 (%@)"), unitStr)) {
+                    TextField(L10n.string("例如 70"), text: $targetStr)
                         .keyboardType(.decimalPad)
                     if let current = entryStore.latestValue(for: selectedMetric) {
                         let disp = displayCurrent(current)
-                        Text("当前：\(disp.0) \(disp.1)")
+                        Text(String(format: L10n.string("当前：%@ %@"), disp.0, disp.1))
                             .font(.system(size: 13))
                             .foregroundColor(.secondary)
                     }
                 }
             }
-            .navigationTitle("设置目标")
+            .navigationTitle(L10n.string("设置目标"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("取消") { isPresented = false }.foregroundColor(.secondary)
+                    Button(L10n.string("取消")) { isPresented = false }.foregroundColor(.secondary)
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("添加") { addGoal() }
+                    Button(L10n.string("添加")) { addGoal() }
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(.formlogPrimary)
                 }
             }
-            .alert("输入有误", isPresented: $showError) {
-                Button("好的", role: .cancel) {}
+            .alert(L10n.string("输入有误"), isPresented: $showError) {
+                Button(L10n.string("好的"), role: .cancel) {}
             } message: {
-                Text("请输入有效的目标值")
+                Text(L10n.string("请输入有效的目标值"))
             }
             .onAppear {
                 if let first = appState.enabledMetrics.first { selectedMetric = first }
