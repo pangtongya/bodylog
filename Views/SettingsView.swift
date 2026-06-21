@@ -536,9 +536,17 @@ struct SettingsView: View {
         do {
             let data = try Data(contentsOf: url)
             guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-                  let _ = json["version"] as? String else {
+                  let backupVersion = json["version"] as? String else {
                 backupResult = L10n.string("恢复失败：无效的备份文件")
                 return
+            }
+            
+            // 版本检查和迁移
+            let currentVersion = "1.0"
+            if backupVersion != currentVersion {
+                // 未来版本的数据迁移逻辑将在这里处理
+                print("[SettingsView] 备份版本 \(backupVersion)，当前版本 \(currentVersion)，需要迁移")
+                // TODO: 添加具体的数据迁移逻辑
             }
             
             // Restore entries
