@@ -1,0 +1,4 @@
+/* en InfoPlist.strings */
+/* App display name */
+CFBundleDisplayName = "FormLog";
+CFBundleName = "FormLog";

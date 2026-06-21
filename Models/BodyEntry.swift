@@ -12,7 +12,7 @@ struct BodyEntry: Identifiable, Codable, Equatable {
     
     // MARK: - Photo Storage
     
-    /// 新格式：照片文件名（存储在 Documents/BodyLogPhotos/ 目录）
+    /// 新格式：照片文件名（存储在 Documents/FormLogPhotos/ 目录）
     var photoFilename: String?
     
     /// 旧格式：照片数据（向后兼容，新代码不再使用此字段写入，仅在迁移时读取）

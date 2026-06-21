@@ -1,5 +1,5 @@
 // ColorExtensions.swift
-// BodyLog 品牌色定义
+// FormLog 品牌色定义
 
 import SwiftUI
 

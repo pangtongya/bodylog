@@ -1,10 +1,10 @@
-// BodyLogApp.swift
+// FormLogApp.swift
 // @main 入口
 
 import SwiftUI
 
 @main
-struct BodyLogApp: App {
+struct FormLogApp: App {
     @StateObject private var appState = AppState.shared
     @StateObject private var entryStore = BodyEntryStore()
     @StateObject private var goalStore = GoalStore()

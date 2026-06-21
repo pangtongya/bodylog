@@ -9,7 +9,7 @@ import SwiftUI
 final class PurchaseManager: ObservableObject {
     static let shared = PurchaseManager()
 
-    static let proProductID = "com.pangtong.bodylog.pro"
+    static let proProductID = "com.pangtong.formlog.pro"
 
     @Published var proProduct: Product?
     @Published var isPurchasing: Bool = false
