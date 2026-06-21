@@ -2,3 +2,8 @@
 /* App 显示名称 */
 CFBundleDisplayName = "形记";
 CFBundleName = "形记";
+
+/* 权限描述 */
+NSCameraUsageDescription = "用于拍摄身体对比照片，记录您的形体变化。";
+NSPhotoLibraryUsageDescription = "用于从相册选取或保存身体对比照片。";
+NSPhotoLibraryAddUsageDescription = "用于保存导出的图表和对比图到相册。";

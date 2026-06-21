@@ -14,7 +14,6 @@ class AppState: ObservableObject {
     // MARK: - 用户基本信息
     @Published var userName: String = ""
     @Published var userHeight: Double = 0       // cm
-    @Published var userBirthYear: Int = 0
     @Published var userGender: Gender = .notSet
 
     // MARK: - 单位设置
@@ -82,7 +81,6 @@ class AppState: ObservableObject {
         var hasCompletedOnboarding: Bool
         var userName: String
         var userHeight: Double
-        var userBirthYear: Int
         var userGender: Gender
         var weightUnit: WeightUnit
         var theme: AppTheme
@@ -111,7 +109,6 @@ class AppState: ObservableObject {
             hasCompletedOnboarding: hasCompletedOnboarding,
             userName: userName,
             userHeight: userHeight,
-            userBirthYear: userBirthYear,
             userGender: userGender,
             weightUnit: weightUnit,
             theme: theme,
@@ -137,7 +134,6 @@ class AppState: ObservableObject {
             hasCompletedOnboarding = decoded.hasCompletedOnboarding
             userName = decoded.userName
             userHeight = decoded.userHeight
-            userBirthYear = decoded.userBirthYear
             userGender = decoded.userGender
             weightUnit = decoded.weightUnit
             theme = decoded.theme
@@ -160,7 +156,6 @@ class AppState: ObservableObject {
             hasCompletedOnboarding: hasCompletedOnboarding,
             userName: userName,
             userHeight: userHeight,
-            userBirthYear: userBirthYear,
             userGender: userGender,
             weightUnit: weightUnit,
             theme: theme,
@@ -180,7 +175,6 @@ class AppState: ObservableObject {
         hasCompletedOnboarding = decoded.hasCompletedOnboarding
         userName = decoded.userName
         userHeight = decoded.userHeight
-        userBirthYear = decoded.userBirthYear
         userGender = decoded.userGender
         weightUnit = decoded.weightUnit
         theme = decoded.theme

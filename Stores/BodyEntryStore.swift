@@ -14,6 +14,31 @@ class BodyEntryStore: ObservableObject {
             .appendingPathComponent("body_entries.json")
     }()
 
+    // MARK: - Shared DateFormatters (cached)
+    private static let dateDisplayFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy年M月d日"
+        return f
+    }()
+
+    private static let csvExportFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd HH:mm"
+        return f
+    }()
+
+    private static let csvImportFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd HH:mm"
+        return f
+    }()
+
+    private static let csvShortDateFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd"
+        return f
+    }()
+
     init() {
         load()
     }
@@ -65,8 +90,6 @@ class BodyEntryStore: ObservableObject {
 
     /// 按日期分组的记录（Dictionary<String, [BodyEntry]>）
     var groupedByDate: [(key: String, value: [BodyEntry])] {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy年M月d日"
         let calendar = Calendar.current
         // Group by start-of-day Date to enable fast Date-based sorting
         let grouped = Dictionary(grouping: entries) { entry -> Date in
@@ -75,7 +98,7 @@ class BodyEntryStore: ObservableObject {
         // Sort descending by date (newest first), then format key for display
         return grouped
             .sorted { $0.key > $1.key }
-            .map { (key: formatter.string(from: $0.key), value: $0.value) }
+            .map { (key: Self.dateDisplayFormatter.string(from: $0.key), value: $0.value) }
     }
 
     /// 某个指标最近 N 条记录，用于图表
@@ -170,10 +193,8 @@ class BodyEntryStore: ObservableObject {
     func exportCSV() -> String {
         let allMetrics = BodyMetricType.allCases
         let header = (["日期"] + allMetrics.map { $0.displayName + "(\($0.unit))" } + ["备注"]).joined(separator: ",")
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm"
         let rows = entries.map { entry -> String in
-            let date = formatter.string(from: entry.recordedAt)
+            let date = Self.csvExportFormatter.string(from: entry.recordedAt)
             let values = allMetrics.map { type -> String in
                 if let v = entry.value(for: type) {
                     return String(format: "%.2f", v)
@@ -194,7 +215,7 @@ class BodyEntryStore: ObservableObject {
             .filter { !$0.isEmpty }
         
         guard lines.count >= 2 else {
-            return (0, "CSV 文件格式不正确，至少需要标题行和一行数据")
+            return (0, L10n.string("CSV 文件格式不正确，至少需要标题行和一行数据"))
         }
         
         // Parse header to find column indices
@@ -225,10 +246,8 @@ class BodyEntryStore: ObservableObject {
         
         var importedCount = 0
         var errors: [String] = []
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
-        let shortDateFormatter = DateFormatter()
-        shortDateFormatter.dateFormat = "yyyy-MM-dd"
+        let dateFormatter = Self.csvImportFormatter
+        let shortDateFormatter = Self.csvShortDateFormatter
         
         for line in lines.dropFirst() {
             let cols = parseCSVLine(line)
@@ -239,7 +258,7 @@ class BodyEntryStore: ObservableObject {
             let dateString = cols[dateColIndex].trimmingCharacters(in: .whitespaces)
             guard let date = dateFormatter.date(from: dateString) ??
                           shortDateFormatter.date(from: dateString) else {
-                errors.append("无法解析日期: \(dateString)")
+                errors.append(String(format: L10n.string("无法解析日期: %@"), dateString))
                 continue
             }
             
@@ -273,9 +292,9 @@ class BodyEntryStore: ObservableObject {
         save()
         
         if importedCount > 0 {
-            return (importedCount, errors.isEmpty ? nil : "\(errors.count) 行数据跳过")
+            return (importedCount, errors.isEmpty ? nil : String(format: L10n.string("%d 行数据跳过"), errors.count))
         } else {
-            return (0, errors.isEmpty ? "未找到有效数据" : errors.first)
+            return (0, errors.isEmpty ? L10n.string("未找到有效数据") : errors.first)
         }
     }
     
@@ -341,28 +360,8 @@ class BodyEntryStore: ObservableObject {
             let data = try Data(contentsOf: Self.storeURL)
             entries = try JSONDecoder().decode([BodyEntry].self, from: data)
             sortEntries()
-            
-            // 迁移旧数据：photoData (Data?) → photoFilename (String?)
-            migrateLegacyPhotos()
         } catch {
             entries = []
-        }
-    }
-    
-    /// 迁移旧格式的照片数据到文件存储
-    private func migrateLegacyPhotos() {
-        var needsSave = false
-        for idx in entries.indices {
-            // 只迁移有photoData但没有photoFilename的entry
-            if entries[idx].photoData != nil && entries[idx].photoFilename == nil,
-               let filename = PhotoManager.shared.migrate(photoData: entries[idx].photoData) {
-                entries[idx].photoFilename = filename
-                entries[idx].photoData = nil  // 清除旧数据
-                needsSave = true
-            }
-        }
-        if needsSave {
-            performSave()
         }
     }
 

@@ -49,13 +49,6 @@ enum BodyMetricType: String, CaseIterable, Codable, Identifiable {
         }
     }
 
-    var unitLb: String {
-        switch self {
-        case .weight, .muscleMass: return "lb"
-        default: return unit
-        }
-    }
-
     var icon: String {
         switch self {
         case .weight: return "scalemass.fill"
