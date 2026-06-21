@@ -82,11 +82,12 @@ struct BodyEntry: Identifiable, Codable, Equatable {
         return nil
     }
 
-    // MARK: - Equatable (忽略 photoData 大字段，仅比较业务字段)
+    // MARK: - Equatable (比较所有业务字段，包括照片引用)
     static func == (lhs: BodyEntry, rhs: BodyEntry) -> Bool {
         lhs.id == rhs.id &&
         lhs.recordedAt == rhs.recordedAt &&
         lhs.metrics == rhs.metrics &&
-        lhs.note == rhs.note
+        lhs.note == rhs.note &&
+        lhs.photoFilename == rhs.photoFilename
     }
 }

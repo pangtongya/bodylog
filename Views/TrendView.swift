@@ -328,25 +328,6 @@ struct TrendView: View {
         return Array(result.prefix(3))
     }
 
-    private func summaryStatCell(title: String, value: String, unit: String, color: Color) -> some View {
-        VStack(spacing: 4) {
-            Text(title)
-                .font(.system(size: 12))
-                .foregroundColor(.secondary)
-            HStack(alignment: .lastTextBaseline, spacing: 2) {
-                Text(value)
-                    .font(.system(size: 18, weight: .bold, design: .rounded).monospacedDigit())
-                    .foregroundColor(color)
-                if !unit.isEmpty {
-                    Text(unit)
-                        .font(.system(size: 11))
-                        .foregroundColor(.secondary)
-                }
-            }
-        }
-        .frame(maxWidth: .infinity)
-    }
-
     // MARK: - Chart
     
     private var chartCard: some View {
