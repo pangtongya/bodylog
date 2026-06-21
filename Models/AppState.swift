@@ -5,7 +5,7 @@ import SwiftUI
 import Foundation
 
 @MainActor
-class AppState: ObservableObject, Codable {
+class AppState: ObservableObject {
     static let shared = AppState()
 
     // MARK: - Onboarding
@@ -76,45 +76,22 @@ class AppState: ObservableObject, Codable {
         case system, light, dark
     }
 
-    // MARK: - Codable
-    enum CodingKeys: String, CodingKey {
-        case hasCompletedOnboarding, userName, userHeight, userBirthYear, userGender
-        case weightUnit, theme, reminderEnabled, reminderHour, reminderMinute
-        case isPro, enabledMetrics, achievements
-    }
+    // MARK: - Codable Storage（独立结构体，避免 @MainActor 跨越隔离边界）
 
-    func encode(to encoder: Encoder) throws {
-        var c = encoder.container(keyedBy: CodingKeys.self)
-        try c.encode(hasCompletedOnboarding, forKey: .hasCompletedOnboarding)
-        try c.encode(userName, forKey: .userName)
-        try c.encode(userHeight, forKey: .userHeight)
-        try c.encode(userBirthYear, forKey: .userBirthYear)
-        try c.encode(userGender, forKey: .userGender)
-        try c.encode(weightUnit, forKey: .weightUnit)
-        try c.encode(theme, forKey: .theme)
-        try c.encode(reminderEnabled, forKey: .reminderEnabled)
-        try c.encode(reminderHour, forKey: .reminderHour)
-        try c.encode(reminderMinute, forKey: .reminderMinute)
-        try c.encode(isPro, forKey: .isPro)
-        try c.encode(enabledMetrics, forKey: .enabledMetrics)
-        try c.encode(achievements, forKey: .achievements)
-    }
-
-    required init(from decoder: Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        hasCompletedOnboarding = (try? c.decode(Bool.self, forKey: .hasCompletedOnboarding)) ?? false
-        userName = (try? c.decode(String.self, forKey: .userName)) ?? ""
-        userHeight = (try? c.decode(Double.self, forKey: .userHeight)) ?? 0
-        userBirthYear = (try? c.decode(Int.self, forKey: .userBirthYear)) ?? 0
-        userGender = (try? c.decode(Gender.self, forKey: .userGender)) ?? .notSet
-        weightUnit = (try? c.decode(WeightUnit.self, forKey: .weightUnit)) ?? .kg
-        theme = (try? c.decode(AppTheme.self, forKey: .theme)) ?? .system
-        reminderEnabled = (try? c.decode(Bool.self, forKey: .reminderEnabled)) ?? false
-        reminderHour = (try? c.decode(Int.self, forKey: .reminderHour)) ?? 8
-        reminderMinute = (try? c.decode(Int.self, forKey: .reminderMinute)) ?? 0
-        isPro = (try? c.decode(Bool.self, forKey: .isPro)) ?? false
-        enabledMetrics = (try? c.decode([BodyMetricType].self, forKey: .enabledMetrics)) ?? [.weight, .bodyFat]
-        achievements = (try? c.decode([Achievement].self, forKey: .achievements)) ?? []
+    private struct CodableData: Codable {
+        var hasCompletedOnboarding: Bool
+        var userName: String
+        var userHeight: Double
+        var userBirthYear: Int
+        var userGender: Gender
+        var weightUnit: WeightUnit
+        var theme: AppTheme
+        var reminderEnabled: Bool
+        var reminderHour: Int
+        var reminderMinute: Int
+        var isPro: Bool
+        var enabledMetrics: [BodyMetricType]
+        var achievements: [Achievement]
     }
 
     // MARK: - Persistence
@@ -130,9 +107,24 @@ class AppState: ObservableObject, Codable {
     }
 
     private func performSave() {
+        let data = CodableData(
+            hasCompletedOnboarding: hasCompletedOnboarding,
+            userName: userName,
+            userHeight: userHeight,
+            userBirthYear: userBirthYear,
+            userGender: userGender,
+            weightUnit: weightUnit,
+            theme: theme,
+            reminderEnabled: reminderEnabled,
+            reminderHour: reminderHour,
+            reminderMinute: reminderMinute,
+            isPro: isPro,
+            enabledMetrics: enabledMetrics,
+            achievements: achievements
+        )
         do {
-            let data = try JSONEncoder().encode(self)
-            try data.write(to: Self.storeURL)
+            let encoded = try JSONEncoder().encode(data)
+            try encoded.write(to: Self.storeURL)
         } catch {
             print("[AppState] Save error: \(error)")
         }
@@ -141,7 +133,7 @@ class AppState: ObservableObject, Codable {
     private func load() {
         do {
             let data = try Data(contentsOf: Self.storeURL)
-            let decoded = try JSONDecoder().decode(AppState.self, from: data)
+            let decoded = try JSONDecoder().decode(CodableData.self, from: data)
             hasCompletedOnboarding = decoded.hasCompletedOnboarding
             userName = decoded.userName
             userHeight = decoded.userHeight
