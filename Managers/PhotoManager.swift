@@ -14,17 +14,9 @@ final class PhotoManager: @unchecked Sendable {
     private let fileManager = FileManager.default
     
     /// 照片存放目录: Documents/FormLogPhotos/
-    /// 注意：保持 BodyLogPhotos 目录名向后兼容（已安装用户的数据不丢失）
     private var photosDirectory: URL {
         let docs = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
-        // 优先使用新目录名，如果旧目录存在则继续使用（向后兼容）
-        let newPath = docs.appendingPathComponent("FormLogPhotos", isDirectory: true)
-        let oldPath = docs.appendingPathComponent("BodyLogPhotos", isDirectory: true)
-        if fileManager.fileExists(atPath: oldPath.path) && !fileManager.fileExists(atPath: newPath.path) {
-            // 迁移旧目录到新目录名
-            try? fileManager.moveItem(at: oldPath, to: newPath)
-        }
-        return newPath
+        return docs.appendingPathComponent("FormLogPhotos", isDirectory: true)
     }
     
     private init() {
