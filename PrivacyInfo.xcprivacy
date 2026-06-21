@@ -9,6 +9,30 @@
     <key>NSPrivacyCollectedDataTypes</key>
     <array/>
     <key>NSPrivacyContactedDomains</key>
-    <array/>
+    <array>
+        <!-- App Store Connect 仅用于内购验证，不主动联系服务器 -->
+        <!-- StoreKit 联系的域名由系统管理，无需在此声明 -->
+    </array>
+    <key>NSPrivacyAccessedAPITypes</key>
+    <array>
+        <!-- UserDefaults: 用于存储用户设置和应用状态 -->
+        <dict>
+            <key>NSPrivacyAccessedAPIType</key>
+            <string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+            <key>NSPrivacyAccessedAPITypeReasons</key>
+            <array>
+                <string>CA92.1</string>
+            </array>
+        </dict>
+        <!-- File Timestamp: 用于读取/写入数据文件的时间戳 -->
+        <dict>
+            <key>NSPrivacyAccessedAPIType</key>
+            <string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
+            <key>NSPrivacyAccessedAPITypeReasons</key>
+            <array>
+                <string>C617.1</string>
+            </array>
+        </dict>
+    </array>
 </dict>
 </plist>
