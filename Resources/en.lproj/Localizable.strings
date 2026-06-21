@@ -1,0 +1,212 @@
+// en Localizable.strings
+// BodyLog English
+
+// MARK: - General
+"取消" = "Cancel";
+"保存" = "Save";
+"删除" = "Delete";
+"添加" = "Add";
+"好的" = "OK";
+"继续编辑" = "Keep Editing";
+"放弃修改" = "Discard Changes";
+"完成" = "Done";
+"返回" = "Back";
+"重试" = "Retry";
+"分享" = "Share";
+
+// MARK: - Tab Bar
+"记录" = "Log";
+"趋势" = "Trends";
+"目标" = "Goals";
+"设置" = "Settings";
+
+// MARK: - Onboarding
+"你的身体变化\n值得被记录" = "Your body changes\ndeserve to be tracked";
+"用数据和照片，见证每一次进步 💪" = "Track your progress with data and photos 💪";
+"隐私优先" = "Privacy First";
+"数据只存在你的手机，不上云" = "Data stays on your device, no cloud";
+"一次买断" = "One-time Purchase";
+"没有订阅，永久使用" = "No subscription, yours forever";
+"照片对比" = "Photo Comparison";
+"见证形体变化（独家功能）" = "See your transformation (exclusive)";
+"智能洞察" = "Smart Insights";
+"自动分析你的变化趋势" = "Automatic trend analysis";
+"下一步" = "Next";
+"开始记录" = "Start Tracking";
+"填写基本信息" = "Basic Info";
+"你的名字（可选）" = "Your Name (optional)";
+"昵称" = "Nickname";
+"身高（cm）" = "Height (cm)";
+"性别" = "Gender";
+"男" = "Male";
+"女" = "Female";
+"不填" = "Prefer not to say";
+"重量单位" = "Weight Unit";
+"选择要追踪的指标" = "Choose Metrics to Track";
+"至少选择一个，之后可以在设置中修改" = "Select at least one. You can change this later in Settings.";
+
+// MARK: - Home
+"早上好" = "Good morning";
+"下午好" = "Good afternoon";
+"晚上好" = "Good evening";
+"用数据见证你的变化" = "Track your transformation with data";
+"记录今天数据" = "Log Today's Data";
+"记录第一条数据" = "Log Your First Entry";
+"今日数据" = "Today's Data";
+"今天" = "Today";
+"昨天" = "Yesterday";
+"记录天数" = "Days Logged";
+"连续天数" = "Current Streak";
+"本周记录" = "This Week";
+"历史记录" = "History";
+"暂无记录" = "No entries yet";
+"开始记录你的身体变化" = "Start tracking your body changes";
+"记录体重、体脂、围度，见证每一次进步" = "Log weight, body fat, measurements — see every step of progress";
+"已记录 %d 张形体照片" = "%d progress photos logged";
+"用照片见证你的形体变化" = "Document your transformation with photos";
+"未记录" = "Not logged";
+
+// MARK: - Log Entry
+"记录数据" = "Log Data";
+"编辑记录" = "Edit Entry";
+"记录时间" = "Date & Time";
+"身体指标" = "Body Metrics";
+"形体照片（可选）" = "Progress Photo (optional)";
+"添加照片" = "Add Photo";
+"选择照片来源" = "Choose Photo Source";
+"拍照" = "Take Photo";
+"从相册选取" = "Choose from Library";
+"备注（可选）" = "Note (optional)";
+"今天感觉怎么样..." = "How are you feeling today...";
+"请至少填写一个指标" = "Please enter at least one metric";
+"放弃修改？" = "Discard changes?";
+"输入有误" = "Invalid Input";
+
+// MARK: - Trends
+"数据概览" = "Overview";
+"当前值" = "Current";
+"总变化" = "Total Change";
+"变化率" = "Change %";
+"记录次数" = "Entries";
+"数据洞察" = "Insights";
+"还没有%@的记录" = "No %@ data yet";
+"开始记录你的身体数据\n用图表见证你的变化 ✨" = "Start logging your body data\nSee your progress in charts ✨";
+"1月" = "1M";
+"3月" = "3M";
+"6月" = "6M";
+"全部" = "All";
+
+// MARK: - Goals
+"设定你的第一个目标" = "Set Your First Goal";
+"有了目标，改变更有方向\n让数据见证你的进步 ✨" = "Goals give direction to your change\nLet data witness your progress ✨";
+"设置目标" = "Set Goal";
+"进行中的目标" = "Active Goals";
+"已达成" = "Achieved";
+"目标已达成！" = "Goal Achieved!";
+"马上就要达成了！💪" = "Almost there! 💪";
+"恭喜你达成了目标，继续保持良好的状态！" = "Congratulations on reaching your goal! Keep it up!";
+"删除目标" = "Delete Goal";
+"确定要删除这个目标吗？" = "Are you sure you want to delete this goal?";
+"免费版最多 2 个目标" = "Free version: max 2 goals";
+"升级到 Pro，无限目标" = "Upgrade to Pro for unlimited goals";
+"指标" = "Metric";
+"追踪指标" = "Track Metric";
+"方向" = "Direction";
+"目标方向" = "Goal Direction";
+"目标值" = "Target Value";
+"当前" = "Current";
+"请输入有效的目标值" = "Please enter a valid target value";
+
+// MARK: - Settings
+"关于" = "About";
+"版本" = "Version";
+"隐私政策" = "Privacy Policy";
+"升级到 Pro" = "Upgrade to Pro";
+"无限目标 · 导出 · 提醒 · 照片记录" = "Unlimited goals · Export · Reminders · Photos";
+"恢复购买" = "Restore Purchase";
+
+// MARK: - Paywall
+"解锁 BodyLog Pro" = "Unlock BodyLog Pro";
+"用数据和照片，见证你的身体变化" = "Track your body changes with data and photos";
+"形体照片对比" = "Progress Photo Comparison";
+"拍照记录，对比身形变化" = "Capture photos, compare your transformation";
+"CSV 数据导出/导入" = "CSV Export/Import";
+"随时导出导入数据" = "Export and import your data anytime";
+"每日提醒" = "Daily Reminders";
+"自定义时间提醒记录" = "Custom reminder notifications";
+"无限目标" = "Unlimited Goals";
+"设置任意数量的健康目标" = "Set as many health goals as you want";
+"100% 隐私优先 · 数据本地存储 · 无订阅" = "100% Privacy First · Local Storage · No Subscription";
+"一次购买，永久使用 · 支持多设备登录同一 Apple ID" = "One purchase, yours forever · Works across devices with the same Apple ID";
+"无订阅 · 无隐藏费用 · 数据始终在你的设备上" = "No subscription · No hidden fees · Your data stays on your device";
+
+// MARK: - Photo Compare
+"对比" = "Compare";
+"还没有照片" = "No Photos Yet";
+"在记录数据时拍摄形体照片\n之后可以在这里对比变化" = "Take progress photos when logging data\nCompare them here later";
+"对比 (\(%d)/2)" = "Compare (%d/2)";
+"见证你的变化 💪" = "See Your Transformation 💪";
+"之前" = "Before";
+"之后" = "After";
+"📅 相差 %d 天" = "📅 %d days apart";
+"📊 指标变化" = "📊 Metric Changes";
+"分享对比" = "Share Comparison";
+
+// MARK: - Achievements
+"成就" = "Achievements";
+"连续记录3天" = "3-Day Streak";
+"连续记录7天" = "7-Day Streak";
+"连续记录14天" = "14-Day Streak";
+"连续记录30天" = "30-Day Streak";
+"记录10条数据" = "10 Entries Logged";
+"记录50条数据" = "50 Entries Logged";
+"记录100条数据" = "100 Entries Logged";
+"第一张形体照片" = "First Progress Photo";
+"10张照片记录" = "10 Progress Photos";
+"完成一个目标" = "Goal Completed";
+"坚持" = "Consistency";
+"积累" = "Volume";
+"照片" = "Photos";
+"目标" = "Goals";
+
+// MARK: - Share Card
+"分享进度" = "Share Progress";
+"BodyLog 身体记录" = "BodyLog Tracker";
+"🔒 隐私优先 · 数据本地存储" = "🔒 Privacy First · Local Storage";
+"最近记录" = "Latest Entry";
+"分享这张卡片" = "Share This Card";
+"保存到相册" = "Save to Photos";
+
+// MARK: - Metric Names
+"体重" = "Weight";
+"体脂率" = "Body Fat";
+"肌肉量" = "Muscle Mass";
+"BMI" = "BMI";
+"腰围" = "Waist";
+"臀围" = "Hip";
+"胸围" = "Chest";
+"左臂围" = "Left Arm";
+"右臂围" = "Right Arm";
+"左腿围" = "Left Thigh";
+"右腿围" = "Right Thigh";
+"颈围" = "Neck";
+"主要指标" = "Primary Metrics";
+"围度测量" = "Measurements";
+"减少" = "Decrease";
+"增加" = "Increase";
+"维持" = "Maintain";
+
+// MARK: - Notifications
+"记录提醒" = "Logging Reminder";
+"该记录今天的身体数据啦 💪" = "Time to log today's body data 💪";
+"目标达成！" = "Goal Achieved!";
+"恭喜你达成了%@目标 🎉" = "Congratulations on reaching your %@ goal 🎉";
+
+// MARK: - Delete Confirmations
+"删除记录" = "Delete Entry";
+"这条记录将被永久删除，无法恢复。" = "This entry will be permanently deleted and cannot be recovered.";
+
+// MARK: - CSV/Backup
+"导入成功：%d 条记录" = "Imported %d entries successfully";
+"备份成功" = "Backup Successful";
+"恢复成功" = "Restore Successful";
