@@ -51,17 +51,23 @@ struct PaywallView: View {
                     
                     // Load Products Error
                     if let loadErr = purchaseManager.loadProductsError {
-                        VStack(spacing: 8) {
-                            Text(loadErr)
-                                .font(.system(size: 13))
+                        VStack(spacing: 12) {
+                            Label(loadErr, systemImage: "exclamationmark.triangle.fill")
+                                .font(.system(size: 14))
                                 .foregroundColor(.formlogDanger)
                                 .multilineTextAlignment(.center)
+                            
                             Button(action: {
+                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                                 Task { await purchaseManager.retryLoadProducts() }
                             }) {
-                                Text(L10n.string("重试"))
-                                    .font(.system(size: 13, weight: .medium))
-                                    .foregroundColor(.formlogPrimary)
+                                Label(L10n.string("重试加载"), systemImage: "arrow.clockwise")
+                                    .font(.system(size: 15, weight: .semibold))
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 24)
+                                    .padding(.vertical, 10)
+                                    .background(Color.formlogPrimary)
+                                    .cornerRadius(8)
                             }
                         }
                         .padding(.horizontal, 20)
