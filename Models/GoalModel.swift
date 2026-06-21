@@ -51,7 +51,16 @@ struct GoalModel: Identifiable, Codable, Equatable {
     }
 
     var isAchieved: Bool { achievedAt != nil }
-
+    
+    /// 根据指标类型返回容差值
+    private var tolerance: Double {
+        switch metricType {
+        case .weight: return 0.5        // 体重：kg
+        case .bodyFat: return 0.5       // 体脂率：%
+        default: return 0.5             // 围度：cm
+        }
+    }
+    
     /// 计算进度 0...1，基于当前值和初始值
     func progress(currentValue: Double, startValue: Double) -> Double {
         guard startValue != targetValue else { return isAchieved ? 1.0 : 0.0 }
@@ -68,16 +77,12 @@ struct GoalModel: Identifiable, Codable, Equatable {
             return max(0, min(1, done / total))
         case .maintain:
             let diff = abs(currentValue - targetValue)
-            return diff < 1.0 ? 1.0 : 0.0
+            return diff < tolerance ? 1.0 : 0.0
         }
     }
-
+    
     /// 是否已达成目标值
     func isReached(currentValue: Double) -> Bool {
-        switch direction {
-        case .decrease: return currentValue <= targetValue
-        case .increase: return currentValue >= targetValue
-        case .maintain: return abs(currentValue - targetValue) < 0.5
-        }
+        abs(currentValue - targetValue) < tolerance
     }
 }

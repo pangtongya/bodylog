@@ -28,17 +28,27 @@ class BodyEntryStore: ObservableObject {
         return f
     }()
 
-    private static let csvImportFormatter: DateFormatter = {
-        let f = DateFormatter()
-        f.dateFormat = "yyyy-MM-dd HH:mm"
-        return f
-    }()
+    /// CSV 导入日期格式列表（按优先级尝试解析）
+    private static let csvImportFormatters: [DateFormatter] = [
+        { let f = DateFormatter(); f.dateFormat = "yyyy-MM-dd HH:mm"; return f }(),
+        { let f = DateFormatter(); f.dateFormat = "yyyy/MM/dd HH:mm"; return f }(),
+        { let f = DateFormatter(); f.dateFormat = "yyyy-MM-dd"; return f }(),
+        { let f = DateFormatter(); f.dateFormat = "yyyy/MM/dd"; return f }(),
+        { let f = DateFormatter(); f.dateFormat = "MM/dd/yyyy HH:mm"; return f }(),
+        { let f = DateFormatter(); f.dateFormat = "MM/dd/yyyy"; return f }(),
+        { let f = DateFormatter(); f.dateFormat = "dd/MM/yyyy HH:mm"; return f }(),
+        { let f = DateFormatter(); f.dateFormat = "dd/MM/yyyy"; return f }(),
+    ]
 
-    private static let csvShortDateFormatter: DateFormatter = {
-        let f = DateFormatter()
-        f.dateFormat = "yyyy-MM-dd"
-        return f
-    }()
+    /// 尝试解析日期字符串（支持多种格式）
+    private static func parseCSVDate(_ string: String) -> Date? {
+        for formatter in csvImportFormatters {
+            if let date = formatter.date(from: string) {
+                return date
+            }
+        }
+        return nil
+    }
 
     init() {
         load()
@@ -269,18 +279,15 @@ class BodyEntryStore: ObservableObject {
         var importedCount = 0
         var errors: [String] = []
         var parsedEntries: [BodyEntry] = []
-        let dateFormatter = Self.csvImportFormatter
-        let shortDateFormatter = Self.csvShortDateFormatter
         
         for line in lines.dropFirst() {
             let cols = parseCSVLine(line)
             
             guard cols.count > max(dateColIndex, 1) else { continue }
             
-            // Parse date
+            // Parse date (支持多种格式)
             let dateString = cols[dateColIndex].trimmingCharacters(in: .whitespaces)
-            guard let date = dateFormatter.date(from: dateString) ??
-                          shortDateFormatter.date(from: dateString) else {
+            guard let date = Self.parseCSVDate(dateString) else {
                 errors.append(String(format: L10n.string("无法解析日期: %@"), dateString))
                 continue
             }
