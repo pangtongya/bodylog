@@ -114,7 +114,7 @@ struct TrendView: View {
                         .foregroundColor(selectedMetric == metric ? .white : .primary)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 8)
-                        .background(selectedMetric == metric ? Color.bodylogPrimary : Color.systemGray6)
+                        .background(selectedMetric == metric ? Color.formlogPrimary : Color.systemGray6)
                         .cornerRadius(20)
                     }
                     .contentShape(Rectangle())
@@ -143,7 +143,7 @@ struct TrendView: View {
             // Title
             HStack {
                 Image(systemName: "chart.bar.fill")
-                    .foregroundColor(.bodylogPrimary)
+                    .foregroundColor(.formlogPrimary)
                 Text("数据概览")
                     .font(.system(size: 16, weight: .bold))
                 Spacer()
@@ -153,7 +153,7 @@ struct TrendView: View {
             HStack(spacing: 0) {
                 statCell(
                     icon: "circle.fill",
-                    iconColor: .bodylogPrimary,
+                    iconColor: .formlogPrimary,
                     title: "当前值",
                     value: latest.map { String(format: "%.1f", $0) } ?? "--",
                     unit: unitStr,
@@ -164,7 +164,7 @@ struct TrendView: View {
                 
                 statCell(
                     icon: "arrow.up.arrow.down",
-                    iconColor: isGoodChange(change ?? 0, for: selectedMetric) ? .bodylogDecrease : .bodylogDanger,
+                    iconColor: isGoodChange(change ?? 0, for: selectedMetric) ? .formlogDecrease : .formlogDanger,
                     title: "总变化",
                     value: change.map { ($0 >= 0 ? "+" : "") + String(format: "%.1f", $0) } ?? "--",
                     unit: unitStr,
@@ -175,7 +175,7 @@ struct TrendView: View {
                 
                 statCell(
                     icon: "percent",
-                    iconColor: isGoodChange(changePercent ?? 0, for: selectedMetric) ? .bodylogDecrease : .bodylogDanger,
+                    iconColor: isGoodChange(changePercent ?? 0, for: selectedMetric) ? .formlogDecrease : .formlogDanger,
                     title: "变化率",
                     value: changePercent.map { ($0 >= 0 ? "+" : "") + String(format: "%.1f", $0) } ?? "--",
                     unit: "%",
@@ -214,7 +214,7 @@ struct TrendView: View {
                 if let trend = trend {
                     Image(systemName: trend == "up" ? "arrow.up" : "arrow.down")
                         .font(.system(size: 10, weight: .bold))
-                        .foregroundColor(trend == "up" ? .bodylogDanger : .bodylogDecrease)
+                        .foregroundColor(trend == "up" ? .formlogDanger : .formlogDecrease)
                 }
                 Text(value)
                     .font(.system(size: 16, weight: .bold, design: .rounded).monospacedDigit())
@@ -286,9 +286,9 @@ struct TrendView: View {
             let unit = (selectedMetric == .weight || selectedMetric == .muscleMass) ? appState.weightUnit.rawValue : selectedMetric.unit
 
             let (text, subtitle, color): (String, String?, Color) = if change30d > 0 {
-                (String(format: L10n.string("30天增长了%@%.1f%@"), sign, absChange, unit), L10n.string("继续保持，进步明显 💪"), .bodylogDanger)
+                (String(format: L10n.string("30天增长了%@%.1f%@"), sign, absChange, unit), L10n.string("继续保持，进步明显 💪"), .formlogDanger)
             } else if change30d < 0 {
-                (String(format: L10n.string("30天减少了%@%.1f%@"), sign, absChange, unit), L10n.string("做得好，继续坚持 🎯"), .bodylogDecrease)
+                (String(format: L10n.string("30天减少了%@%.1f%@"), sign, absChange, unit), L10n.string("做得好，继续坚持 🎯"), .formlogDecrease)
             } else {
                 (L10n.string("30天无变化"), L10n.string("保持现状也很重要 😊"), .secondary)
             }
@@ -302,9 +302,9 @@ struct TrendView: View {
             let (text, subtitle, color): (String, String?, Color) = if streak >= 7 {
                 (String(format: L10n.string("已连续记录%d天"), streak), L10n.string("习惯正在养成，太棒了 🔥"), .orange)
             } else if streak >= 3 {
-                (String(format: L10n.string("已连续记录%d天"), streak), L10n.string("继续保持这个节奏 👍"), .bodylogPrimary)
+                (String(format: L10n.string("已连续记录%d天"), streak), L10n.string("继续保持这个节奏 👍"), .formlogPrimary)
             } else {
-                (String(format: L10n.string("已连续记录%d天"), streak), L10n.string("好的开始 💪"), .bodylogPrimary)
+                (String(format: L10n.string("已连续记录%d天"), streak), L10n.string("好的开始 💪"), .formlogPrimary)
             }
             result.append((id: UUID(), icon: "flame.fill", text: text, subtitle: subtitle, color: color))
         } else if let lastEntry = entryStore.latestEntry {
@@ -319,11 +319,11 @@ struct TrendView: View {
             let progress = goal.progress(currentValue: current, startValue: entryStore.startValue(for: goal.metricType) ?? current)
 
             let (text, subtitle, color): (String, String?, Color) = if progress >= 1.0 {
-                (L10n.string("目标已达成 🎉"), L10n.string("恭喜你，继续保持良好的状态"), .bodylogDecrease)
+                (L10n.string("目标已达成 🎉"), L10n.string("恭喜你，继续保持良好的状态"), .formlogDecrease)
             } else if progress >= 0.8 {
-                (String(format: L10n.string("距离目标还差%.1f%@"), remaining, unit), L10n.string("马上就要达成了，加油！💪"), .bodylogPrimary)
+                (String(format: L10n.string("距离目标还差%.1f%@"), remaining, unit), L10n.string("马上就要达成了，加油！💪"), .formlogPrimary)
             } else {
-                (String(format: L10n.string("距离目标还差%.1f%@"), remaining, unit), L10n.string("一步一步来，你可以的 ✨"), .bodylogPrimary)
+                (String(format: L10n.string("距离目标还差%.1f%@"), remaining, unit), L10n.string("一步一步来，你可以的 ✨"), .formlogPrimary)
             }
 
             result.append((id: UUID(), icon: "target", text: text, subtitle: subtitle, color: color))
@@ -340,11 +340,11 @@ struct TrendView: View {
                 VStack(spacing: 16) {
                     ZStack {
                         Circle()
-                            .fill(Color.bodylogPrimary.opacity(0.1))
+                            .fill(Color.formlogPrimary.opacity(0.1))
                             .frame(width: 80, height: 80)
                         Image(systemName: "chart.line.uptrend.xyaxis")
                             .font(.system(size: 36))
-                            .foregroundColor(.bodylogPrimary)
+                            .foregroundColor(.formlogPrimary)
                     }
                     VStack(spacing: 6) {
                         Text("还没有\(selectedMetric.displayName)的记录")
@@ -369,7 +369,7 @@ struct TrendView: View {
                         )
                         .foregroundStyle(
                             LinearGradient(
-                                colors: [.bodylogPrimary.opacity(0.35), .bodylogPrimary.opacity(0.02)],
+                                colors: [.formlogPrimary.opacity(0.35), .formlogPrimary.opacity(0.02)],
                                 startPoint: .top,
                                 endPoint: .bottom
                             )
@@ -379,7 +379,7 @@ struct TrendView: View {
                             x: .value("日期", point.date),
                             y: .value(selectedMetric.displayName, point.value)
                         )
-                        .foregroundStyle(Color.bodylogPrimary)
+                        .foregroundStyle(Color.formlogPrimary)
                         .lineStyle(StrokeStyle(lineWidth: 2.5))
                         .interpolationMethod(.catmullRom)
 
@@ -388,7 +388,7 @@ struct TrendView: View {
                             x: .value("日期", point.date),
                             y: .value(selectedMetric.displayName, point.value)
                         )
-                        .foregroundStyle(Color.bodylogPrimary)
+                        .foregroundStyle(Color.formlogPrimary)
                         .symbolSize(displayData.count > 30 ? 0 : 36)
                     }
                 }
@@ -451,7 +451,7 @@ struct TrendView: View {
                         .foregroundColor(timeRange == range ? .white : .primary)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 8)
-                        .background(timeRange == range ? Color.bodylogPrimary : Color.clear)
+                        .background(timeRange == range ? Color.formlogPrimary : Color.clear)
                         .cornerRadius(8)
                 }
                 .contentShape(Rectangle())

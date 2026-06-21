@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		08371FB880EE3475248823E5 /* BodyLog.xcodeproj in Resources */ = {isa = PBXBuildFile; fileRef = 8191A542F6E4F844C7954CB9 /* BodyLog.xcodeproj */; };
 		109606EA217022D236FAF298 /* PhotoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB18649030D56EA4060E38E /* PhotoManager.swift */; };
 		15F1571F482A287AC1006930 /* FormLogApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CAFD16DF1FDAB50BB3470B /* FormLogApp.swift */; };
 		15FC5E6586BB8BEAF391F48E /* PhotoCompareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62566E2677DCF479B0A39430 /* PhotoCompareView.swift */; };
@@ -72,6 +73,7 @@
 		7CB184B4BE29045A41AAAB6B /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		7CD129CF83C10E3D34D05319 /* GoalStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalStore.swift; sourceTree = "<group>"; };
 		7CD89E91674748EBED1C82C2 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		8191A542F6E4F844C7954CB9 /* BodyLog.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = BodyLog.xcodeproj; sourceTree = "<group>"; };
 		82C683AD4D92FDE59AFDF512 /* TrendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrendView.swift; sourceTree = "<group>"; };
 		8407F8DFDED7BA5115DC7C6F /* FormLog.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = FormLog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8569AF5A84A1D19327EAA6E6 /* GoalsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsView.swift; sourceTree = "<group>"; };
@@ -187,6 +189,7 @@
 			children = (
 				FD228588F9BF38D4FFC42E42 /* .gitignore */,
 				6E1ECCFF5859D82D9486EB0A /* Assets.xcassets */,
+				8191A542F6E4F844C7954CB9 /* BodyLog.xcodeproj */,
 				B6CAFD16DF1FDAB50BB3470B /* FormLogApp.swift */,
 				CE9A63BF502AE201401437AA /* PrivacyInfo.xcprivacy */,
 				7DF70FE292CA9BD118AF1A30 /* Managers */,
@@ -293,6 +296,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				283960134E0F06A38176CFD5 /* Assets.xcassets in Resources */,
+				08371FB880EE3475248823E5 /* BodyLog.xcodeproj in Resources */,
 				D398B7E46A0756205E80AC28 /* InfoPlist.strings in Resources */,
 				A6B61EC5895A2DAC05017742 /* Localizable.strings in Resources */,
 				EF591613137CC9387FCB48E8 /* PrivacyInfo.xcprivacy in Resources */,

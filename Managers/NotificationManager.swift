@@ -50,7 +50,7 @@ final class NotificationManager: NSObject, ObservableObject, @unchecked Sendable
         content.sound = .default
 
         let request = UNNotificationRequest(
-            identifier: "bodylog.daily_reminder",
+            identifier: "formlog.daily_reminder",
             content: content,
             trigger: trigger
         )
@@ -63,7 +63,7 @@ final class NotificationManager: NSObject, ObservableObject, @unchecked Sendable
     }
 
     func cancelDailyReminder() {
-        notificationCenter.removePendingNotificationRequests(withIdentifiers: ["bodylog.daily_reminder"])
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: ["formlog.daily_reminder"])
     }
 
     // MARK: - 目标达成通知
@@ -76,7 +76,7 @@ final class NotificationManager: NSObject, ObservableObject, @unchecked Sendable
 
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
         let request = UNNotificationRequest(
-            identifier: "bodylog.goal_\(UUID().uuidString)",
+            identifier: "formlog.goal_\(UUID().uuidString)",
             content: content,
             trigger: trigger
         )

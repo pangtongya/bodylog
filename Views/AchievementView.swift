@@ -31,7 +31,7 @@ struct AchievementView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("完成") { dismiss() }
-                        .foregroundColor(.bodylogPrimary)
+                        .foregroundColor(.formlogPrimary)
                 }
             }
         }
@@ -49,7 +49,7 @@ struct AchievementView: View {
 
                 Circle()
                     .trim(from: 0, to: progressFraction)
-                    .stroke(Color.bodylogPrimary, style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                    .stroke(Color.formlogPrimary, style: StrokeStyle(lineWidth: 8, lineCap: .round))
                     .frame(width: 100, height: 100)
                     .rotationEffect(.degrees(-90))
                     .animation(.easeOut(duration: 0.5), value: progressFraction)
@@ -57,7 +57,7 @@ struct AchievementView: View {
                 VStack(spacing: 2) {
                     Text("\(appState.achievements.count)")
                         .font(.system(size: 28, weight: .bold, design: .rounded))
-                        .foregroundColor(.bodylogPrimary)
+                        .foregroundColor(.formlogPrimary)
                     Text("/ \(AchievementType.allCases.count)")
                         .font(.system(size: 13))
                         .foregroundColor(.secondary)
@@ -104,12 +104,12 @@ struct AchievementView: View {
             // Icon
             ZStack {
                 Circle()
-                    .fill(isUnlocked ? Color.bodylogPrimary.opacity(0.1) : Color.systemGray6)
+                    .fill(isUnlocked ? Color.formlogPrimary.opacity(0.1) : Color.systemGray6)
                     .frame(width: 48, height: 48)
 
                 Image(systemName: type.icon)
                     .font(.system(size: 22))
-                    .foregroundColor(isUnlocked ? .bodylogPrimary : .systemGray3)
+                    .foregroundColor(isUnlocked ? .formlogPrimary : .systemGray3)
             }
 
             // Name
@@ -126,7 +126,7 @@ struct AchievementView: View {
                     Text("已解锁")
                         .font(.system(size: 11))
                 }
-                .foregroundColor(.bodylogPrimary)
+                .foregroundColor(.formlogPrimary)
             } else if let prog = progress {
                 // Progress bar
                 GeometryReader { geo in
@@ -135,7 +135,7 @@ struct AchievementView: View {
                             .fill(Color.systemGray5)
                             .frame(height: 4)
                         RoundedRectangle(cornerRadius: 2)
-                            .fill(Color.bodylogPrimary.opacity(0.6))
+                            .fill(Color.formlogPrimary.opacity(0.6))
                             .frame(width: geo.size.width * min(CGFloat(prog.current) / max(CGFloat(prog.target), 1), 1), height: 4)
                     }
                 }
@@ -172,12 +172,12 @@ struct AchievementNotificationBanner: View {
                     // Icon with animation
                     ZStack {
                         Circle()
-                            .fill(Color.bodylogPrimary.opacity(0.1))
+                            .fill(Color.formlogPrimary.opacity(0.1))
                             .frame(width: 44, height: 44)
 
                         Image(systemName: achievement.type.icon)
                             .font(.system(size: 20))
-                            .foregroundColor(.bodylogPrimary)
+                            .foregroundColor(.formlogPrimary)
                     }
 
                     VStack(alignment: .leading, spacing: 2) {

@@ -5,12 +5,12 @@ import SwiftUI
 
 extension Color {
     // 主色：绿色系（健康/活力）
-    static let bodylogPrimary = Color(red: 0.196, green: 0.651, blue: 0.533)
-    static let bodylogAccent = Color(red: 0.259, green: 0.784, blue: 0.608)
+    static let formlogPrimary = Color(red: 0.196, green: 0.651, blue: 0.533)
+    static let formlogAccent = Color(red: 0.259, green: 0.784, blue: 0.608)
 
     // 语义色
-    static let bodylogDecrease = Color(red: 0.220, green: 0.710, blue: 0.494)   // 减少方向（好）
-    static let bodylogDanger = Color(red: 0.941, green: 0.322, blue: 0.310)     // 危险/增加方向（坏）
+    static let formlogDecrease = Color(red: 0.220, green: 0.710, blue: 0.494)   // 减少方向（好）
+    static let formlogDanger = Color(red: 0.941, green: 0.322, blue: 0.310)     // 危险/增加方向（坏）
 
     // 图表渐变
     static let chartStart = Color(red: 0.196, green: 0.651, blue: 0.533)
@@ -19,8 +19,8 @@ extension Color {
 
 // MARK: - 渐变
 extension LinearGradient {
-    static let bodylogGradient = LinearGradient(
-        colors: [.bodylogPrimary, .bodylogAccent],
+    static let formlogGradient = LinearGradient(
+        colors: [.formlogPrimary, .formlogAccent],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )

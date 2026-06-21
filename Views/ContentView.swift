@@ -67,7 +67,7 @@ struct ContentView: View {
                     }
                     .tag(Tab.settings)
         }
-        .tint(.bodylogPrimary)
+        .tint(.formlogPrimary)
         .sheet(isPresented: $showLogSheet) {
             LogEntryView(isPresented: $showLogSheet)
                 .environmentObject(appState)
