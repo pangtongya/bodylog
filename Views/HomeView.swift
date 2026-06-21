@@ -12,7 +12,6 @@ struct HomeView: View {
 
     @State private var showPhotoCompare: Bool = false
     @State private var showPaywall: Bool = false
-    @State private var photoCount: Int = 0
 
     var body: some View {
         NavigationStack {
@@ -78,10 +77,6 @@ struct HomeView: View {
                     .environmentObject(appState)
                     .environmentObject(purchaseManager)
             }
-        }
-        .onAppear { photoCount = entryStore.entries.reduce(0) { $0 + ($1.hasPhoto ? 1 : 0) } }
-        .onChange(of: entryStore.entries) { _ in
-            photoCount = entryStore.entries.reduce(0) { $0 + ($1.hasPhoto ? 1 : 0) }
         }
     }
 
@@ -309,8 +304,8 @@ struct HomeView: View {
     // MARK: - Photo Compare Entry
 
     private var photoCompareEntry: some View {
-        let titleText = photoCount > 0
-            ? String(format: L10n.string("已记录 %d 张形体照片"), photoCount)
+        let titleText = entryStore.photoCount > 0
+            ? String(format: L10n.string("已记录 %d 张形体照片"), entryStore.photoCount)
             : L10n.string("用照片见证你的形体变化")
 
         return Button(action: {
@@ -410,7 +405,7 @@ struct HomeView: View {
                             .padding(.bottom, 2)
 
                         ForEach(group.value) { entry in
-                            NavigationLink(destination: EntryDetailView(entry: entry)
+                            NavigationLink(destination: EntryDetailView(entryID: entry.id)
                                 .environmentObject(appState)
                                 .environmentObject(entryStore)
                                 .environmentObject(goalStore)

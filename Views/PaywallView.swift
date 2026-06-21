@@ -122,15 +122,17 @@ struct PaywallView: View {
                     }
                     .padding(.horizontal, 20)
 
-                    VStack(spacing: 6) {
-                        Text(L10n.string("一次购买，永久使用 · 支持多设备登录同一 Apple ID"))
-                            .font(.system(size: 11))
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                        Text(L10n.string("无订阅 · 无隐藏费用 · 数据始终在你的设备上"))
-                            .font(.system(size: 11))
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
+                    // Legal links
+                    VStack(spacing: 4) {
+                        if let termsURL = URL(string: "https://pangtongya.github.io/formlog-privacy/terms.html"),
+                           let privacyURL = URL(string: "https://pangtongya.github.io/formlog-privacy/privacy-policy.html") {
+                            Link(L10n.string("服务条款"), destination: termsURL)
+                                .font(.system(size: 12))
+                                .foregroundColor(.secondary)
+                            Link(L10n.string("隐私政策"), destination: privacyURL)
+                                .font(.system(size: 12))
+                                .foregroundColor(.secondary)
+                        }
                     }
                     .padding(.horizontal, 40)
                     .padding(.bottom, 20)

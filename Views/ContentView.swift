@@ -74,12 +74,17 @@ struct ContentView: View {
                 .environmentObject(entryStore)
                 .environmentObject(goalStore)
         }
-        .onReceive(NotificationCenter.default.publisher(for: .init("SwitchToHomeTab"))) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: .switchToHomeTab)) { _ in
             withAnimation(.easeInOut(duration: 0.2)) {
                 selectedTab = .home
             }
         }
     }
+}
+
+// MARK: - Notification Names
+extension Notification.Name {
+    static let switchToHomeTab = Notification.Name("SwitchToHomeTab")
 }
 
 #Preview {

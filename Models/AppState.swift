@@ -75,9 +75,13 @@ class AppState: ObservableObject {
         case system, light, dark
     }
 
+    /// Schema version for migration support
+    private static let currentSchemaVersion = 1
+
     // MARK: - Codable Storage（独立结构体，避免 @MainActor 跨越隔离边界）
 
     private struct CodableData: Codable {
+        var schemaVersion: Int
         var hasCompletedOnboarding: Bool
         var userName: String
         var userHeight: Double
@@ -94,10 +98,10 @@ class AppState: ObservableObject {
 
     // MARK: - Persistence
     private static let storeURL: URL = {
-        guard let docsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            fatalError("[AppState] Cannot access Documents directory")
-        }
-        return docsDir.appendingPathComponent("app_state.json")
+        let docsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+        let fallbackDir = FileManager.default.temporaryDirectory
+        let baseURL = docsDir ?? fallbackDir
+        return baseURL.appendingPathComponent("app_state.json")
     }()
 
     func save() {
@@ -107,6 +111,7 @@ class AppState: ObservableObject {
 
     private func performSave() {
         let data = CodableData(
+            schemaVersion: Self.currentSchemaVersion,
             hasCompletedOnboarding: hasCompletedOnboarding,
             userName: userName,
             userHeight: userHeight,
@@ -122,7 +127,7 @@ class AppState: ObservableObject {
         )
         do {
             let encoded = try JSONEncoder().encode(data)
-            try encoded.write(to: Self.storeURL)
+            try encoded.write(to: Self.storeURL, options: [.atomic, .completeFileProtection])
         } catch {
             print("[AppState] Save error: \(error)")
         }
@@ -132,22 +137,39 @@ class AppState: ObservableObject {
         do {
             let data = try Data(contentsOf: Self.storeURL)
             let decoded = try JSONDecoder().decode(CodableData.self, from: data)
-            hasCompletedOnboarding = decoded.hasCompletedOnboarding
-            userName = decoded.userName
-            userHeight = decoded.userHeight
-            userGender = decoded.userGender
-            weightUnit = decoded.weightUnit
-            theme = decoded.theme
-            reminderEnabled = decoded.reminderEnabled
-            reminderHour = decoded.reminderHour
-            reminderMinute = decoded.reminderMinute
-            isPro = decoded.isPro
-            enabledMetrics = decoded.enabledMetrics
-            achievements = decoded.achievements
+            // Handle schema migration
+            if decoded.schemaVersion < Self.currentSchemaVersion {
+                migrateFromSchema(decoded.schemaVersion, to: Self.currentSchemaVersion, decoded: decoded)
+            } else {
+                applyDecodedData(decoded)
+            }
         } catch {
             // 首次启动，使用默认值
             print("[AppState] Load warning: \(error). Starting with default values.")
         }
+    }
+
+    private func applyDecodedData(_ decoded: CodableData) {
+        hasCompletedOnboarding = decoded.hasCompletedOnboarding
+        userName = decoded.userName
+        userHeight = decoded.userHeight
+        userGender = decoded.userGender
+        weightUnit = decoded.weightUnit
+        theme = decoded.theme
+        reminderEnabled = decoded.reminderEnabled
+        reminderHour = decoded.reminderHour
+        reminderMinute = decoded.reminderMinute
+        isPro = decoded.isPro
+        enabledMetrics = decoded.enabledMetrics
+        achievements = decoded.achievements
+    }
+
+    private func migrateFromSchema(_ fromVersion: Int, to toVersion: Int, decoded: CodableData) {
+        // Apply migrations incrementally
+        var current = decoded
+        // Future: add migration steps here when schema version increases
+        // e.g., if fromVersion < 2 { migrateToV2(&current) }
+        applyDecodedData(current)
     }
 
     // MARK: - Backup / Restore（用于 SettingsView 全量备份恢复）
@@ -155,6 +177,7 @@ class AppState: ObservableObject {
     /// 将当前状态编码为 Data（用于备份）
     func encodeForBackup() -> Data {
         let data = CodableData(
+            schemaVersion: Self.currentSchemaVersion,
             hasCompletedOnboarding: hasCompletedOnboarding,
             userName: userName,
             userHeight: userHeight,
@@ -172,8 +195,11 @@ class AppState: ObservableObject {
     }
 
     /// 从备份数据恢复状态
-    func restoreFromBackup(_ data: Data) {
-        guard let decoded = try? JSONDecoder().decode(CodableData.self, from: data) else { return }
+    /// - Returns: true if restore succeeded, false if backup data was invalid
+    func restoreFromBackup(_ data: Data) -> Bool {
+        guard let decoded = try? JSONDecoder().decode(CodableData.self, from: data) else {
+            return false
+        }
         hasCompletedOnboarding = decoded.hasCompletedOnboarding
         userName = decoded.userName
         userHeight = decoded.userHeight
@@ -186,6 +212,8 @@ class AppState: ObservableObject {
         isPro = decoded.isPro
         enabledMetrics = decoded.enabledMetrics
         achievements = decoded.achievements
+        save()
+        return true
     }
 
     // MARK: - Helpers

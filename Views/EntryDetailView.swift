@@ -10,81 +10,81 @@ struct EntryDetailView: View {
     @EnvironmentObject var purchaseManager: PurchaseManager
     @Environment(\.dismiss) private var dismiss
 
-    let entry: BodyEntry
+    let entryID: UUID
 
     @State private var showEditSheet: Bool = false
     @State private var showDeleteAlert: Bool = false
     @State private var showCompareSheet: Bool = false
     @State private var showPaywall: Bool = false
 
+    private var entry: BodyEntry? {
+        entryStore.entries.first { $0.id == entryID }
+    }
+
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
                 // 指标网格
-                metricsGrid
-                    .padding(.horizontal, 20)
+                if let entry = entry {
+                    metricsGrid(entry: entry)
+                        .padding(.horizontal, 20)
 
-                // 照片
-                if let data = entry.loadedPhotoData, let image = UIImage(data: data) {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFit()
-                        .cornerRadius(16)
-                        .padding(.horizontal, 20)
-                    
-                    // 对比按钮
-                    if appState.isPro {
-                        Button(action: {
-                            showCompareSheet = true
-                        }) {
-                            HStack {
-                                Image(systemName: "photo.stack.fill")
-                                Text(L10n.string("对比照片"))
-                                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    // 照片
+                    if let data = entry.loadedPhotoData, let image = UIImage(data: data) {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFit()
+                            .cornerRadius(16)
+                            .padding(.horizontal, 20)
+
+                        // 对比按钮
+                        if appState.isPro {
+                            Button(action: {
+                                showCompareSheet = true
+                            }) {
+                                HStack {
+                                    Image(systemName: "photo.stack.fill")
+                                    Text(L10n.string("对比照片"))
+                                        .font(.system(size: 15, weight: .semibold, design: .rounded))
+                                }
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(Color.formlogPrimary)
+                                .cornerRadius(12)
                             }
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
-                            .background(Color.formlogPrimary)
-                            .cornerRadius(12)
-                        }
-                        .padding(.horizontal, 20)
-                        .sheet(isPresented: $showCompareSheet) {
-                            PhotoCompareView()
-                                .environmentObject(appState)
-                                .environmentObject(entryStore)
-                                .environmentObject(purchaseManager)
-                        }
-                    } else {
-                        // Non-Pro: show locked hint
-                        Button(action: { showPaywall = true }) {
-                            HStack {
-                                Image(systemName: "photo.stack.fill")
-                                Text(L10n.string("对比照片"))
-                                    .font(.system(size: 15, weight: .semibold, design: .rounded))
-                                Image(systemName: "lock.fill")
-                                    .font(.system(size: 12))
+                            .padding(.horizontal, 20)
+                        } else {
+                            // Non-Pro: show locked hint
+                            Button(action: { showPaywall = true }) {
+                                HStack {
+                                    Image(systemName: "photo.stack.fill")
+                                    Text(L10n.string("对比照片"))
+                                        .font(.system(size: 15, weight: .semibold, design: .rounded))
+                                    Image(systemName: "lock.fill")
+                                        .font(.system(size: 12))
+                                }
+                                .foregroundColor(.formlogPrimary)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(Color.formlogPrimary.opacity(0.1))
+                                .cornerRadius(12)
                             }
-                            .foregroundColor(.formlogPrimary)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
-                            .background(Color.formlogPrimary.opacity(0.1))
-                            .cornerRadius(12)
+                            .padding(.horizontal, 20)
                         }
-                        .padding(.horizontal, 20)
                     }
-                }
 
-                // 备注
-                if let note = entry.note, !note.isEmpty {
-                    noteCard(note)
-                        .padding(.horizontal, 20)
+                    // 备注
+                    if let note = entry.note, !note.isEmpty {
+                        noteCard(note)
+                            .padding(.horizontal, 20)
+                    }
                 }
             }
             .padding(.vertical, 16)
         }
         .background(Color.systemGroupedBackground)
-        .navigationTitle(dateTitle)
+        .navigationTitle(entry.map { Self.dateFormatter.string(from: $0.recordedAt) } ?? "")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -99,32 +99,43 @@ struct EntryDetailView: View {
                     Image(systemName: "ellipsis.circle")
                         .foregroundColor(.formlogPrimary)
                 }
+                .accessibilityLabel(L10n.string("更多操作"))
             }
         }
         .alert(L10n.string("删除记录"), isPresented: $showDeleteAlert) {
             Button(L10n.string("删除"), role: .destructive) {
-                entryStore.deleteEntry(id: entry.id)
-                dismiss()
+                if let id = entry?.id {
+                    entryStore.deleteEntry(id: id)
+                    dismiss()
+                }
             }
             Button(L10n.string("取消"), role: .cancel) {}
         } message: {
             Text(L10n.string("这条记录将被永久删除，无法恢复。"))
         }
         .sheet(isPresented: $showEditSheet) {
-            LogEntryView(isPresented: $showEditSheet, editingEntry: entry)
-                .environmentObject(appState)
-                .environmentObject(entryStore)
-                .environmentObject(goalStore)
+            if let entry = entry {
+                LogEntryView(isPresented: $showEditSheet, editingEntry: entry)
+                    .environmentObject(appState)
+                    .environmentObject(entryStore)
+                    .environmentObject(goalStore)
+            }
         }
         .sheet(isPresented: $showPaywall) {
             PaywallView(isPresented: $showPaywall)
                 .environmentObject(appState)
                 .environmentObject(PurchaseManager.shared)
         }
+        .sheet(isPresented: $showCompareSheet) {
+            PhotoCompareView()
+                .environmentObject(appState)
+                .environmentObject(entryStore)
+                .environmentObject(purchaseManager)
+        }
     }
 
-    private var metricsGrid: some View {
-        let metrics = entry.metrics.keys.compactMap { BodyMetricType(rawValue: $0) }.sorted { $0.rawValue < $1.rawValue }
+    private func metricsGrid(entry: BodyEntry) -> some View {
+        let metrics = BodyMetricType.allCases.filter { entry.metrics[$0.rawValue] != nil }
         let columns = [GridItem(.flexible()), GridItem(.flexible())]
         return LazyVGrid(columns: columns, spacing: 12) {
             ForEach(metrics, id: \.self) { metric in
@@ -176,10 +187,6 @@ struct EntryDetailView: View {
         f.setLocalizedDateFormatFromTemplate("MdHHmm")
         return f
     }()
-
-    private var dateTitle: String {
-        Self.dateFormatter.string(from: entry.recordedAt)
-    }
 
     private func formattedValue(_ value: Double, type: BodyMetricType) -> (String, String) {
         if type == .weight || type == .muscleMass {

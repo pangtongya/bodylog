@@ -15,15 +15,6 @@
     </array>
     <key>NSPrivacyAccessedAPITypes</key>
     <array>
-        <!-- UserDefaults: 用于存储用户设置和应用状态 -->
-        <dict>
-            <key>NSPrivacyAccessedAPIType</key>
-            <string>NSPrivacyAccessedAPICategoryUserDefaults</string>
-            <key>NSPrivacyAccessedAPITypeReasons</key>
-            <array>
-                <string>CA92.1</string>
-            </array>
-        </dict>
         <!-- File Timestamp: 用于读取/写入数据文件的时间戳 -->
         <dict>
             <key>NSPrivacyAccessedAPIType</key>

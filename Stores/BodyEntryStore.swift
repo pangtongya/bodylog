@@ -9,10 +9,10 @@ class BodyEntryStore: ObservableObject {
     @Published var entries: [BodyEntry] = []
 
     private static let storeURL: URL = {
-        guard let docsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            fatalError("[BodyEntryStore] Cannot access Documents directory")
-        }
-        return docsDir.appendingPathComponent("body_entries.json")
+        let docsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+        let fallbackDir = FileManager.default.temporaryDirectory
+        let baseURL = docsDir ?? fallbackDir
+        return baseURL.appendingPathComponent("body_entries.json")
     }()
 
     // MARK: - Shared DateFormatters (cached)
@@ -25,6 +25,7 @@ class BodyEntryStore: ObservableObject {
     private static let csvExportFormatter: DateFormatter = {
         let f = DateFormatter()
         f.dateFormat = "yyyy-MM-dd HH:mm"
+        f.locale = Locale(identifier: "en_US_POSIX")
         return f
     }()
 
@@ -190,14 +191,20 @@ class BodyEntryStore: ObservableObject {
 
     /// 连续记录天数（streak）— 缓存优化
     private var _cachedStreak: Int?
-    private var _cachedStreakEntriesCount: Int = -1
+    private var _cachedStreakDatesHash: Int = 0
+
+    private func computeStreakDatesHash() -> Int {
+        let dates = Set(entries.map { Calendar.current.startOfDay(for: $0.recordedAt) })
+        return dates.hashValue
+    }
 
     var currentStreak: Int {
-        // 如果 entries 数量没变，直接返回缓存值
-        if _cachedStreakEntriesCount == entries.count, let cached = _cachedStreak {
+        // If entries' date set hasn't changed, return cached value
+        let currentHash = computeStreakDatesHash()
+        if _cachedStreakDatesHash == currentHash, let cached = _cachedStreak {
             return cached
         }
-        // 重新计算
+        // Recalculate
         var streak = 0
         var checkDate = Calendar.current.startOfDay(for: Date())
         let recordedDays = Set(entries.map { Calendar.current.startOfDay(for: $0.recordedAt) })
@@ -207,7 +214,7 @@ class BodyEntryStore: ObservableObject {
             checkDate = Calendar.current.date(byAdding: .day, value: -1, to: checkDate) ?? checkDate
         }
         _cachedStreak = streak
-        _cachedStreakEntriesCount = entries.count
+        _cachedStreakDatesHash = currentHash
         return streak
     }
 
@@ -424,7 +431,7 @@ class BodyEntryStore: ObservableObject {
     private func performSave() {
         do {
             let data = try JSONEncoder().encode(entries)
-            try data.write(to: Self.storeURL)
+            try data.write(to: Self.storeURL, options: [.atomic, .completeFileProtection])
         } catch {
             print("[BodyEntryStore] Save error: \(error)")
         }

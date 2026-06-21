@@ -2,6 +2,7 @@
 // 数据分享卡片 - 生成可分享的图片
 
 import SwiftUI
+import Photos
 
 struct ShareCardView: View {
     @EnvironmentObject var entryStore: BodyEntryStore
@@ -211,27 +212,22 @@ struct ShareCardView: View {
 
     private func saveToPhotos() {
         guard let image = renderAsImage() else { return }
-        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+        PHPhotoLibrary.requestAuthorization(for: .addOnly) { status in
+            if status == .authorized || status == .limited {
+                UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+            } else {
+                print("[ShareCardView] Photo library access denied")
+            }
+        }
     }
 
     private func renderAsImage() -> UIImage? {
-        let controller = UIHostingController(rootView:
-            cardContent
-                .frame(width: 350)
-                .environment(\.colorScheme, .light)
+        let renderer = ImageRenderer(content: cardContent
+            .frame(width: 350)
+            .environment(\.colorScheme, .light)
         )
-        let view = controller.view
-
-        view?.backgroundColor = .white
-        // 先设置宽度，让 SwiftUI 自适应计算高度
-        view?.frame = CGRect(x: 0, y: 0, width: 350, height: 0)
-        let targetSize = controller.sizeThatFits(in: CGSize(width: 350, height: UIView.layoutFittingCompressedSize.height))
-        view?.bounds = CGRect(origin: .zero, size: targetSize)
-        view?.layoutIfNeeded()
-
-        guard let view = view else { return nil }
-        let renderer = UIGraphicsImageRenderer(size: view.bounds.size)
-        return renderer.image { _ in view.drawHierarchy(in: view.bounds, afterScreenUpdates: true) }
+        renderer.scale = UIScreen.main.scale
+        return renderer.uiImage
     }
 
     private static let dateFormatter: DateFormatter = {

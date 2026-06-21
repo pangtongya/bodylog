@@ -182,7 +182,7 @@ struct TrendView: View {
                 
                 statCell(
                     icon: "arrow.up.arrow.down",
-                    iconColor: isGoodChange(change ?? 0, for: selectedMetric) ? .formlogDecrease : .formlogDanger,
+                    iconColor: change != nil ? (isGoodChange(change ?? 0, for: selectedMetric) ? .formlogDecrease : .formlogDanger) : .secondary,
                     titleKey: L10n.string("总变化"),
                     value: change.map { ($0 >= 0 ? "+" : "") + String(format: "%.1f", $0) } ?? "--",
                     unit: unitStr,
@@ -193,7 +193,7 @@ struct TrendView: View {
                 
                 statCell(
                     icon: "percent",
-                    iconColor: isGoodChange(changePercent ?? 0, for: selectedMetric) ? .formlogDecrease : .formlogDanger,
+                    iconColor: changePercent != nil ? (isGoodChange(changePercent ?? 0, for: selectedMetric) ? .formlogDecrease : .formlogDanger) : .secondary,
                     titleKey: L10n.string("变化率"),
                     value: changePercent.map { ($0 >= 0 ? "+" : "") + String(format: "%.1f", $0) } ?? "--",
                     unit: "%",

@@ -68,9 +68,9 @@ struct BodyEntry: Identifiable, Codable, Equatable {
         for t in priority {
             if let v = value(for: t) { return (t, v) }
         }
-        if let first = metrics.first,
-           let t = BodyMetricType(rawValue: first.key) {
-            return (t, first.value)
+        // Fallback: iterate through all types in defined order
+        for t in BodyMetricType.allCases {
+            if let v = value(for: t) { return (t, v) }
         }
         return nil
     }

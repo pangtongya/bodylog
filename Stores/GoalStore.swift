@@ -9,10 +9,10 @@ class GoalStore: ObservableObject {
     @Published var goals: [GoalModel] = []
 
     private static let storeURL: URL = {
-        guard let docsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            fatalError("[GoalStore] Cannot access Documents directory")
-        }
-        return docsDir.appendingPathComponent("goals.json")
+        let docsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+        let fallbackDir = FileManager.default.temporaryDirectory
+        let baseURL = docsDir ?? fallbackDir
+        return baseURL.appendingPathComponent("goals.json")
     }()
 
     init() {
@@ -82,7 +82,7 @@ class GoalStore: ObservableObject {
     private func performSave() {
         do {
             let data = try JSONEncoder().encode(goals)
-            try data.write(to: Self.storeURL)
+            try data.write(to: Self.storeURL, options: [.atomic, .completeFileProtection])
         } catch {
             print("[GoalStore] Save error: \(error)")
         }
@@ -93,7 +93,14 @@ class GoalStore: ObservableObject {
             let data = try Data(contentsOf: Self.storeURL)
             goals = try JSONDecoder().decode([GoalModel].self, from: data)
         } catch {
+            print("[GoalStore] Load warning: \(error). Starting with empty data.")
             goals = []
+            // Backup corrupted file for potential recovery
+            if FileManager.default.fileExists(atPath: Self.storeURL.path) {
+                let backupURL = Self.storeURL.deletingPathExtension().appendingPathExtension("backup.json")
+                try? FileManager.default.copyItem(at: Self.storeURL, to: backupURL)
+                print("[GoalStore] Backup created at: \(backupURL.path)")
+            }
         }
     }
 }

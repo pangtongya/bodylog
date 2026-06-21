@@ -59,6 +59,7 @@ struct LogEntryView: View {
                 .padding(.bottom, 40)
             }
             .background(Color.systemGroupedBackground)
+            .scrollDismissesKeyboard(.interactively)
             .navigationTitle(isEditing ? L10n.string("编辑记录") : L10n.string("记录数据"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -213,17 +214,17 @@ struct LogEntryView: View {
                     }
                     Button(L10n.string("取消"), role: .cancel) {}
                 }
-                .sheet(isPresented: $showCamera) {
-                    CameraPicker(imageData: $photoData)
-                }
-                .photosPicker(isPresented: $showPhotoPicker, selection: $selectedPhotoItem, matching: .images)
-                .onChange(of: selectedPhotoItem) { newItem in
-                    Task {
-                        if let data = try? await newItem?.loadTransferable(type: Data.self) {
-                            if let image = UIImage(data: data) {
-                                photoData = image.jpegData(compressionQuality: 0.6)
-                            }
-                        }
+            }
+        }
+        .sheet(isPresented: $showCamera) {
+            CameraPicker(imageData: $photoData)
+        }
+        .photosPicker(isPresented: $showPhotoPicker, selection: $selectedPhotoItem, matching: .images)
+        .onChange(of: selectedPhotoItem) { newItem in
+            Task {
+                if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                    if let image = UIImage(data: data) {
+                        photoData = image.jpegData(compressionQuality: 0.6)
                     }
                 }
             }

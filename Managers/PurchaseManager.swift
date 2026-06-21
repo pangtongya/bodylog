@@ -21,10 +21,12 @@ final class PurchaseManager: ObservableObject {
 
     private init() {
         updateListenerTask = listenForTransactions()
-        Task {
-            await loadProducts()
-            await checkPurchases()
-        }
+    }
+
+    /// Start loading products and verifying purchases - call this after init
+    func start() async {
+        await loadProducts()
+        await checkPurchases()
     }
 
     deinit {
@@ -83,6 +85,8 @@ final class PurchaseManager: ObservableObject {
             case .pending:
                 purchaseError = L10n.string("购买待处理，请稍后查看。")
             @unknown default:
+                print("[PurchaseManager] Unknown purchase result case: \(result)")
+                purchaseError = L10n.string("购买处理失败，请联系支持。")
                 break
             }
         } catch {
@@ -108,14 +112,25 @@ final class PurchaseManager: ObservableObject {
     // MARK: - Check
 
     func checkPurchases() async {
+        var foundValid = false
         for await result in Transaction.currentEntitlements {
             if case .verified(let transaction) = result,
-               transaction.productID == Self.proProductID,
-               transaction.revocationDate == nil {
-                AppState.shared.isPro = true
-                AppState.shared.save()
-                return
+               transaction.productID == Self.proProductID {
+                if transaction.revocationDate == nil {
+                    foundValid = true
+                    AppState.shared.isPro = true
+                    AppState.shared.save()
+                    return
+                }
+            } else {
+                // Log unverified transactions for debugging
+                print("[PurchaseManager] Unverified transaction found: \(result)")
             }
+        }
+        // No valid entitlement found (including refunds/revocations)
+        if !foundValid {
+            AppState.shared.isPro = false
+            AppState.shared.save()
         }
     }
 

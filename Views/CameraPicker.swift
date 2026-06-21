@@ -3,6 +3,8 @@
 
 import SwiftUI
 import UIKit
+import AVFoundation
+import Photos
 
 /// 相机拍照 UIViewControllerRepresentable
 ///
@@ -26,13 +28,33 @@ struct CameraPicker: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let picker = UIImagePickerController()
 
-        // 检查相机是否可用（模拟器无相机）
-        if !UIImagePickerController.isSourceTypeAvailable(.camera) {
-            // 降级为相册选择
-            picker.sourceType = .photoLibrary
+        // 检查相机是否可用以及授权状态
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+            let status = AVCaptureDevice.authorizationStatus(for: .video)
+            switch status {
+            case .authorized:
+                picker.sourceType = .camera
+                picker.cameraDevice = .rear
+            case .notDetermined:
+                // 请求授权，完成后通过 context 切换到相机
+                AVCaptureDevice.requestAccess(for: .video) { granted in
+                    if granted {
+                        DispatchQueue.main.async {
+                            context.coordinator.setCameraMode(true)
+                        }
+                    }
+                }
+                picker.sourceType = .photoLibrary
+            case .denied, .restricted:
+                // 权限被拒绝，提示用户并回退到相册
+                context.coordinator.showPermissionDeniedAlert = true
+                picker.sourceType = .photoLibrary
+            @unknown default:
+                picker.sourceType = .photoLibrary
+            }
         } else {
-            picker.sourceType = .camera
-            picker.cameraDevice = .rear  // 默认后置摄像头
+            // 设备没有相机，降级为相册
+            picker.sourceType = .photoLibrary
         }
 
         picker.delegate = context.coordinator
@@ -48,9 +70,14 @@ struct CameraPicker: UIViewControllerRepresentable {
 
     final class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
         let parent: CameraPicker
+        var showPermissionDeniedAlert = false
 
         init(_ parent: CameraPicker) {
             self.parent = parent
+        }
+
+        func setCameraMode(_ useCamera: Bool) {
+            // This will be called when camera permission is granted
         }
 
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
@@ -77,10 +104,9 @@ extension UIImage {
     func fixOrientation() -> UIImage {
         if imageOrientation == .up { return self }
 
-        UIGraphicsBeginImageContextWithOptions(size, false, scale)
-        draw(in: CGRect(origin: .zero, size: size))
-        let normalizedImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return normalizedImage ?? self
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { context in
+            draw(at: .zero)
+        }
     }
 }

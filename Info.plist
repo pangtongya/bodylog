@@ -42,10 +42,8 @@
     <string>用于从相册选取或保存身体对比照片。</string>
     <key>NSPhotoLibraryAddUsageDescription</key>
     <string>用于保存导出的图表和对比图到相册。</string>
-    <key>UIUserNotificationSettings</key>
-    <dict/>
-    <key>UIBackgroundModes</key>
-    <array/>
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
     <key>UILaunchScreen</key>
     <dict>
         <key>UIColorName</key>

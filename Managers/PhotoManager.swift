@@ -47,7 +47,17 @@ final class PhotoManager: @unchecked Sendable {
     
     /// 根据文件名加载照片数据
     func loadPhoto(filename: String) -> Data? {
+        // Validate filename to prevent path traversal attacks
+        guard !filename.contains("/") && !filename.contains("..") else {
+            print("[PhotoManager] Invalid filename rejected: \(filename)")
+            return nil
+        }
         let url = photosDirectory.appendingPathComponent(filename)
+        // Ensure the resolved path is within photosDirectory
+        guard url.path.hasPrefix(photosDirectory.path) else {
+            print("[PhotoManager] Path traversal attempt detected: \(filename)")
+            return nil
+        }
         do {
             return try Data(contentsOf: url)
         } catch {

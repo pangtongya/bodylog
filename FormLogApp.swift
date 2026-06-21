@@ -5,28 +5,19 @@ import SwiftUI
 
 @main
 struct FormLogApp: App {
-    @StateObject private var appState = AppState.shared
+    @ObservedObject private var appState = AppState.shared
     @StateObject private var entryStore = BodyEntryStore()
     @StateObject private var goalStore = GoalStore()
-    @StateObject private var purchaseManager = PurchaseManager.shared
+    @ObservedObject private var purchaseManager = PurchaseManager.shared
 
     var body: some Scene {
         WindowGroup {
-            if appState.hasCompletedOnboarding {
-                ContentView()
-                    .environmentObject(appState)
-                    .environmentObject(entryStore)
-                    .environmentObject(goalStore)
-                    .environmentObject(purchaseManager)
-                    .preferredColorScheme(colorScheme)
-            } else {
-                OnboardingView()
-                    .environmentObject(appState)
-                    .environmentObject(entryStore)
-                    .environmentObject(goalStore)
-                    .environmentObject(purchaseManager)
-                    .preferredColorScheme(colorScheme)
-            }
+            RootView()
+                .environmentObject(appState)
+                .environmentObject(entryStore)
+                .environmentObject(goalStore)
+                .environmentObject(purchaseManager)
+                .preferredColorScheme(colorScheme)
         }
     }
 
@@ -36,5 +27,20 @@ struct FormLogApp: App {
         case .light: return .light
         case .dark: return .dark
         }
+    }
+}
+
+struct RootView: View {
+    @EnvironmentObject var appState: AppState
+
+    var body: some View {
+        ZStack {
+            if appState.hasCompletedOnboarding {
+                ContentView()
+            } else {
+                OnboardingView()
+            }
+        }
+        .animation(.easeInOut(duration: 0.3), value: appState.hasCompletedOnboarding)
     }
 }

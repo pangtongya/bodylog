@@ -469,6 +469,13 @@ struct SettingsView: View {
                     message = L10n.string("未选择文件")
                     break
                 }
+                // Start accessing security scoped resource
+                let accessing = url.startAccessingSecurityScopedResource()
+                defer {
+                    if accessing {
+                        url.stopAccessingSecurityScopedResource()
+                    }
+                }
                 do {
                     let data = try Data(contentsOf: url)
                     guard let csvString = String(data: data, encoding: .utf8) else {
@@ -533,6 +540,13 @@ struct SettingsView: View {
     
     private func performRestore() {
         guard let url = pendingRestoreURL else { return }
+        // Start accessing security scoped resource
+        let accessing = url.startAccessingSecurityScopedResource()
+        defer {
+            if accessing {
+                url.stopAccessingSecurityScopedResource()
+            }
+        }
         do {
             let data = try Data(contentsOf: url)
             guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -540,35 +554,36 @@ struct SettingsView: View {
                 backupResult = L10n.string("恢复失败：无效的备份文件")
                 return
             }
-            
-            // 版本检查和迁移
+
+            // Version check and migration
             let currentVersion = "1.0"
             if backupVersion != currentVersion {
-                // 未来版本的数据迁移逻辑将在这里处理
-                print("[SettingsView] 备份版本 \(backupVersion)，当前版本 \(currentVersion)，需要迁移")
-                // TODO: 添加具体的数据迁移逻辑
+                print("[SettingsView] Backup version \(backupVersion), current version \(currentVersion), migration may be needed")
             }
-            
+
             // Restore entries
             if let entriesData = json["entries"] as? Data,
                let entries = try? JSONDecoder().decode([BodyEntry].self, from: entriesData) {
                 entryStore.entries = entries
                 entryStore.save()
             }
-            
+
             // Restore goals
             if let goalsData = json["goals"] as? Data,
                let goals = try? JSONDecoder().decode([GoalModel].self, from: goalsData) {
                 goalStore.goals = goals
                 goalStore.save()
             }
-            
+
             // Restore app state
             if let appStateData = json["appState"] as? Data {
-                appState.restoreFromBackup(appStateData)
-                appState.save()
+                if !appState.restoreFromBackup(appStateData) {
+                    backupResult = L10n.string("恢复失败：应用状态数据无效")
+                    pendingRestoreURL = nil
+                    return
+                }
             }
-            
+
             backupResult = L10n.string("数据恢复成功！")
             pendingRestoreURL = nil
         } catch {
