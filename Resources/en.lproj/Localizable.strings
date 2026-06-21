@@ -310,5 +310,15 @@
 "日期" = "Date";
 "备注" = "Note";
 "cm" = "cm";
-"🎉 恭喜！你已达成「%@」目标！" = "Congratulations! You've achieved your %@ goal!";
-"🎉 成就解锁！" = "Achievement Unlocked!";
+// MARK: - Notification Permission
+"通知权限已开启" = "Notification permission granted";
+"通知权限已被拒绝" = "Notification permission denied";
+"如需接收每日提醒，请在系统设置中开启通知权限" = "To receive daily reminders, please enable notifications in System Settings";
+"前往系统设置" = "Open System Settings";
+"通知权限未请求" = "Notification permission not requested";
+"临时通知权限" = "Provisional notification permission";
+
+// MARK: - Data Restore Confirmation
+"确认恢复数据" = "Confirm Data Restore";
+"恢复将覆盖当前所有数据，此操作不可撤销。" = "Restore will overwrite all current data. This action cannot be undone.";
+"确认恢复" = "Confirm Restore";

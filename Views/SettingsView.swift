@@ -2,6 +2,7 @@
 // 设置页
 
 import SwiftUI
+import UserNotifications
 
 struct SettingsView: View {
     @EnvironmentObject var appState: AppState
@@ -24,6 +25,9 @@ struct SettingsView: View {
     @State private var backupData: Data = Data()
     @State private var backupFileURL: URL?
     @State private var isImporting: Bool = false
+    @State private var showRestoreConfirm: Bool = false
+    @State private var pendingRestoreURL: URL?
+    @State private var notificationAuthStatus: UNAuthorizationStatus = .notDetermined
 
     /// 从 Bundle 动态读取版本号
     private var appVersion: String {
@@ -146,6 +150,9 @@ struct SettingsView: View {
                             displayedComponents: .hourAndMinute
                         )
                     }
+                    
+                    // Notification permission status
+                    notificationPermissionView
                 }
 
                 // Appearance
@@ -249,6 +256,9 @@ struct SettingsView: View {
             }
             .navigationTitle(L10n.string("设置"))
             .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                checkNotificationAuthorizationStatus()
+            }
             .overlay {
                 if isImporting {
                     ZStack {
@@ -289,7 +299,15 @@ struct SettingsView: View {
             }
         }
         .fileImporter(isPresented: $showRestorePicker, allowedContentTypes: [.json], allowsMultipleSelection: false) { result in
-            handleRestoreResult(result)
+            handleRestorePickerResult(result)
+        }
+        .alert(L10n.string("确认恢复数据"), isPresented: $showRestoreConfirm) {
+            Button(L10n.string("取消"), role: .cancel) { }
+            Button(L10n.string("确认恢复"), role: .destructive) {
+                performRestore()
+            }
+        } message: {
+            Text(L10n.string("恢复将覆盖当前所有数据，此操作不可撤销。"))
         }
         .sheet(isPresented: $showAchievementView) {
             AchievementView()
@@ -305,6 +323,60 @@ struct SettingsView: View {
     }
 
     // MARK: - Pro Banner
+    
+    private var notificationPermissionView: some View {
+        Group {
+            switch notificationAuthStatus {
+            case .authorized:
+                Label(L10n.string("通知权限已开启"), systemImage: "checkmark.circle.fill")
+                    .foregroundColor(.green)
+                    .font(.system(size: 13))
+            case .denied:
+                VStack(alignment: .leading, spacing: 8) {
+                    Label(L10n.string("通知权限已被拒绝"), systemImage: "exclamationmark.triangle.fill")
+                        .foregroundColor(.orange)
+                        .font(.system(size: 13))
+                    Text(L10n.string("如需接收每日提醒，请在系统设置中开启通知权限"))
+                        .font(.system(size: 12))
+                        .foregroundColor(.secondary)
+                    Button(action: openSystemSettings) {
+                        Text(L10n.string("前往系统设置"))
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(.formlogPrimary)
+                    }
+                }
+            case .notDetermined:
+                Text(L10n.string("通知权限未请求"))
+                    .font(.system(size: 13))
+                    .foregroundColor(.secondary)
+            case .provisional:
+                Label(L10n.string("临时通知权限"), systemImage: "info.circle.fill")
+                    .foregroundColor(.blue)
+                    .font(.system(size: 13))
+            case .ephemeral:
+                Label(L10n.string("临时通知权限"), systemImage: "info.circle.fill")
+                    .foregroundColor(.blue)
+                    .font(.system(size: 13))
+            @unknown default:
+                EmptyView()
+            }
+        }
+    }
+    
+    private func checkNotificationAuthorizationStatus() {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            let status = settings.authorizationStatus
+            Task { @MainActor in
+                self.notificationAuthStatus = status
+            }
+        }
+    }
+    
+    private func openSystemSettings() {
+        if let url = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(url)
+        }
+    }
 
     private var proSection: some View {
         Section {
@@ -411,44 +483,51 @@ struct SettingsView: View {
         }
     }
     
-    private func handleRestoreResult(_ result: Result<[URL], Error>) {
+    private func handleRestorePickerResult(_ result: Result<[URL], Error>) {
         switch result {
         case .success(let urls):
             guard let url = urls.first else { return }
-            do {
-                let data = try Data(contentsOf: url)
-                guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-                      let _ = json["version"] as? String else {
-                    backupResult = L10n.string("恢复失败：无效的备份文件")
-                    return
-                }
-                
-                // Restore entries
-                if let entriesData = json["entries"] as? Data,
-                   let entries = try? JSONDecoder().decode([BodyEntry].self, from: entriesData) {
-                    entryStore.entries = entries
-                    entryStore.save()
-                }
-                
-                // Restore goals
-                if let goalsData = json["goals"] as? Data,
-                   let goals = try? JSONDecoder().decode([GoalModel].self, from: goalsData) {
-                    goalStore.goals = goals
-                    goalStore.save()
-                }
-                
-                // Restore app state
-                if let appStateData = json["appState"] as? Data {
-                    appState.restoreFromBackup(appStateData)
-                    appState.save()
-                }
-                
-                backupResult = L10n.string("数据恢复成功！")
-            } catch {
-                backupResult = String(format: L10n.string("恢复失败：%@"), error.localizedDescription)
-            }
+            pendingRestoreURL = url
+            showRestoreConfirm = true
         case .failure(let error):
             backupResult = String(format: L10n.string("选择文件失败：%@"), error.localizedDescription)
+        }
+    }
+    
+    private func performRestore() {
+        guard let url = pendingRestoreURL else { return }
+        do {
+            let data = try Data(contentsOf: url)
+            guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let _ = json["version"] as? String else {
+                backupResult = L10n.string("恢复失败：无效的备份文件")
+                return
+            }
+            
+            // Restore entries
+            if let entriesData = json["entries"] as? Data,
+               let entries = try? JSONDecoder().decode([BodyEntry].self, from: entriesData) {
+                entryStore.entries = entries
+                entryStore.save()
+            }
+            
+            // Restore goals
+            if let goalsData = json["goals"] as? Data,
+               let goals = try? JSONDecoder().decode([GoalModel].self, from: goalsData) {
+                goalStore.goals = goals
+                goalStore.save()
+            }
+            
+            // Restore app state
+            if let appStateData = json["appState"] as? Data {
+                appState.restoreFromBackup(appStateData)
+                appState.save()
+            }
+            
+            backupResult = L10n.string("数据恢复成功！")
+            pendingRestoreURL = nil
+        } catch {
+            backupResult = String(format: L10n.string("恢复失败：%@"), error.localizedDescription)
         }
     }
 }
