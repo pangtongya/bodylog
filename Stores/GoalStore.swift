@@ -9,9 +9,10 @@ class GoalStore: ObservableObject {
     @Published var goals: [GoalModel] = []
 
     private static let storeURL: URL = {
-        FileManager.default
-            .urls(for: .documentDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("goals.json")
+        guard let docsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            fatalError("[GoalStore] Cannot access Documents directory")
+        }
+        return docsDir.appendingPathComponent("goals.json")
     }()
 
     init() {

@@ -41,6 +41,14 @@ struct ShareCardView: View {
             }
         }
     }
+    
+    // MARK: - App Name (from InfoPlist)
+    
+    private var appDisplayName: String {
+        Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String
+            ?? Bundle.main.infoDictionary?["CFBundleName"] as? String
+            ?? "FormLog"
+    }
 
     // MARK: - Card Preview
 
@@ -61,7 +69,7 @@ struct ShareCardView: View {
             // Header
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(L10n.string("FormLog 形记"))
+                    Text(appDisplayName)
                         .font(.system(size: 18, weight: .bold))
                     Text(formatDate(Date()))
                         .font(.system(size: 13))
@@ -135,7 +143,7 @@ struct ShareCardView: View {
                     .font(.system(size: 11))
                     .foregroundColor(.secondary)
                 Spacer()
-                Text("FormLog")
+                Text(appDisplayName)
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundColor(.formlogPrimary)
             }

@@ -9,9 +9,10 @@ class BodyEntryStore: ObservableObject {
     @Published var entries: [BodyEntry] = []
 
     private static let storeURL: URL = {
-        FileManager.default
-            .urls(for: .documentDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("body_entries.json")
+        guard let docsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            fatalError("[BodyEntryStore] Cannot access Documents directory")
+        }
+        return docsDir.appendingPathComponent("body_entries.json")
     }()
 
     // MARK: - Shared DateFormatters (cached)
@@ -51,6 +52,13 @@ class BodyEntryStore: ObservableObject {
         sortEntries()
         save()
         return entry
+    }
+
+    /// 批量添加记录（用于 CSV 导入，不触发单次保存）
+    func addEntries(_ newEntries: [BodyEntry]) {
+        entries.insert(contentsOf: newEntries, at: 0)
+        sortEntries()
+        save()
     }
 
     func updateEntry(_ entry: BodyEntry) {
@@ -195,7 +203,7 @@ class BodyEntryStore: ObservableObject {
     /// 生成 CSV 字符串（所有已记录指标）
     func exportCSV() -> String {
         let allMetrics = BodyMetricType.allCases
-        let header = (["日期"] + allMetrics.map { $0.displayName + "(\($0.unit))" } + ["备注"]).joined(separator: ",")
+        let header = ([L10n.string("日期")] + allMetrics.map { $0.displayName + "(\($0.unit))" } + [L10n.string("备注")]).joined(separator: ",")
         let rows = entries.map { entry -> String in
             let date = Self.csvExportFormatter.string(from: entry.recordedAt)
             let values = allMetrics.map { type -> String in
@@ -260,6 +268,7 @@ class BodyEntryStore: ObservableObject {
         
         var importedCount = 0
         var errors: [String] = []
+        var parsedEntries: [BodyEntry] = []
         let dateFormatter = Self.csvImportFormatter
         let shortDateFormatter = Self.csvShortDateFormatter
         
@@ -299,11 +308,14 @@ class BodyEntryStore: ObservableObject {
                 metrics: metrics,
                 note: note
             )
-            addEntry(entry)
             importedCount += 1
+            parsedEntries.append(entry)
         }
         
-        save()
+        // 批量添加（只保存一次）
+        if !parsedEntries.isEmpty {
+            addEntries(parsedEntries)
+        }
         
         if importedCount > 0 {
             return (importedCount, errors.isEmpty ? nil : String(format: L10n.string("%d 行数据跳过"), errors.count))

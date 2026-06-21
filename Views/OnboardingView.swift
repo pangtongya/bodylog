@@ -283,7 +283,7 @@ struct OnboardingView: View {
         } else {
             // Save and complete onboarding
             appState.userName = name
-            if let h = Double(heightStr), h > 0 { appState.userHeight = h }
+            if let h = Double(heightStr), h > 0 && h <= 300 { appState.userHeight = h }
             appState.userGender = gender
             appState.weightUnit = weightUnit
             appState.enabledMetrics = Array(selectedMetrics)

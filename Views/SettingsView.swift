@@ -506,7 +506,7 @@ struct MetricsPickerView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("完成") { isPresented = false }
+                    Button(L10n.string("完成")) { isPresented = false }
                         .foregroundColor(.formlogPrimary)
                 }
             }

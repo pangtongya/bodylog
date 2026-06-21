@@ -17,9 +17,12 @@ enum L10n {
         NSLocalizedString(key, comment: comment)
     }
 
-    /// 获取本地化字符串（带格式化参数）
-    static func string(_ key: String, _ args: CVarArg...) -> String {
-        String(format: NSLocalizedString(key, comment: ""), args)
+    /// 获取本地化字符串（支持多个占位符参数）
+    static func string(_ key: String, _ args: String...) -> String {
+        if args.isEmpty {
+            return NSLocalizedString(key, comment: "")
+        }
+        return String(format: NSLocalizedString(key, comment: ""), arguments: args.map { $0 as CVarArg })
     }
 
     /// 当前语言代码

@@ -94,9 +94,10 @@ class AppState: ObservableObject {
 
     // MARK: - Persistence
     private static let storeURL: URL = {
-        FileManager.default
-            .urls(for: .documentDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("app_state.json")
+        guard let docsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            fatalError("[AppState] Cannot access Documents directory")
+        }
+        return docsDir.appendingPathComponent("app_state.json")
     }()
 
     func save() {
