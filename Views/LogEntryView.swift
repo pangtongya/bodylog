@@ -77,7 +77,7 @@ struct LogEntryView: View {
                         saveEntry()
                     }
                     .font(.system(size: 15, weight: .semibold))
-                    .foregroundColor(.bodylogPrimary)
+                    .foregroundColor(.formlogPrimary)
                 }
             }
         }
@@ -135,7 +135,7 @@ struct LogEntryView: View {
     private func metricInputRow(metric: BodyMetricType) -> some View {
         HStack(spacing: 12) {
             Image(systemName: metric.icon)
-                .foregroundColor(.bodylogPrimary)
+                .foregroundColor(.formlogPrimary)
                 .frame(width: 28)
 
             Text(metric.displayName)
@@ -197,10 +197,10 @@ struct LogEntryView: View {
                         Text("添加照片")
                             .font(.system(size: 15))
                     }
-                    .foregroundColor(.bodylogPrimary)
+                    .foregroundColor(.formlogPrimary)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
-                    .background(Color.bodylogPrimary.opacity(0.1))
+                    .background(Color.formlogPrimary.opacity(0.1))
                     .cornerRadius(12)
                 }
                 .confirmationDialog("选择照片来源", isPresented: $showPhotoSourceDialog, titleVisibility: .visible) {

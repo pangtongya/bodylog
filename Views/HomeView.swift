@@ -62,7 +62,7 @@ struct HomeView: View {
                     }) {
                         Image(systemName: "plus.circle.fill")
                             .font(.system(size: 24))
-                            .foregroundColor(.bodylogPrimary)
+                            .foregroundColor(.formlogPrimary)
                     }
                 }
             }
@@ -104,7 +104,7 @@ struct HomeView: View {
                     ForEach(insights, id: \.self) { insight in
                         HStack(alignment: .top, spacing: 8) {
                             Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.bodylogPrimary)
+                                .foregroundColor(.formlogPrimary)
                                 .font(.system(size: 14))
                                 .padding(.top, 2)
                             Text(insight)
@@ -207,7 +207,7 @@ struct HomeView: View {
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)
-                .background(Color.bodylogPrimary)
+                .background(Color.formlogPrimary)
                 .cornerRadius(12)
             }
             .contentShape(Rectangle())
@@ -223,7 +223,7 @@ struct HomeView: View {
             HStack {
                 Image(systemName: type.icon)
                     .font(.system(size: 12))
-                    .foregroundColor(.bodylogPrimary)
+                    .foregroundColor(.formlogPrimary)
                 Text(type.displayName)
                     .font(.system(size: 12))
                     .foregroundColor(.secondary)
@@ -249,7 +249,7 @@ struct HomeView: View {
                             .font(.system(size: 10))
                             .foregroundColor(.secondary)
                     }
-                    .foregroundColor(isGood ? .bodylogDecrease : .bodylogDanger)
+                    .foregroundColor(isGood ? .formlogDecrease : .formlogDanger)
                 }
             } else {
                 Text("未记录")
@@ -269,13 +269,13 @@ struct HomeView: View {
             HStack(spacing: 16) {
                 Image(systemName: "figure.stand")
                     .font(.system(size: 32))
-                    .foregroundColor(.bodylogPrimary)
+                    .foregroundColor(.formlogPrimary)
                 Image(systemName: "chart.line.uptrend.xyaxis")
                     .font(.system(size: 32))
-                    .foregroundColor(.bodylogPrimary)
+                    .foregroundColor(.formlogPrimary)
                 Image(systemName: "photo.stack")
                     .font(.system(size: 32))
-                    .foregroundColor(.bodylogPrimary)
+                    .foregroundColor(.formlogPrimary)
             }
             
             VStack(spacing: 8) {
@@ -294,7 +294,7 @@ struct HomeView: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, 32)
                     .padding(.vertical, 12)
-                    .background(Color.bodylogPrimary)
+                    .background(Color.formlogPrimary)
                     .cornerRadius(12)
             }
         }
@@ -321,11 +321,11 @@ struct HomeView: View {
             HStack(spacing: 14) {
                 ZStack {
                     Circle()
-                        .fill(Color.bodylogPrimary.opacity(0.1))
+                        .fill(Color.formlogPrimary.opacity(0.1))
                         .frame(width: 44, height: 44)
                     Image(systemName: "photo.stack.fill")
                         .font(.system(size: 18))
-                        .foregroundColor(.bodylogPrimary)
+                        .foregroundColor(.formlogPrimary)
                 }
 
                 VStack(alignment: .leading, spacing: 3) {
@@ -372,7 +372,7 @@ struct HomeView: View {
         VStack(spacing: 4) {
             Text(value)
                 .font(.system(size: 22, weight: .bold, design: .rounded))
-                .foregroundColor(.bodylogPrimary)
+                .foregroundColor(.formlogPrimary)
             Text(label)
                 .font(.system(size: 12))
                 .foregroundColor(.secondary)
@@ -483,7 +483,7 @@ struct EntryRowView: View {
                 HStack(spacing: 4) {
                     Image(systemName: primary.type.icon)
                         .font(.system(size: 13))
-                        .foregroundColor(.bodylogPrimary)
+                        .foregroundColor(.formlogPrimary)
                     Text(formattedValue(primary.value, type: primary.type))
                         .font(.system(size: 15, weight: .semibold, design: .rounded).monospacedDigit())
                     Text(primary.type.unit)

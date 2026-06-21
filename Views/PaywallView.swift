@@ -16,7 +16,7 @@ struct PaywallView: View {
                     VStack(spacing: 12) {
                         Image(systemName: "photo.stack.fill")
                             .font(.system(size: 56))
-                            .foregroundStyle(LinearGradient.bodylogGradient)
+                            .foregroundStyle(LinearGradient.formlogGradient)
                         Text(L10n.string("解锁 FormLog Pro"))
                             .font(.system(size: 26, weight: .bold, design: .rounded))
                         Text("用数据和照片，见证你的身体变化")
@@ -44,7 +44,7 @@ struct PaywallView: View {
                     if let err = purchaseManager.purchaseError {
                         Text(err)
                             .font(.system(size: 13))
-                            .foregroundColor(.bodylogDanger)
+                            .foregroundColor(.formlogDanger)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 20)
                     }
@@ -54,14 +54,14 @@ struct PaywallView: View {
                         VStack(spacing: 8) {
                             Text(loadErr)
                                 .font(.system(size: 13))
-                                .foregroundColor(.bodylogDanger)
+                                .foregroundColor(.formlogDanger)
                                 .multilineTextAlignment(.center)
                             Button(action: {
                                 Task { await purchaseManager.retryLoadProducts() }
                             }) {
                                 Text("重试")
                                     .font(.system(size: 13, weight: .medium))
-                                    .foregroundColor(.bodylogPrimary)
+                                    .foregroundColor(.formlogPrimary)
                             }
                         }
                         .padding(.horizontal, 20)
@@ -71,7 +71,7 @@ struct PaywallView: View {
                     HStack(spacing: 8) {
                         Image(systemName: "lock.shield.fill")
                             .font(.system(size: 13))
-                            .foregroundColor(.bodylogPrimary)
+                            .foregroundColor(.formlogPrimary)
                         Text("100% 隐私优先 · 数据本地存储 · 无订阅")
                             .font(.system(size: 13, weight: .medium))
                             .foregroundColor(.secondary)
@@ -101,7 +101,7 @@ struct PaywallView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
-                            .background(purchaseManager.isPurchasing || purchaseManager.isLoadingProducts ? Color.secondary : Color.bodylogPrimary)
+                            .background(purchaseManager.isPurchasing || purchaseManager.isLoadingProducts ? Color.secondary : Color.formlogPrimary)
                             .cornerRadius(14)
                         }
                         .disabled(!purchaseManager.canPurchase)
@@ -151,7 +151,7 @@ struct PaywallView: View {
         HStack(spacing: 16) {
             Image(systemName: icon)
                 .font(.system(size: 20))
-                .foregroundColor(.bodylogPrimary)
+                .foregroundColor(.formlogPrimary)
                 .frame(width: 32)
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
@@ -163,7 +163,7 @@ struct PaywallView: View {
             Spacer()
             Image(systemName: "checkmark")
                 .font(.system(size: 13, weight: .bold))
-                .foregroundColor(.bodylogPrimary)
+                .foregroundColor(.formlogPrimary)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)

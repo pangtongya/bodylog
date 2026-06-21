@@ -41,12 +41,12 @@ struct PhotoCompareView: View {
                                 selectedEntries.removeAll()
                             }
                         }
-                        .foregroundColor(.bodylogPrimary)
+                        .foregroundColor(.formlogPrimary)
                     } else {
                         Button("完成") {
                             dismiss()
                         }
-                        .foregroundColor(.bodylogPrimary)
+                        .foregroundColor(.formlogPrimary)
                     }
                 }
                 
@@ -71,7 +71,7 @@ struct PhotoCompareView: View {
                                 Text("对比 (\(selectedEntries.count)/2)")
                                     .font(.system(size: 15, weight: .semibold))
                             }
-                            .foregroundColor(selectedEntries.count >= 2 ? .bodylogPrimary : .secondary)
+                            .foregroundColor(selectedEntries.count >= 2 ? .formlogPrimary : .secondary)
                         }
                         .disabled(selectedEntries.count < 2)
                     }
@@ -94,7 +94,7 @@ struct PhotoCompareView: View {
         VStack(spacing: 16) {
             Image(systemName: "photo.stack")
                 .font(.system(size: 56))
-                .foregroundColor(.bodylogPrimary.opacity(0.4))
+                .foregroundColor(.formlogPrimary.opacity(0.4))
             Text("还没有照片")
                 .font(.system(size: 18, weight: .semibold))
             Text("在记录数据时拍摄形体照片\n之后可以在这里对比变化")
@@ -157,7 +157,7 @@ struct PhotoCompareView: View {
                 if isSelected {
                     ZStack {
                         Circle()
-                            .fill(Color.bodylogPrimary)
+                            .fill(Color.formlogPrimary)
                             .frame(width: 24, height: 24)
                         Text("\(selectedEntries.firstIndex { $0.id == entry.id }! + 1)")
                             .font(.system(size: 12, weight: .bold))
@@ -266,7 +266,7 @@ struct PhotoCompareView: View {
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
-                    .background(Color.bodylogPrimary)
+                    .background(Color.formlogPrimary)
                     .cornerRadius(12)
                 }
                 .padding(.horizontal, 16)
@@ -280,10 +280,10 @@ struct PhotoCompareView: View {
         VStack(spacing: 8) {
             Text(tag)
                 .font(.system(size: 12, weight: .bold))
-                .foregroundColor(.bodylogPrimary)
+                .foregroundColor(.formlogPrimary)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 4)
-                .background(Color.bodylogPrimary.opacity(0.1))
+                .background(Color.formlogPrimary.opacity(0.1))
                 .cornerRadius(8)
             
             ZStack(alignment: .topTrailing) {
@@ -330,7 +330,7 @@ struct PhotoCompareView: View {
                 HStack(spacing: 12) {
                     // Icon
                     Image(systemName: type.icon)
-                        .foregroundColor(.bodylogPrimary)
+                        .foregroundColor(.formlogPrimary)
                         .frame(width: 28)
                         .font(.system(size: 16))
                     
@@ -373,9 +373,9 @@ struct PhotoCompareView: View {
     private func changeColor(_ change: Double, type: BodyMetricType) -> Color {
         switch type {
         case .weight, .bodyFat, .waist, .hip:
-            return change < 0 ? .bodylogDecrease : .bodylogDanger
+            return change < 0 ? .formlogDecrease : .formlogDanger
         case .muscleMass:
-            return change > 0 ? .bodylogDecrease : .bodylogDanger
+            return change > 0 ? .formlogDecrease : .formlogDanger
         default:
             return .primary
         }

@@ -70,7 +70,7 @@ struct ShareCardView: View {
                 Spacer()
                 Image(systemName: "figure.stand")
                     .font(.system(size: 28))
-                    .foregroundColor(.bodylogPrimary)
+                    .foregroundColor(.formlogPrimary)
             }
 
             Divider()
@@ -108,7 +108,7 @@ struct ShareCardView: View {
                             HStack {
                                 Image(systemName: type.icon)
                                     .font(.system(size: 12))
-                                    .foregroundColor(.bodylogPrimary)
+                                    .foregroundColor(.formlogPrimary)
                                     .frame(width: 20)
                                 Text(type.displayName)
                                     .font(.system(size: 14))
@@ -137,7 +137,7 @@ struct ShareCardView: View {
                 Spacer()
                 Text("FormLog")
                     .font(.system(size: 11, weight: .semibold))
-                    .foregroundColor(.bodylogPrimary)
+                    .foregroundColor(.formlogPrimary)
             }
         }
         .padding(24)
@@ -147,7 +147,7 @@ struct ShareCardView: View {
         VStack(spacing: 6) {
             Image(systemName: icon)
                 .font(.system(size: 20))
-                .foregroundColor(.bodylogPrimary)
+                .foregroundColor(.formlogPrimary)
             Text(value)
                 .font(.system(size: 24, weight: .bold, design: .rounded).monospacedDigit())
                 .foregroundColor(.primary)
@@ -172,7 +172,7 @@ struct ShareCardView: View {
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)
-                .background(Color.bodylogPrimary)
+                .background(Color.formlogPrimary)
                 .cornerRadius(12)
             }
 
@@ -183,10 +183,10 @@ struct ShareCardView: View {
                     Text("保存到相册")
                         .font(.system(size: 15, weight: .regular, design: .rounded))
                 }
-                .foregroundColor(.bodylogPrimary)
+                .foregroundColor(.formlogPrimary)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)
-                .background(Color.bodylogPrimary.opacity(0.1))
+                .background(Color.formlogPrimary.opacity(0.1))
                 .cornerRadius(12)
             }
         }

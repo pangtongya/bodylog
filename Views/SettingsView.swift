@@ -93,7 +93,7 @@ struct SettingsView: View {
                 // Reminder
                 Section("每日提醒") {
                     Toggle("开启提醒", isOn: $appState.reminderEnabled)
-                        .tint(.bodylogPrimary)
+                        .tint(.formlogPrimary)
                         .onChange(of: appState.reminderEnabled) { enabled in
                             appState.save()
                             if enabled {
@@ -168,20 +168,20 @@ struct SettingsView: View {
                             }
                         }
                     }
-                    .foregroundColor(appState.isPro ? .bodylogPrimary : .secondary)
+                    .foregroundColor(appState.isPro ? .formlogPrimary : .secondary)
                     
                     if appState.isPro {
                         Button(action: { showImportPicker = true }) {
                             Label("导入 CSV", systemImage: "arrow.up.doc.fill")
                         }
-                        .foregroundColor(.bodylogPrimary)
+                        .foregroundColor(.formlogPrimary)
                     }
                     
                     // Backup / Restore (all users)
                     Button(action: createBackup) {
                         Label("备份数据", systemImage: "square.and.arrow.up")
                     }
-                    .foregroundColor(.bodylogPrimary)
+                    .foregroundColor(.formlogPrimary)
                     
                     if let result = backupResult {
                         Text(result)
@@ -233,12 +233,12 @@ struct SettingsView: View {
                     Button(action: { showShareCardView = true }) {
                         Label("分享进度", systemImage: "square.and.arrow.up")
                     }
-                    .foregroundColor(.bodylogPrimary)
+                    .foregroundColor(.formlogPrimary)
 
                 // About
                 Section("关于") {
                     LabeledContent("版本", value: appVersion)
-                    Link(destination: URL(string: "https://pangtongya.github.io/bodylog-privacy/privacy-policy.html")!) {
+                    Link(destination: URL(string: "https://pangtongya.github.io/formlog-privacy/privacy-policy.html")!) {
                         Label("隐私政策", systemImage: "hand.raised.fill")
                     }
                 }
@@ -308,7 +308,7 @@ struct SettingsView: View {
                 HStack(spacing: 14) {
                     Image(systemName: "star.fill")
                         .font(.system(size: 22))
-                        .foregroundStyle(LinearGradient.bodylogGradient)
+                        .foregroundStyle(LinearGradient.formlogGradient)
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text("升级到 Pro")
@@ -321,7 +321,7 @@ struct SettingsView: View {
                     Spacer()
                     Text(purchaseManager.formattedPrice)
                         .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.bodylogPrimary)
+                        .foregroundColor(.formlogPrimary)
                 }
                 .padding(.vertical, 4)
             }
@@ -486,7 +486,7 @@ struct MetricsPickerView: View {
                             }) {
                                 HStack {
                                     Image(systemName: metric.icon)
-                                        .foregroundColor(isEnabled ? .bodylogPrimary : .secondary)
+                                        .foregroundColor(isEnabled ? .formlogPrimary : .secondary)
                                         .frame(width: 28)
                                     Text(metric.displayName)
                                         .foregroundColor(.primary)
@@ -498,7 +498,7 @@ struct MetricsPickerView: View {
                                     Spacer()
                                     if isEnabled {
                                         Image(systemName: "checkmark")
-                                            .foregroundColor(.bodylogPrimary)
+                                            .foregroundColor(.formlogPrimary)
                                             .font(.system(size: 13, weight: .bold))
                                     }
                                 }
@@ -513,7 +513,7 @@ struct MetricsPickerView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("完成") { isPresented = false }
-                        .foregroundColor(.bodylogPrimary)
+                        .foregroundColor(.formlogPrimary)
                 }
             }
         }

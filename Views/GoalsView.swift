@@ -61,7 +61,7 @@ struct GoalsView: View {
                             Image(systemName: "plus.circle.fill")
                                 .font(.system(size: 24))
                         }
-                        .foregroundColor(.bodylogPrimary)
+                        .foregroundColor(.formlogPrimary)
                     }
                 }
             }
@@ -95,7 +95,7 @@ struct GoalsView: View {
                     Button(action: { showPaywall = true }) {
                         Text("升级到 Pro，无限目标")
                             .font(.system(size: 13, weight: .medium))
-                            .foregroundColor(.bodylogPrimary)
+                            .foregroundColor(.formlogPrimary)
                     }
                 }
                 .padding(.top, 8)
@@ -103,11 +103,11 @@ struct GoalsView: View {
 
             ZStack {
                 Circle()
-                    .fill(Color.bodylogPrimary.opacity(0.1))
+                    .fill(Color.formlogPrimary.opacity(0.1))
                     .frame(width: 100, height: 100)
                 Image(systemName: "target")
                     .font(.system(size: 44))
-                    .foregroundColor(.bodylogPrimary)
+                    .foregroundColor(.formlogPrimary)
             }
 
             VStack(spacing: 8) {
@@ -130,9 +130,9 @@ struct GoalsView: View {
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)
-                .background(Color.bodylogPrimary)
+                .background(Color.formlogPrimary)
                 .cornerRadius(14)
-                .shadow(color: .bodylogPrimary.opacity(0.3), radius: 8, x: 0, y: 4)
+                .shadow(color: .formlogPrimary.opacity(0.3), radius: 8, x: 0, y: 4)
             }
             .padding(.horizontal, 20)
         }
@@ -184,7 +184,7 @@ struct GoalCardView: View {
                 .padding(.vertical, 8)
                 .background(
                     LinearGradient(
-                        colors: [.bodylogDecrease, .bodylogDecrease.opacity(0.8)],
+                        colors: [.formlogDecrease, .formlogDecrease.opacity(0.8)],
                         startPoint: .leading,
                         endPoint: .trailing
                     )
@@ -196,17 +196,17 @@ struct GoalCardView: View {
                 // Header
                 HStack {
                     Image(systemName: goal.metricType.icon)
-                        .foregroundColor(isAchieved ? .bodylogDecrease : .bodylogPrimary)
+                        .foregroundColor(isAchieved ? .formlogDecrease : .formlogPrimary)
                     Text(goal.metricType.displayName)
                         .font(.system(size: 15, weight: .semibold))
                     Spacer()
                     if isAchieved {
                         Label("已达成", systemImage: "checkmark.seal.fill")
                             .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(.bodylogDecrease)
+                            .foregroundColor(.formlogDecrease)
                     } else {
                         Image(systemName: goal.direction.icon)
-                            .foregroundColor(.bodylogPrimary.opacity(0.7))
+                            .foregroundColor(.formlogPrimary.opacity(0.7))
                     }
 
                     // Share button (when achieved)
@@ -217,7 +217,7 @@ struct GoalCardView: View {
                         }) {
                             Image(systemName: "square.and.arrow.up")
                                 .font(.system(size: 14))
-                                .foregroundColor(.bodylogDecrease)
+                                .foregroundColor(.formlogDecrease)
                         }
                         .sheet(isPresented: $showShareSheet) {
                             ShareSheet(items: shareItems)
@@ -233,7 +233,7 @@ struct GoalCardView: View {
                     let targetDisplay = formattedTarget
                     Text(targetDisplay.0)
                         .font(.system(size: 24, weight: .bold, design: .rounded).monospacedDigit())
-                        .foregroundColor(isAchieved ? .bodylogDecrease : .bodylogPrimary)
+                        .foregroundColor(isAchieved ? .formlogDecrease : .formlogPrimary)
                     Text(targetDisplay.1)
                         .font(.system(size: 14))
                         .foregroundColor(.secondary)
@@ -259,7 +259,7 @@ struct GoalCardView: View {
                 if !isAchieved {
                     VStack(alignment: .leading, spacing: 6) {
                         ProgressView(value: min(progress, 1.0))
-                            .tint(Color.bodylogPrimary)
+                            .tint(Color.formlogPrimary)
                             .frame(height: 10)
                             .scaleEffect(y: 1.4)
                             .animation(.easeOut(duration: 0.8), value: progress)
@@ -272,7 +272,7 @@ struct GoalCardView: View {
                             if progress >= 0.8 && progress < 1.0 {
                                 Text("马上就要达成了！💪")
                                     .font(.system(size: 11))
-                                    .foregroundColor(.bodylogPrimary)
+                                    .foregroundColor(.formlogPrimary)
                             }
                         }
                     }
@@ -291,11 +291,11 @@ struct GoalCardView: View {
             .padding(16)
         }
         .frame(maxWidth: .infinity)
-        .background(isAchieved ? Color.bodylogDecrease.opacity(0.06) : Color.systemBackground)
+        .background(isAchieved ? Color.formlogDecrease.opacity(0.06) : Color.systemBackground)
         .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(isAchieved ? Color.bodylogDecrease.opacity(0.3) : Color.clear, lineWidth: 1.5)
+                .stroke(isAchieved ? Color.formlogDecrease.opacity(0.3) : Color.clear, lineWidth: 1.5)
         )
         .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
         .contextMenu {
@@ -396,7 +396,7 @@ struct AddGoalView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("添加") { addGoal() }
                         .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(.bodylogPrimary)
+                        .foregroundColor(.formlogPrimary)
                 }
             }
             .alert("输入有误", isPresented: $showError) {

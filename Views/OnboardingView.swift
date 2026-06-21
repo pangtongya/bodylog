@@ -24,7 +24,7 @@ struct OnboardingView: View {
                 HStack(spacing: 8) {
                     ForEach(0..<totalSteps, id: \.self) { i in
                         Circle()
-                            .fill(i <= step ? Color.bodylogPrimary : Color.systemGray4)
+                            .fill(i <= step ? Color.formlogPrimary : Color.systemGray4)
                             .frame(width: i == step ? 10 : 6, height: i == step ? 10 : 6)
                             .animation(.spring(), value: step)
                     }
@@ -59,7 +59,7 @@ struct OnboardingView: View {
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
-                    .background(Color.bodylogPrimary)
+                    .background(Color.formlogPrimary)
                     .cornerRadius(14)
                 }
                 .padding(.horizontal, 24)
@@ -76,11 +76,11 @@ struct OnboardingView: View {
             // Animated icon
             ZStack {
                 Circle()
-                    .fill(Color.bodylogPrimary.opacity(0.1))
+                    .fill(Color.formlogPrimary.opacity(0.1))
                     .frame(width: 120, height: 120)
                 Image(systemName: "photo.stack.fill")
                     .font(.system(size: 56))
-                    .foregroundColor(.bodylogPrimary)
+                    .foregroundColor(.formlogPrimary)
                     .scaleEffect(1.0 + (step == 0 ? 0.05 : 0.0))
                     .animation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true), value: step)
             }
@@ -115,11 +115,11 @@ struct OnboardingView: View {
         HStack(spacing: 14) {
             ZStack {
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.bodylogPrimary.opacity(0.1))
+                    .fill(Color.formlogPrimary.opacity(0.1))
                     .frame(width: 40, height: 40)
                 Image(systemName: icon)
                     .font(.system(size: 18))
-                    .foregroundColor(.bodylogPrimary)
+                    .foregroundColor(.formlogPrimary)
             }
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
@@ -177,7 +177,7 @@ struct OnboardingView: View {
                                     .foregroundColor(gender == g ? .white : .primary)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 10)
-                                    .background(gender == g ? Color.bodylogPrimary : Color.systemGray6)
+                                    .background(gender == g ? Color.formlogPrimary : Color.systemGray6)
                                     .cornerRadius(10)
                             }
                             .contentShape(Rectangle())
@@ -198,7 +198,7 @@ struct OnboardingView: View {
                                     .foregroundColor(weightUnit == u ? .white : .primary)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 10)
-                                    .background(weightUnit == u ? Color.bodylogPrimary : Color.systemGray6)
+                                    .background(weightUnit == u ? Color.formlogPrimary : Color.systemGray6)
                                     .cornerRadius(10)
                             }
                             .contentShape(Rectangle())
@@ -255,7 +255,7 @@ struct OnboardingView: View {
         }) {
             HStack {
                 Image(systemName: metric.icon)
-                    .foregroundColor(isSelected ? .bodylogPrimary : .secondary)
+                    .foregroundColor(isSelected ? .formlogPrimary : .secondary)
                     .frame(width: 28)
                 Text(metric.displayName)
                     .font(.system(size: 15))
@@ -266,7 +266,7 @@ struct OnboardingView: View {
                 }
                 Spacer()
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .foregroundColor(isSelected ? .bodylogPrimary : .systemGray3)
+                    .foregroundColor(isSelected ? .formlogPrimary : .systemGray3)
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 12)

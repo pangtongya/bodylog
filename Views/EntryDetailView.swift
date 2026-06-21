@@ -45,7 +45,7 @@ struct EntryDetailView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 12)
-                            .background(Color.bodylogPrimary)
+                            .background(Color.formlogPrimary)
                             .cornerRadius(12)
                         }
                         .padding(.horizontal, 20)
@@ -65,10 +65,10 @@ struct EntryDetailView: View {
                                 Image(systemName: "lock.fill")
                                     .font(.system(size: 12))
                             }
-                            .foregroundColor(.bodylogPrimary)
+                            .foregroundColor(.formlogPrimary)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 12)
-                            .background(Color.bodylogPrimary.opacity(0.1))
+                            .background(Color.formlogPrimary.opacity(0.1))
                             .cornerRadius(12)
                         }
                         .padding(.horizontal, 20)
@@ -97,7 +97,7 @@ struct EntryDetailView: View {
                     }
                 } label: {
                     Image(systemName: "ellipsis.circle")
-                        .foregroundColor(.bodylogPrimary)
+                        .foregroundColor(.formlogPrimary)
                 }
             }
         }
@@ -133,7 +133,7 @@ struct EntryDetailView: View {
                         HStack {
                             Image(systemName: metric.icon)
                                 .font(.system(size: 14))
-                                .foregroundColor(.bodylogPrimary)
+                                .foregroundColor(.formlogPrimary)
                             Text(metric.displayName)
                                 .font(.system(size: 13))
                                 .foregroundColor(.secondary)
@@ -159,7 +159,7 @@ struct EntryDetailView: View {
     private func noteCard(_ text: String) -> some View {
         HStack(alignment: .top, spacing: 12) {
             Image(systemName: "text.bubble.fill")
-                .foregroundColor(.bodylogPrimary.opacity(0.7))
+                .foregroundColor(.formlogPrimary.opacity(0.7))
             Text(text)
                 .font(.system(size: 15))
                 .foregroundColor(.primary)
