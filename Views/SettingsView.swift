@@ -367,8 +367,8 @@ struct SettingsView: View {
                         break
                     }
                     let (count, error) = entryStore.importCSV(csvString)
-                    if error != nil && count == 0 {
-                        message = String(format: L10n.string("导入失败：%@"), error!)
+                    if let err = error, count == 0 {
+                        message = String(format: L10n.string("导入失败：%@"), err)
                     } else {
                         message = String(format: L10n.string("成功导入 %d 条记录"), count) + (error.map { "（\($0)）" } ?? "")
                     }
