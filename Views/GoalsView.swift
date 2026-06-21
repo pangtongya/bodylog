@@ -14,38 +14,31 @@ struct GoalsView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack(alignment: .top) {
-                ScrollView {
-                    VStack(spacing: 20) {
-                        if goalStore.activeGoals.isEmpty && goalStore.achievedGoals.isEmpty {
-                            emptyState
-                                .padding(.horizontal, 20)
-                                .padding(.top, 40)
-                        } else {
-                            // Active Goals
-                            if !goalStore.activeGoals.isEmpty {
-                                sectionHeader("进行中的目标")
-                                    .padding(.horizontal, 20)
-                                ForEach(goalStore.activeGoals) { goal in
-                                    GoalCardView(goal: goal)
-                                        .padding(.horizontal, 20)
-                                }
+            ScrollView {
+                VStack(spacing: 20) {
+                    if goalStore.activeGoals.isEmpty && goalStore.achievedGoals.isEmpty {
+                        emptyState
+                    } else {
+                        // Active Goals
+                        if !goalStore.activeGoals.isEmpty {
+                            sectionHeader("进行中的目标")
+                            ForEach(goalStore.activeGoals) { goal in
+                                GoalCardView(goal: goal)
                             }
+                        }
 
-                            // Achieved Goals
-                            if !goalStore.achievedGoals.isEmpty {
-                                sectionHeader("已达成")
-                                    .padding(.horizontal, 20)
-                                ForEach(goalStore.achievedGoals) { goal in
-                                    GoalCardView(goal: goal, isAchieved: true)
-                                        .padding(.horizontal, 20)
-                                }
+                        // Achieved Goals
+                        if !goalStore.achievedGoals.isEmpty {
+                            sectionHeader("已达成")
+                            ForEach(goalStore.achievedGoals) { goal in
+                                GoalCardView(goal: goal, isAchieved: true)
                             }
                         }
                     }
-                    .padding(.top, 8)
-                    .padding(.bottom, 100)
                 }
+                .padding(.horizontal, 20)
+                .padding(.top, 8)
+                .padding(.bottom, 100)
             }
             .background(Color.systemGroupedBackground)
             .navigationTitle("目标")
@@ -116,7 +109,7 @@ struct GoalsView: View {
                     .font(.system(size: 44))
                     .foregroundColor(.bodylogPrimary)
             }
-            
+
             VStack(spacing: 8) {
                 Text("设定你的第一个目标")
                     .font(.system(size: 20, weight: .bold))
@@ -127,7 +120,7 @@ struct GoalsView: View {
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
             }
-            
+
             Button(action: { showAddGoal = true }) {
                 HStack(spacing: 8) {
                     Image(systemName: "plus.circle.fill")
@@ -135,19 +128,21 @@ struct GoalsView: View {
                 }
                 .font(.system(size: 16, weight: .semibold, design: .rounded))
                 .foregroundColor(.white)
-                .padding(.horizontal, 36)
+                .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)
                 .background(Color.bodylogPrimary)
-                .cornerRadius(25)
+                .cornerRadius(14)
                 .shadow(color: .bodylogPrimary.opacity(0.3), radius: 8, x: 0, y: 4)
             }
+            .padding(.horizontal, 20)
         }
-        .padding(.horizontal, 40)
+        .padding(.top, 40)
     }
 
     private func sectionHeader(_ title: String) -> some View {
         Text(title)
             .font(.system(size: 16, weight: .semibold))
+            .foregroundColor(.primary)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
@@ -165,7 +160,6 @@ struct GoalCardView: View {
     @State private var showDeleteAlert: Bool = false
     @State private var showShareSheet: Bool = false
     @State private var shareItems: [Any] = []
-    @State private var showCelebration: Bool = false
 
     private var currentValue: Double? { entryStore.latestValue(for: goal.metricType) }
     private var startValue: Double? { entryStore.startValue(for: goal.metricType) }
@@ -196,7 +190,7 @@ struct GoalCardView: View {
                     )
                 )
             }
-            
+
             // Card content
             VStack(spacing: 14) {
                 // Header
@@ -214,7 +208,7 @@ struct GoalCardView: View {
                         Image(systemName: goal.direction.icon)
                             .foregroundColor(.bodylogPrimary.opacity(0.7))
                     }
-                    
+
                     // Share button (when achieved)
                     if isAchieved {
                         Button(action: {
@@ -230,7 +224,7 @@ struct GoalCardView: View {
                         }
                     }
                 }
-                
+
                 // Target
                 HStack(alignment: .lastTextBaseline) {
                     Text(goal.direction.displayName)
@@ -260,28 +254,16 @@ struct GoalCardView: View {
                         }
                     }
                 }
-                
+
                 // Progress bar
                 if !isAchieved {
                     VStack(alignment: .leading, spacing: 6) {
-                        GeometryReader { geo in
-                            ZStack(alignment: .leading) {
-                                RoundedRectangle(cornerRadius: 6)
-                                    .fill(Color.systemGray5)
-                                    .frame(height: 10)
-                                RoundedRectangle(cornerRadius: 6)
-                                    .fill(
-                                        LinearGradient(
-                                            colors: [.bodylogPrimary, .bodylogPrimary.opacity(0.7)],
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        )
-                                    )
-                                    .frame(width: geo.size.width * min(progress, 1.0), height: 10)
-                                    .animation(.easeOut(duration: 0.8), value: progress)
-                            }
-                        }
-                        .frame(height: 10)
+                        ProgressView(value: min(progress, 1.0))
+                            .tint(Color.bodylogPrimary)
+                            .frame(height: 10)
+                            .scaleEffect(y: 1.4)
+                            .animation(.easeOut(duration: 0.8), value: progress)
+
                         HStack {
                             Text("\(Int(min(progress, 1.0) * 100))%")
                                 .font(.system(size: 12, design: .rounded).monospacedDigit())
@@ -308,16 +290,19 @@ struct GoalCardView: View {
             }
             .padding(16)
         }
+        .frame(maxWidth: .infinity)
         .background(isAchieved ? Color.bodylogDecrease.opacity(0.06) : Color.systemBackground)
-        .cornerRadius(14)
+        .cornerRadius(16)
         .overlay(
-            RoundedRectangle(cornerRadius: 14)
+            RoundedRectangle(cornerRadius: 16)
                 .stroke(isAchieved ? Color.bodylogDecrease.opacity(0.3) : Color.clear, lineWidth: 1.5)
         )
-        .shadow(color: .black.opacity(0.04), radius: 6, x: 0, y: 1)
-        .swipeActions(edge: .trailing) {
-            Button(role: .destructive) { showDeleteAlert = true } label: {
-                Label("删除", systemImage: "trash")
+        .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
+        .contextMenu {
+            Button(role: .destructive) {
+                showDeleteAlert = true
+            } label: {
+                Label("删除目标", systemImage: "trash")
             }
         }
         .alert("删除目标", isPresented: $showDeleteAlert) {
@@ -326,22 +311,14 @@ struct GoalCardView: View {
         } message: {
             Text("确定要删除这个目标吗？")
         }
-        .onAppear {
-            // Show celebration animation when view appears (if achieved)
-            if isAchieved {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    showCelebration = true
-                }
-            }
-        }
     }
-    
+
     private func shareGoal() {
         let message = """
         🎉 我在BodyLog达成了身体数据目标！
-        
+
         \(goal.metricType.displayName): \(formattedTarget.0)\(formattedTarget.1)
-        
+
         用数据记录身体变化，见证每一次进步 💪
         """
         shareItems = [message]
