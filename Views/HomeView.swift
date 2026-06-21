@@ -10,6 +10,9 @@ struct HomeView: View {
     @EnvironmentObject var purchaseManager: PurchaseManager
     @Binding var showLogSheet: Bool
 
+    @State private var showPhotoCompare: Bool = false
+    @State private var showPaywall: Bool = false
+
     var body: some View {
         NavigationStack {
             ZStack(alignment: .top) {
@@ -25,6 +28,10 @@ struct HomeView: View {
 
                         // 快速统计
                         statsRow
+                            .padding(.horizontal, 20)
+
+                        // 照片对比入口（Pro 核心卖点）
+                        photoCompareEntry
                             .padding(.horizontal, 20)
 
                         // 历史记录
@@ -58,6 +65,17 @@ struct HomeView: View {
                             .foregroundColor(.bodylogPrimary)
                     }
                 }
+            }
+            .sheet(isPresented: $showPhotoCompare) {
+                PhotoCompareView()
+                    .environmentObject(appState)
+                    .environmentObject(entryStore)
+                    .environmentObject(purchaseManager)
+            }
+            .sheet(isPresented: $showPaywall) {
+                PaywallView(isPresented: $showPaywall)
+                    .environmentObject(appState)
+                    .environmentObject(purchaseManager)
             }
         }
     }
@@ -282,6 +300,59 @@ struct HomeView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 40)
+    }
+
+    // MARK: - Photo Compare Entry
+
+    private var photoCompareEntry: some View {
+        let photoCount = entryStore.entries.filter { $0.hasPhoto }.count
+
+        return Button(action: {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            if appState.isPro {
+                showPhotoCompare = true
+            } else {
+                showPaywall = true
+            }
+        }) {
+            HStack(spacing: 14) {
+                ZStack {
+                    Circle()
+                        .fill(Color.bodylogPrimary.opacity(0.1))
+                        .frame(width: 44, height: 44)
+                    Image(systemName: "photo.stack.fill")
+                        .font(.system(size: 18))
+                        .foregroundColor(.bodylogPrimary)
+                }
+
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack(spacing: 4) {
+                        Text("照片对比")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(.primary)
+                        if !appState.isPro {
+                            Image(systemName: "lock.fill")
+                                .font(.system(size: 10))
+                                .foregroundColor(.orange)
+                        }
+                    }
+                    Text(photoCount > 0 ? "已记录 \(photoCount) 张形体照片" : "用照片见证你的形体变化")
+                        .font(.system(size: 12))
+                        .foregroundColor(.secondary)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13))
+                    .foregroundColor(.systemGray3)
+            }
+            .padding(16)
+            .background(Color.systemBackground)
+            .cornerRadius(16)
+            .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Stats Row
