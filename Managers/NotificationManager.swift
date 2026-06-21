@@ -46,7 +46,7 @@ final class NotificationManager: NSObject, ObservableObject, @unchecked Sendable
 
         let content = UNMutableNotificationContent()
         content.title = L10n.string("记录今天的数据 💪")
-        content.body = L10n.string("打开 BodyLog，记录今天的身体指标，见证每一点变化。")
+        content.body = L10n.string("打开 FormLog，记录今天的身体指标，见证每一点变化。")
         content.sound = .default
 
         let request = UNNotificationRequest(

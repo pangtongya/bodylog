@@ -336,7 +336,7 @@ struct SettingsView: View {
             return
         }
         let csvString = entryStore.exportCSV()
-        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("BodyLog_\(Date().formatted(date: .abbreviated, time: .omitted)).csv")
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("FormLog_\(Date().formatted(date: .abbreviated, time: .omitted)).csv")
         do {
             try csvString.write(to: tempURL, atomically: true, encoding: .utf8)
             exportCSV = tempURL.absoluteString
@@ -397,7 +397,7 @@ struct SettingsView: View {
         do {
             let data = try JSONSerialization.data(withJSONObject: backupDict, options: [.prettyPrinted, .sortedKeys])
             backupData = data
-            let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("BodyLog_Backup_\(Date().formatted(date: .abbreviated, time: .omitted)).json")
+            let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("FormLog_Backup_\(Date().formatted(date: .abbreviated, time: .omitted)).json")
             try data.write(to: tempURL, options: .atomic)
             backupFileURL = tempURL
             showBackupSheet = true

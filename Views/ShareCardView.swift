@@ -61,7 +61,7 @@ struct ShareCardView: View {
             // Header
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("BodyLog 身体记录")
+                    Text(L10n.string("FormLog 形记"))
                         .font(.system(size: 18, weight: .bold))
                     Text(formatDate(Date()))
                         .font(.system(size: 13))
@@ -135,7 +135,7 @@ struct ShareCardView: View {
                     .font(.system(size: 11))
                     .foregroundColor(.secondary)
                 Spacer()
-                Text("BodyLog App")
+                Text("FormLog")
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundColor(.bodylogPrimary)
             }

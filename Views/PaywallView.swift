@@ -17,7 +17,7 @@ struct PaywallView: View {
                         Image(systemName: "photo.stack.fill")
                             .font(.system(size: 56))
                             .foregroundStyle(LinearGradient.bodylogGradient)
-                        Text("解锁 BodyLog Pro")
+                        Text(L10n.string("解锁 FormLog Pro"))
                             .font(.system(size: 26, weight: .bold, design: .rounded))
                         Text("用数据和照片，见证你的身体变化")
                             .font(.system(size: 15))

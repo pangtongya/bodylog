@@ -1,11 +1,11 @@
-// BodyLogTests.swift
-// BodyLog 单元测试
+// FormLogTests.swift
+// FormLog 单元测试
 
 import XCTest
-@testable import BodyLog
+@testable import FormLog
 
 @MainActor
-final class BodyLogTests: XCTestCase {
+final class FormLogTests: XCTestCase {
 
     var entryStore: BodyEntryStore!
     var goalStore: GoalStore!
