@@ -45,8 +45,8 @@ final class NotificationManager: NSObject, ObservableObject, @unchecked Sendable
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
 
         let content = UNMutableNotificationContent()
-        content.title = "记录今天的数据 💪"
-        content.body = "打开 BodyLog，记录今天的身体指标，见证每一点变化。"
+        content.title = L10n.string("记录今天的数据 💪")
+        content.body = L10n.string("打开 BodyLog，记录今天的身体指标，见证每一点变化。")
         content.sound = .default
 
         let request = UNNotificationRequest(
@@ -70,8 +70,8 @@ final class NotificationManager: NSObject, ObservableObject, @unchecked Sendable
 
     func sendGoalAchievedNotification(metricName: String) {
         let content = UNMutableNotificationContent()
-        content.title = "目标达成！🎉"
-        content.body = "恭喜你，\(metricName) 已达到目标值！"
+        content.title = L10n.string("目标达成！🎉")
+        content.body = String(format: L10n.string("恭喜你，%@ 已达到目标值！"), metricName)
         content.sound = .default
 
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)

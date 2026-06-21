@@ -41,11 +41,11 @@ final class PurchaseManager: ObservableObject {
             let products = try await Product.products(for: [Self.proProductID])
             proProduct = products.first
             if proProduct == nil {
-                loadProductsError = "无法找到商品，请检查配置。"
+                loadProductsError = L10n.string("无法找到商品，请检查配置。")
             }
         } catch {
             print("[PurchaseManager] Load products error: \(error)")
-            loadProductsError = "加载商品失败：\(error.localizedDescription)"
+            loadProductsError = String(format: L10n.string("加载商品失败：%@"), error.localizedDescription)
         }
         
         isLoadingProducts = false
@@ -59,7 +59,7 @@ final class PurchaseManager: ObservableObject {
 
     func purchasePro() async {
         guard let product = proProduct else {
-            purchaseError = "无法加载商品，请检查网络后重试。"
+            purchaseError = L10n.string("无法加载商品，请检查网络后重试。")
             return
         }
 
@@ -76,17 +76,17 @@ final class PurchaseManager: ObservableObject {
                     AppState.shared.isPro = true
                     AppState.shared.save()
                 case .unverified:
-                    purchaseError = "购买验证失败，请联系支持。"
+                    purchaseError = L10n.string("购买验证失败，请联系支持。")
                 }
             case .userCancelled:
                 break
             case .pending:
-                purchaseError = "购买待处理，请稍后查看。"
+                purchaseError = L10n.string("购买待处理，请稍后查看。")
             @unknown default:
                 break
             }
         } catch {
-            purchaseError = "购买失败：\(error.localizedDescription)"
+            purchaseError = String(format: L10n.string("购买失败：%@"), error.localizedDescription)
         }
 
         isPurchasing = false
@@ -100,7 +100,7 @@ final class PurchaseManager: ObservableObject {
             try await AppStore.sync()
             await checkPurchases()
         } catch {
-            purchaseError = "恢复购买失败：\(error.localizedDescription)"
+            purchaseError = String(format: L10n.string("恢复购买失败：%@"), error.localizedDescription)
         }
         isPurchasing = false
     }
@@ -144,11 +144,11 @@ final class PurchaseManager: ObservableObject {
         if let product = proProduct {
             return product.displayPrice
         } else if loadProductsError != nil {
-            return "加载失败，点击重试"
+            return L10n.string("加载失败，点击重试")
         } else if isLoadingProducts {
-            return "加载中..."
+            return L10n.string("加载中...")
         } else {
-            return "加载中..."
+            return L10n.string("加载中...")
         }
     }
     

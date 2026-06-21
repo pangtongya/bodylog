@@ -201,7 +201,7 @@ struct PhotoCompareView: View {
                     if let entry1 = selectedEntries.first,
                        let data1 = entry1.loadedPhotoData,
                        let image1 = UIImage(data: data1) {
-                        photoCard(image: image1, entry: entry1, tag: "之前") {
+                        photoCard(image: image1, entry: entry1, tag: L10n.string("之前")) {
                             withAnimation {
                                 selectedEntries.removeAll { $0.id == entry1.id }
                                 if selectedEntries.count < 2 {
@@ -214,7 +214,7 @@ struct PhotoCompareView: View {
                     if let entry2 = selectedEntries.last,
                        let data2 = entry2.loadedPhotoData,
                        let image2 = UIImage(data: data2) {
-                        photoCard(image: image2, entry: entry2, tag: "之后") {
+                        photoCard(image: image2, entry: entry2, tag: L10n.string("之后")) {
                             withAnimation {
                                 selectedEntries.removeAll { $0.id == entry2.id }
                                 if selectedEntries.count < 2 {

@@ -35,9 +35,9 @@ struct GoalModel: Identifiable, Codable, Equatable {
 
         var displayName: String {
             switch self {
-            case .decrease: return "减少到"
-            case .increase: return "增加到"
-            case .maintain: return "维持在"
+            case .decrease: return L10n.string("减少到")
+            case .increase: return L10n.string("增加到")
+            case .maintain: return L10n.string("维持在")
             }
         }
 

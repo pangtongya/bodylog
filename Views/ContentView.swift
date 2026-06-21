@@ -17,10 +17,10 @@ struct ContentView: View {
 
         var title: String {
             switch self {
-            case .home: return "记录"
-            case .trend: return "趋势"
-            case .goals: return "目标"
-            case .settings: return "设置"
+            case .home: return L10n.string("记录")
+            case .trend: return L10n.string("趋势")
+            case .goals: return L10n.string("目标")
+            case .settings: return L10n.string("设置")
             }
         }
         var icon: String {

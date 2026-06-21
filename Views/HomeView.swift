@@ -135,31 +135,31 @@ struct HomeView: View {
         let streak = entryStore.currentStreak
         if streak > 0 {
             if streak >= 7 {
-                result.append("🔥 已连续记录\(streak)天，你太棒了！")
+                result.append(String(format: L10n.string("🔥 已连续记录%d天，你太棒了！"), streak))
             } else {
-                result.append("💪 已连续记录\(streak)天，继续保持！")
+                result.append(String(format: L10n.string("💪 已连续记录%d天，继续保持！"), streak))
             }
         } else if let lastEntry = entryStore.latestEntry {
             let days = Calendar.current.dateComponents([.day], from: lastEntry.recordedAt, to: Date()).day ?? 0
             if days == 1 {
-                result.append("昨天记录了，今天继续吗？")
+                result.append(L10n.string("昨天记录了，今天继续吗？"))
             } else if days <= 7 {
-                result.append("已\(days)天没有记录，今天开始吧")
+                result.append(String(format: L10n.string("已%d天没有记录，今天开始吧"), days))
             } else {
-                result.append("好久不见！记录一下今天的变化吧")
+                result.append(L10n.string("好久不见！记录一下今天的变化吧"))
             }
         } else {
-            result.append("开始记录你的身体变化吧 💪")
+            result.append(L10n.string("开始记录你的身体变化吧 💪"))
         }
-        
+
         // Insight 2: Goal progress (if has active goal)
         if let goal = goalStore.activeGoals.first, let current = entryStore.latestValue(for: goal.metricType) {
             let remaining = abs(goal.targetValue - current)
             let unit = (goal.metricType == .weight || goal.metricType == .muscleMass) ? appState.weightUnit.rawValue : goal.metricType.unit
             if goal.isAchieved {
-                result.append("🎉 恭喜！你已达成「\(goal.metricType.displayName)」目标！")
+                result.append(String(format: L10n.string("🎉 恭喜！你已达成「%@」目标！"), goal.metricType.displayName))
             } else {
-                result.append("距离「\(goal.metricType.displayName)」目标还差\(String(format: "%.1f", remaining))\(unit)")
+                result.append(String(format: L10n.string("距离「%@」目标还差%.1f%@"), goal.metricType.displayName, remaining, unit))
             }
         }
 
@@ -306,6 +306,9 @@ struct HomeView: View {
 
     private var photoCompareEntry: some View {
         let photoCount = entryStore.entries.filter { $0.hasPhoto }.count
+        let titleText = photoCount > 0
+            ? String(format: L10n.string("已记录 %d 张形体照片"), photoCount)
+            : L10n.string("用照片见证你的形体变化")
 
         return Button(action: {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
@@ -336,7 +339,7 @@ struct HomeView: View {
                                 .foregroundColor(.orange)
                         }
                     }
-                    Text(photoCount > 0 ? "已记录 \(photoCount) 张形体照片" : "用照片见证你的形体变化")
+                    Text(titleText)
                         .font(.system(size: 12))
                         .foregroundColor(.secondary)
                 }
@@ -425,16 +428,16 @@ struct HomeView: View {
         let hour = Calendar.current.component(.hour, from: Date())
         let name = appState.userName.isEmpty ? "" : "，\(appState.userName)"
         switch hour {
-        case 5..<12: return "早上好\(name)"
-        case 12..<18: return "下午好\(name)"
-        default: return "晚上好\(name)"
+        case 5..<12: return L10n.string("早上好") + name
+        case 12..<18: return L10n.string("下午好") + name
+        default: return L10n.string("晚上好") + name
         }
     }
 
     private func relativeDate(_ date: Date) -> String {
         let calendar = Calendar.current
-        if calendar.isDateInToday(date) { return "今天" }
-        if calendar.isDateInYesterday(date) { return "昨天" }
+        if calendar.isDateInToday(date) { return L10n.string("今天") }
+        if calendar.isDateInYesterday(date) { return L10n.string("昨天") }
         let formatter = DateFormatter()
         formatter.dateFormat = "M月d日"
         return formatter.string(from: date)

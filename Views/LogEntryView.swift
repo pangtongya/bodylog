@@ -81,16 +81,16 @@ struct LogEntryView: View {
                 }
             }
         }
-        .alert("输入有误", isPresented: $showValidationError) {
-            Button("好的", role: .cancel) {}
+        .alert(L10n.string("输入有误"), isPresented: $showValidationError) {
+            Button(L10n.string("好的"), role: .cancel) {}
         } message: {
             Text(validationMessage)
         }
-        .confirmationDialog("放弃修改？", isPresented: $showCancelConfirmation, titleVisibility: .visible) {
-            Button("放弃修改", role: .destructive) {
+        .confirmationDialog(L10n.string("放弃修改？"), isPresented: $showCancelConfirmation, titleVisibility: .visible) {
+            Button(L10n.string("放弃修改"), role: .destructive) {
                 isPresented = false
             }
-            Button("继续编辑", role: .cancel) {}
+            Button(L10n.string("继续编辑"), role: .cancel) {}
         }
         .onAppear { prefillIfEditing() }
     }
@@ -268,7 +268,7 @@ struct LogEntryView: View {
         }
 
         if parsedMetrics.isEmpty {
-            validationMessage = "请至少填写一个指标"
+            validationMessage = L10n.string("请至少填写一个指标")
             showValidationError = true
             return
         }

@@ -18,6 +18,10 @@ struct TrendView: View {
         case month6 = "6月"
         case all    = "全部"
 
+        var localizedName: String {
+            L10n.string(rawValue)
+        }
+
         var days: Int? {
             switch self {
             case .month1: return 30
@@ -274,57 +278,57 @@ struct TrendView: View {
     
     private var insights: [(id: UUID, icon: String, text: String, subtitle: String?, color: Color)] {
         var result: [(id: UUID, icon: String, text: String, subtitle: String?, color: Color)] = []
-        
+
         // Insight 1: Recent change (30 days)
         if let change30d = entryStore.change30Days(for: selectedMetric) {
             let absChange = abs(change30d)
             let sign = change30d >= 0 ? "+" : ""
             let unit = (selectedMetric == .weight || selectedMetric == .muscleMass) ? appState.weightUnit.rawValue : selectedMetric.unit
-            
+
             let (text, subtitle, color): (String, String?, Color) = if change30d > 0 {
-                ("30天增长了\(sign)\(String(format: "%.1f", absChange))\(unit)", "继续保持，进步明显 💪", .bodylogDanger)
+                (String(format: L10n.string("30天增长了%@%.1f%@"), sign, absChange, unit), L10n.string("继续保持，进步明显 💪"), .bodylogDanger)
             } else if change30d < 0 {
-                ("30天减少了\(sign)\(String(format: "%.1f", absChange))\(unit)", "做得好，继续坚持 🎯", .bodylogDecrease)
+                (String(format: L10n.string("30天减少了%@%.1f%@"), sign, absChange, unit), L10n.string("做得好，继续坚持 🎯"), .bodylogDecrease)
             } else {
-                ("30天无变化", "保持现状也很重要 😊", .secondary)
+                (L10n.string("30天无变化"), L10n.string("保持现状也很重要 😊"), .secondary)
             }
-            
+
             result.append((id: UUID(), icon: "calendar.badge.clock", text: text, subtitle: subtitle, color: color))
         }
-        
+
         // Insight 2: Streak
         let streak = entryStore.currentStreak
         if streak > 0 {
             let (text, subtitle, color): (String, String?, Color) = if streak >= 7 {
-                ("已连续记录\(streak)天", "习惯正在养成，太棒了 🔥", .orange)
+                (String(format: L10n.string("已连续记录%d天"), streak), L10n.string("习惯正在养成，太棒了 🔥"), .orange)
             } else if streak >= 3 {
-                ("已连续记录\(streak)天", "继续保持这个节奏 👍", .bodylogPrimary)
+                (String(format: L10n.string("已连续记录%d天"), streak), L10n.string("继续保持这个节奏 👍"), .bodylogPrimary)
             } else {
-                ("已连续记录\(streak)天", "好的开始 💪", .bodylogPrimary)
+                (String(format: L10n.string("已连续记录%d天"), streak), L10n.string("好的开始 💪"), .bodylogPrimary)
             }
             result.append((id: UUID(), icon: "flame.fill", text: text, subtitle: subtitle, color: color))
         } else if let lastEntry = entryStore.latestEntry {
             let days = Calendar.current.dateComponents([.day], from: lastEntry.recordedAt, to: Date()).day ?? 0
-            result.append((id: UUID(), icon: "flame", text: "已\(days)天没有记录", subtitle: "别忘了记录今天的身体数据哦 😊", color: .secondary))
+            result.append((id: UUID(), icon: "flame", text: String(format: L10n.string("已%d天没有记录"), days), subtitle: L10n.string("别忘了记录今天的身体数据哦 😊"), color: .secondary))
         }
-        
+
         // Insight 3: Goal progress (if has active goal)
         if let goal = goalStore.activeGoal(for: selectedMetric), let current = entryStore.latestValue(for: goal.metricType) {
             let remaining = abs(goal.targetValue - current)
             let unit = (selectedMetric == .weight || selectedMetric == .muscleMass) ? appState.weightUnit.rawValue : selectedMetric.unit
             let progress = goal.progress(currentValue: current, startValue: entryStore.startValue(for: goal.metricType) ?? current)
-            
+
             let (text, subtitle, color): (String, String?, Color) = if progress >= 1.0 {
-                ("目标已达成 🎉", "恭喜你，继续保持良好的状态", .bodylogDecrease)
+                (L10n.string("目标已达成 🎉"), L10n.string("恭喜你，继续保持良好的状态"), .bodylogDecrease)
             } else if progress >= 0.8 {
-                ("距离目标还差\(String(format: "%.1f", remaining))\(unit)", "马上就要达成了，加油！💪", .bodylogPrimary)
+                (String(format: L10n.string("距离目标还差%.1f%@"), remaining, unit), L10n.string("马上就要达成了，加油！💪"), .bodylogPrimary)
             } else {
-                ("距离目标还差\(String(format: "%.1f", remaining))\(unit)", "一步一步来，你可以的 ✨", .bodylogPrimary)
+                (String(format: L10n.string("距离目标还差%.1f%@"), remaining, unit), L10n.string("一步一步来，你可以的 ✨"), .bodylogPrimary)
             }
-            
+
             result.append((id: UUID(), icon: "target", text: text, subtitle: subtitle, color: color))
         }
-        
+
         return Array(result.prefix(3))
     }
 
@@ -442,7 +446,7 @@ struct TrendView: View {
                     UIImpactFeedbackGenerator(style: .light).impactOccurred()
                     withAnimation(.easeInOut(duration: 0.2)) { timeRange = range }
                 }) {
-                    Text(range.rawValue)
+                    Text(range.localizedName)
                         .font(.system(size: 14, weight: .medium, design: .rounded))
                         .foregroundColor(timeRange == range ? .white : .primary)
                         .frame(maxWidth: .infinity)

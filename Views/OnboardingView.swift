@@ -227,7 +227,7 @@ struct OnboardingView: View {
                                 metricToggleRow(metric)
                             }
                         } header: {
-                            Text(category.rawValue)
+                            Text(category.localizedName)
                                 .font(.system(size: 12, weight: .semibold))
                                 .foregroundColor(.secondary)
                                 .frame(maxWidth: .infinity, alignment: .leading)

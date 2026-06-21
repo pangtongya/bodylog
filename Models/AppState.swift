@@ -52,9 +52,9 @@ class AppState: ObservableObject, Codable {
 
         var displayName: String {
             switch self {
-            case .male: return "男"
-            case .female: return "女"
-            case .notSet: return "不填"
+            case .male: return L10n.string("男")
+            case .female: return L10n.string("女")
+            case .notSet: return L10n.string("不填")
             }
         }
     }
