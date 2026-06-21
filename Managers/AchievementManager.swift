@@ -23,19 +23,24 @@ final class AchievementManager {
     ) -> [Achievement] {
         var newAchievements: [Achievement] = []
         let unlockedIds = Set(existingAchievements.map { $0.id })
-
+        
         // 检查每个成就类型
         for type in AchievementType.allCases {
             // 跳过已解锁的成就
             if unlockedIds.contains(type.id) { continue }
-
+            
             // 检查是否满足条件
             if isUnlocked(type: type, entryStore: entryStore, goalStore: goalStore) {
                 let achievement = Achievement(type: type)
                 newAchievements.append(achievement)
             }
         }
-
+        
+        // 限制返回数量（防止通知过载）
+        if newAchievements.count > 3 {
+            return Array(newAchievements.prefix(3))
+        }
+        
         return newAchievements
     }
 
