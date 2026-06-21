@@ -390,5 +390,7 @@ struct PhotoCompareView: View {
 
 #Preview {
     PhotoCompareView()
+        .environmentObject(AppState.shared)
         .environmentObject(BodyEntryStore())
+        .environmentObject(PurchaseManager.shared)
 }
