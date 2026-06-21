@@ -215,7 +215,11 @@ struct ShareCardView: View {
         let view = controller.view
 
         view?.backgroundColor = .white
-        view?.bounds = CGRect(origin: .zero, size: CGSize(width: 350, height: 400))
+        // 先设置宽度，让 SwiftUI 自适应计算高度
+        view?.frame = CGRect(x: 0, y: 0, width: 350, height: 0)
+        let targetSize = controller.sizeThatFits(in: CGSize(width: 350, height: UIView.layoutFittingCompressedSize.height))
+        view?.bounds = CGRect(origin: .zero, size: targetSize)
+        view?.layoutIfNeeded()
 
         guard let view = view else { return nil }
         let renderer = UIGraphicsImageRenderer(size: view.bounds.size)

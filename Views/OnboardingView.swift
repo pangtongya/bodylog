@@ -292,17 +292,6 @@ struct OnboardingView: View {
             appState.save()
         }
     }
-
-    private func featureBullet(icon: String, text: String) -> some View {
-        HStack(spacing: 12) {
-            Image(systemName: icon)
-                .foregroundColor(.bodylogPrimary)
-                .frame(width: 24)
-            Text(text)
-                .font(.system(size: 15))
-                .foregroundColor(.primary)
-        }
-    }
 }
 
 #Preview {
