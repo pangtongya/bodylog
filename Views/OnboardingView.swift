@@ -101,7 +101,7 @@ struct OnboardingView: View {
             // Differentiators
             VStack(alignment: .leading, spacing: 14) {
                 differenceBullet(icon: "lock.shield.fill", title: "隐私优先", description: "数据只存在你的手机，不上云")
-                differenceBullet(icon: "creditcard.fill", title: "¥6 买断", description: "没有订阅，永久使用")
+                differenceBullet(icon: "creditcard.fill", title: "一次买断", description: "没有订阅，永久使用")
                 differenceBullet(icon: "photo.stack.fill", title: "照片对比", description: "见证形体变化（独家功能）")
                 differenceBullet(icon: "chart.line.uptrend.xyaxis", title: "智能洞察", description: "自动分析你的变化趋势")
             }

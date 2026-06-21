@@ -48,6 +48,8 @@ struct ShareCardView: View {
         VStack(spacing: 0) {
             // Card content (will be captured as image)
             cardContent
+                // 强制浅色模式：分享卡片始终白底黑字，确保深色模式下文字可见
+                .environment(\.colorScheme, .light)
                 .background(Color.white)
                 .cornerRadius(16)
                 .shadow(color: .black.opacity(0.1), radius: 12, x: 0, y: 4)
@@ -205,7 +207,11 @@ struct ShareCardView: View {
     }
 
     private func renderAsImage() -> UIImage? {
-        let controller = UIHostingController(rootView: cardContent.frame(width: 350))
+        let controller = UIHostingController(rootView:
+            cardContent
+                .frame(width: 350)
+                .environment(\.colorScheme, .light)
+        )
         let view = controller.view
 
         view?.backgroundColor = .white

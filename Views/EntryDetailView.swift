@@ -2,12 +2,12 @@
 // 单条记录详情页
 
 import SwiftUI
-import StoreKit
 
 struct EntryDetailView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var entryStore: BodyEntryStore
     @EnvironmentObject var goalStore: GoalStore
+    @EnvironmentObject var purchaseManager: PurchaseManager
     @Environment(\.dismiss) private var dismiss
 
     let entry: BodyEntry
@@ -51,7 +51,9 @@ struct EntryDetailView: View {
                         .padding(.horizontal, 20)
                         .sheet(isPresented: $showCompareSheet) {
                             PhotoCompareView()
+                                .environmentObject(appState)
                                 .environmentObject(entryStore)
+                                .environmentObject(purchaseManager)
                         }
                     } else {
                         // Non-Pro: show locked hint

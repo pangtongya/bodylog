@@ -24,6 +24,8 @@ struct LogEntryView: View {
     @State private var showValidationError: Bool = false
     @State private var validationMessage: String = ""
     @State private var showCancelConfirmation: Bool = false
+    /// 标记用户是否主动删除了照片（编辑模式下用于区分"没碰照片"和"主动删除"）
+    @State private var photoWasRemoved: Bool = false
 
     /// 检查用户是否已输入任何内容
     private var hasUserInput: Bool {
@@ -173,7 +175,11 @@ struct LogEntryView: View {
                         .frame(maxHeight: 200)
                         .cornerRadius(12)
 
-                    Button(action: { photoData = nil; selectedPhotoItem = nil }) {
+                    Button(action: {
+                        photoData = nil
+                        selectedPhotoItem = nil
+                        photoWasRemoved = true
+                    }) {
                         Image(systemName: "xmark.circle.fill")
                             .font(.system(size: 22))
                             .foregroundColor(.white)
@@ -273,14 +279,18 @@ struct LogEntryView: View {
             entry.metrics = parsedMetrics
             entry.note = note.isEmpty ? nil : note
             entry.recordedAt = recordDate
-            // 保存照片到文件
+            // 照片处理逻辑（修复编辑模式删除照片 Bug）：
+            // - 有新照片数据 → 保存新照片
+            // - 无照片数据且用户主动删除 → 清除 photoFilename
+            // - 无照片数据但用户没碰照片 → 保留原有 photoFilename（不修改）
             if let data = photoData {
                 if let filename = PhotoManager.shared.savePhoto(data) {
                     entry.photoFilename = filename
                 }
-            } else {
+            } else if photoWasRemoved {
                 entry.photoFilename = nil
             }
+            // else: 保留 entry 原有的 photoFilename
             entryStore.updateEntry(entry)
         } else {
             // 保存照片到文件
@@ -309,6 +319,7 @@ struct LogEntryView: View {
         recordDate = entry.recordedAt
         note = entry.note ?? ""
         photoData = entry.loadedPhotoData
+        photoWasRemoved = false  // 重置删除标志
         for metric in BodyMetricType.allCases {
             if let val = entry.value(for: metric) {
                 if metric == .weight || metric == .muscleMass {

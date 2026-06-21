@@ -18,7 +18,7 @@ targets:
     platform: iOS
     deploymentTarget: "16.0"
     sources:
-      - path: BodyLog
+      - path: .
         excludes:
           - project.yml
           - README.md
@@ -30,6 +30,7 @@ targets:
           - "*.md"
           - "*.py"
           - BodyLog.xcodeproj
+          - BodyLog
     settings:
       INFOPLIST_FILE: Info.plist
       PRODUCT_BUNDLE_IDENTIFIER: com.pangtong.bodylog

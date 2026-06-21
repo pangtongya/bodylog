@@ -124,15 +124,9 @@ class AppState: ObservableObject, Codable {
             .appendingPathComponent("app_state.json")
     }()
 
-    private var saveWorkItem: DispatchWorkItem?
-
     func save() {
-        saveWorkItem?.cancel()
-        let workItem = DispatchWorkItem { [weak self] in
-            self?.performSave()
-        }
-        saveWorkItem = workItem
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: workItem)
+        // 立即保存，不使用延迟防抖，避免 App 被杀死时数据丢失
+        performSave()
     }
 
     private func performSave() {
