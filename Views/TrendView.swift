@@ -146,8 +146,14 @@ struct TrendView: View {
     private var statsSummary: some View {
         let latest = cachedDisplayData.last?.value
         let first = cachedDisplayData.first?.value
-        let change = (latest != nil && first != nil) ? latest! - first! : nil
-        let changePercent = (latest != nil && first != nil && first! != 0) ? (latest! - first!) / abs(first!) * 100 : nil
+        let change: Double? = {
+            guard let l = latest, let f = first else { return nil }
+            return l - f
+        }()
+        let changePercent: Double? = {
+            guard let l = latest, let f = first, f != 0 else { return nil }
+            return (l - f) / abs(f) * 100
+        }()
         let unitStr = (selectedMetric == .weight || selectedMetric == .muscleMass)
             ? appState.weightUnit.rawValue : selectedMetric.unit
         
