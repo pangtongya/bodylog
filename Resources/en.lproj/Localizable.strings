@@ -9,10 +9,10 @@
 "好的" = "OK";
 "继续编辑" = "Keep Editing";
 "放弃修改" = "Discard Changes";
+"放弃修改？" = "Discard Changes?";
 "完成" = "Done";
 "返回" = "Back";
 "重试" = "Retry";
-"分享" = "Share";
 
 // MARK: - Tab Bar
 "记录" = "Log";
@@ -21,7 +21,7 @@
 "设置" = "Settings";
 
 // MARK: - Onboarding
-"你的身体变化\n值得被记录" = "Your body changes\ndeserve to be tracked";
+"你的身体变化\n值得被记录" = "Your Body Changes\nDeserve to Be Tracked";
 "用数据和照片，见证每一次进步 💪" = "Track your progress with data and photos 💪";
 "隐私优先" = "Privacy First";
 "数据只存在你的手机，不上云" = "Data stays on your device, no cloud";
@@ -44,6 +44,7 @@
 "重量单位" = "Weight Unit";
 "选择要追踪的指标" = "Choose Metrics to Track";
 "至少选择一个，之后可以在设置中修改" = "Select at least one. You can change this later in Settings.";
+"例如：175" = "e.g. 175";
 
 // MARK: - Home
 "早上好" = "Good morning";
@@ -65,6 +66,15 @@
 "已记录 %d 张形体照片" = "%d progress photos logged";
 "用照片见证你的形体变化" = "Document your transformation with photos";
 "未记录" = "Not logged";
+"30天" = "30d";
+"🔥 已连续记录%d天，你太棒了！" = "🔥 %d-day streak, amazing!";
+"💪 已连续记录%d天，继续保持！" = "💪 %d-day streak, keep it up!";
+"昨天记录了，今天继续吗？" = "You logged yesterday. Continue today?";
+"已%d天没有记录，今天开始吧" = "It's been %d days. Start again today?";
+"好久不见！记录一下今天的变化吧" = "Long time no see! Log today's changes";
+"开始记录你的身体变化吧 💪" = "Start tracking your body changes 💪";
+"🎉 恭喜！你已达成「%@」目标！" = "🎉 Congratulations! You've reached your %@ goal!";
+"距离「%@」目标还差%.1f%@" = "%.1f%@ away from your %@ goal";
 
 // MARK: - Log Entry
 "记录数据" = "Log Data";
@@ -79,7 +89,6 @@
 "备注（可选）" = "Note (optional)";
 "今天感觉怎么样..." = "How are you feeling today...";
 "请至少填写一个指标" = "Please enter at least one metric";
-"放弃修改？" = "Discard changes?";
 "输入有误" = "Invalid Input";
 
 // MARK: - Trends
@@ -88,17 +97,33 @@
 "总变化" = "Total Change";
 "变化率" = "Change %";
 "记录次数" = "Entries";
+"次" = "";
 "数据洞察" = "Insights";
-"还没有%@的记录" = "No %@ data yet";
-"开始记录你的身体数据\n用图表见证你的变化 ✨" = "Start logging your body data\nSee your progress in charts ✨";
 "1月" = "1M";
 "3月" = "3M";
 "6月" = "6M";
 "全部" = "All";
+"30天增长了%@%.1f%@" = "Increased %@%.1f%@ in 30 days";
+"继续保持，进步明显 💪" = "Great progress, keep it up 💪";
+"30天减少了%@%.1f%@" = "Decreased %@%.1f%@ in 30 days";
+"做得好，继续坚持 🎯" = "Well done, stay consistent 🎯";
+"30天无变化" = "No change in 30 days";
+"保持现状也很重要 😊" = "Maintaining is also important 😊";
+"已连续记录%d天" = "%d-day streak";
+"习惯正在养成，太棒了 🔥" = "Habit is forming, great job 🔥";
+"继续保持这个节奏 👍" = "Keep this rhythm going 👍";
+"好的开始 💪" = "Great start 💪";
+"已%d天没有记录" = "%d days since last entry";
+"别忘了记录今天的身体数据哦 😊" = "Don't forget to log today 😊";
+"目标已达成 🎉" = "Goal achieved 🎉";
+"恭喜你，继续保持良好的状态" = "Congratulations, maintain your progress";
+"距离目标还差%.1f%@" = "%.1f%@ away from your goal";
+"马上就要达成了，加油！💪" = "Almost there! 💪";
+"一步一步来，你可以的 ✨" = "Step by step, you can do it ✨";
 
 // MARK: - Goals
 "设定你的第一个目标" = "Set Your First Goal";
-"有了目标，改变更有方向\n让数据见证你的进步 ✨" = "Goals give direction to your change\nLet data witness your progress ✨";
+"有了目标，改变更有方向\n让数据见证你的进步 ✨" = "Goals give direction\nLet data witness your progress ✨";
 "设置目标" = "Set Goal";
 "进行中的目标" = "Active Goals";
 "已达成" = "Achieved";
@@ -116,6 +141,10 @@
 "目标值" = "Target Value";
 "当前" = "Current";
 "请输入有效的目标值" = "Please enter a valid target value";
+"例如 70" = "e.g. 70";
+"减少到" = "Decrease to";
+"增加到" = "Increase to";
+"维持在" = "Maintain at";
 
 // MARK: - Settings
 "关于" = "About";
@@ -124,6 +153,38 @@
 "升级到 Pro" = "Upgrade to Pro";
 "无限目标 · 导出 · 提醒 · 照片记录" = "Unlimited goals · Export · Reminders · Photos";
 "恢复购买" = "Restore Purchase";
+"个人信息" = "Profile";
+"名字" = "Name";
+"身高" = "Height";
+"单位" = "Units";
+"管理指标" = "Manage Metrics";
+"开启提醒" = "Enable Reminder";
+"提醒时间" = "Reminder Time";
+"外观" = "Appearance";
+"主题" = "Theme";
+"跟随系统" = "System";
+"浅色" = "Light";
+"深色" = "Dark";
+"数据" = "Data";
+"导出 CSV" = "Export CSV";
+"导入 CSV" = "Import CSV";
+"备份数据" = "Backup Data";
+"恢复数据" = "Restore Data";
+"总记录数" = "Total Entries";
+"查看成就" = "View Achievements";
+"导入中..." = "Importing...";
+"导出失败：%@" = "Export failed: %@";
+"未选择文件" = "No file selected";
+"导入失败：文件编码不支持" = "Import failed: unsupported file encoding";
+"导入失败：%@" = "Import failed: %@";
+"成功导入 %d 条记录" = "Successfully imported %d entries";
+"读取文件失败：%@" = "Failed to read file: %@";
+"选择文件失败：%@" = "Failed to select file: %@";
+"备份成功（%.1f KB）" = "Backup successful (%.1f KB)";
+"备份失败：%@" = "Backup failed: %@";
+"恢复失败：无效的备份文件" = "Restore failed: invalid backup file";
+"数据恢复成功！" = "Data restored successfully!";
+"恢复失败：%@" = "Restore failed: %@";
 
 // MARK: - Paywall
 "解锁 BodyLog Pro" = "Unlock BodyLog Pro";
@@ -139,35 +200,46 @@
 "100% 隐私优先 · 数据本地存储 · 无订阅" = "100% Privacy First · Local Storage · No Subscription";
 "一次购买，永久使用 · 支持多设备登录同一 Apple ID" = "One purchase, yours forever · Works across devices with the same Apple ID";
 "无订阅 · 无隐藏费用 · 数据始终在你的设备上" = "No subscription · No hidden fees · Your data stays on your device";
+"购买" = "Buy";
 
 // MARK: - Photo Compare
 "对比" = "Compare";
 "还没有照片" = "No Photos Yet";
 "在记录数据时拍摄形体照片\n之后可以在这里对比变化" = "Take progress photos when logging data\nCompare them here later";
-"对比 (\(%d)/2)" = "Compare (%d/2)";
 "见证你的变化 💪" = "See Your Transformation 💪";
 "之前" = "Before";
 "之后" = "After";
-"📅 相差 %d 天" = "📅 %d days apart";
 "📊 指标变化" = "📊 Metric Changes";
 "分享对比" = "Share Comparison";
 
 // MARK: - Achievements
 "成就" = "Achievements";
-"连续记录3天" = "3-Day Streak";
-"连续记录7天" = "7-Day Streak";
-"连续记录14天" = "14-Day Streak";
-"连续记录30天" = "30-Day Streak";
-"记录10条数据" = "10 Entries Logged";
-"记录50条数据" = "50 Entries Logged";
-"记录100条数据" = "100 Entries Logged";
-"第一张形体照片" = "First Progress Photo";
-"10张照片记录" = "10 Progress Photos";
-"完成一个目标" = "Goal Completed";
-"坚持" = "Consistency";
-"积累" = "Volume";
-"照片" = "Photos";
-"目标" = "Goals";
+"初露锋芒" = "First Steps";
+"一周坚持" = "Week Warrior";
+"两周毅力" = "Fortnight Fighter";
+"月度达人" = "Monthly Master";
+"数据新手" = "Data Rookie";
+"数据积累" = "Data Collector";
+"百条记录" = "Century Club";
+"首次留影" = "First Photo";
+"摄影爱好者" = "Photo Pro";
+"目标达成" = "Goal Getter";
+"连续记录身体数据3天" = "Log body data for 3 consecutive days";
+"连续记录身体数据7天" = "Log body data for 7 consecutive days";
+"连续记录身体数据14天" = "Log body data for 14 consecutive days";
+"连续记录身体数据30天" = "Log body data for 30 consecutive days";
+"累计记录10条身体数据" = "Log 10 body data entries";
+"累计记录50条身体数据" = "Log 50 body data entries";
+"累计记录100条身体数据" = "Log 100 body data entries";
+"拍摄第一张形体照片" = "Take your first progress photo";
+"累计拍摄10张形体照片" = "Take 10 progress photos";
+"完成第一个目标" = "Complete your first goal";
+"坚持记录" = "Consistency";
+"照片记录" = "Photos";
+"已解锁成就" = "Unlocked Achievements";
+"已解锁" = "Unlocked";
+"未开始" = "Locked";
+"🎉 成就解锁！" = "🎉 Achievement Unlocked!";
 
 // MARK: - Share Card
 "分享进度" = "Share Progress";
@@ -190,23 +262,31 @@
 "左腿围" = "Left Thigh";
 "右腿围" = "Right Thigh";
 "颈围" = "Neck";
-"主要指标" = "Primary Metrics";
+"核心指标" = "Core Metrics";
 "围度测量" = "Measurements";
-"减少" = "Decrease";
-"增加" = "Increase";
-"维持" = "Maintain";
+
+// MARK: - Detail
+"对比照片" = "Compare Photos";
+"编辑" = "Edit";
+"这条记录将被永久删除，无法恢复。" = "This entry will be permanently deleted and cannot be recovered.";
+"删除记录" = "Delete Entry";
 
 // MARK: - Notifications
-"记录提醒" = "Logging Reminder";
-"该记录今天的身体数据啦 💪" = "Time to log today's body data 💪";
-"目标达成！" = "Goal Achieved!";
-"恭喜你达成了%@目标 🎉" = "Congratulations on reaching your %@ goal 🎉";
+"记录今天的数据 💪" = "Log Today's Data 💪";
+"打开 BodyLog，记录今天的身体指标，见证每一点变化。" = "Open BodyLog, log today's body metrics, and track every change.";
+"目标达成！🎉" = "Goal Achieved! 🎉";
+"恭喜你，%@ 已达到目标值！" = "Congratulations! %@ has reached its target!";
 
-// MARK: - Delete Confirmations
-"删除记录" = "Delete Entry";
-"这条记录将被永久删除，无法恢复。" = "This entry will be permanently deleted and cannot be recovered.";
+// MARK: - PurchaseManager Errors
+"无法找到商品，请检查配置。" = "Product not found. Please check configuration.";
+"加载商品失败：%@" = "Failed to load product: %@";
+"无法加载商品，请检查网络后重试。" = "Cannot load product. Check your network and retry.";
+"购买验证失败，请联系支持。" = "Purchase verification failed. Please contact support.";
+"购买待处理，请稍后查看。" = "Purchase pending. Please check later.";
+"购买失败：%@" = "Purchase failed: %@";
+"恢复购买失败：%@" = "Restore failed: %@";
+"加载失败，点击重试" = "Load failed, tap to retry";
+"加载中..." = "Loading...";
 
-// MARK: - CSV/Backup
-"导入成功：%d 条记录" = "Imported %d entries successfully";
-"备份成功" = "Backup Successful";
-"恢复成功" = "Restore Successful";
+// MARK: - Share Text
+"🎉 我在BodyLog达成了身体数据目标！\n\n%@: %@%@\n用数据记录身体变化，见证每一次进步 💪" = "🎉 I reached my body data goal in BodyLog!\n\n%@: %@%@\nTrack your body changes with data, witness every progress 💪";

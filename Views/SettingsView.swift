@@ -342,10 +342,10 @@ struct SettingsView: View {
             exportCSV = tempURL.absoluteString
             showExportSheet = true
         } catch {
-            backupResult = "导出失败：\(error.localizedDescription)"
+            backupResult = String(format: L10n.string("导出失败：%@"), error.localizedDescription)
         }
     }
-    
+
     private func handleImportResult(_ result: Result<[URL], Error>) {
         isImporting = true
         Task {
@@ -353,28 +353,28 @@ struct SettingsView: View {
             switch result {
             case .success(let urls):
                 guard let url = urls.first else {
-                    message = "未选择文件"
+                    message = L10n.string("未选择文件")
                     break
                 }
                 do {
                     let data = try Data(contentsOf: url)
                     guard let csvString = String(data: data, encoding: .utf8) else {
-                        message = "导入失败：文件编码不支持"
+                        message = L10n.string("导入失败：文件编码不支持")
                         break
                     }
                     let (count, error) = entryStore.importCSV(csvString)
                     if error != nil && count == 0 {
-                        message = "导入失败：\(error!)"
+                        message = String(format: L10n.string("导入失败：%@"), error!)
                     } else {
-                        message = "成功导入 \(count) 条记录" + (error.map { "（\($0)）" } ?? "")
+                        message = String(format: L10n.string("成功导入 %d 条记录"), count) + (error.map { "（\($0)）" } ?? "")
                     }
                 } catch {
-                    message = "读取文件失败：\(error.localizedDescription)"
+                    message = String(format: L10n.string("读取文件失败：%@"), error.localizedDescription)
                 }
             case .failure(let error):
-                message = "选择文件失败：\(error.localizedDescription)"
+                message = String(format: L10n.string("选择文件失败：%@"), error.localizedDescription)
             }
-            
+
             importResult = message
             isImporting = false
         }
@@ -401,9 +401,9 @@ struct SettingsView: View {
             try data.write(to: tempURL, options: .atomic)
             backupFileURL = tempURL
             showBackupSheet = true
-            backupResult = "备份成功（\(String(format: "%.1f", Double(data.count)/1024))KB）"
+            backupResult = String(format: L10n.string("备份成功（%.1f KB）"), Double(data.count)/1024)
         } catch {
-            backupResult = "备份失败：\(error.localizedDescription)"
+            backupResult = String(format: L10n.string("备份失败：%@"), error.localizedDescription)
         }
     }
     
@@ -415,7 +415,7 @@ struct SettingsView: View {
                 let data = try Data(contentsOf: url)
                 guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
                       let _ = json["version"] as? String else {
-                    backupResult = "恢复失败：无效的备份文件"
+                    backupResult = L10n.string("恢复失败：无效的备份文件")
                     return
                 }
                 
@@ -449,12 +449,12 @@ struct SettingsView: View {
                     appState.save()
                 }
                 
-                backupResult = "数据恢复成功！"
+                backupResult = L10n.string("数据恢复成功！")
             } catch {
-                backupResult = "恢复失败：\(error.localizedDescription)"
+                backupResult = String(format: L10n.string("恢复失败：%@"), error.localizedDescription)
             }
         case .failure(let error):
-            backupResult = "选择文件失败：\(error.localizedDescription)"
+            backupResult = String(format: L10n.string("选择文件失败：%@"), error.localizedDescription)
         }
     }
 }
@@ -469,7 +469,7 @@ struct MetricsPickerView: View {
         NavigationStack {
             List {
                 ForEach([BodyMetricType.MetricCategory.primary, .measurement], id: \.rawValue) { cat in
-                    Section(cat.rawValue) {
+                    Section(cat.localizedName) {
                         ForEach(BodyMetricType.allCases.filter { $0.category == cat }) { metric in
                             let isEnabled = appState.enabledMetrics.contains(metric)
                             Button(action: {

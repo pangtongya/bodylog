@@ -84,7 +84,7 @@ struct AchievementView: View {
         let achievementsInCategory = AchievementType.allCases.filter { $0.category == category }
 
         return VStack(alignment: .leading, spacing: 12) {
-            Text(category.rawValue)
+            Text(category.localizedName)
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(.secondary)
 

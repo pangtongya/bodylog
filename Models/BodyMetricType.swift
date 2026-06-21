@@ -25,18 +25,18 @@ enum BodyMetricType: String, CaseIterable, Codable, Identifiable {
 
     var displayName: String {
         switch self {
-        case .weight: return "体重"
-        case .bodyFat: return "体脂率"
-        case .muscleMass: return "肌肉量"
-        case .bmi: return "BMI"
-        case .waist: return "腰围"
-        case .hip: return "臀围"
-        case .chest: return "胸围"
-        case .leftArm: return "左臂围"
-        case .rightArm: return "右臂围"
-        case .leftThigh: return "左腿围"
-        case .rightThigh: return "右腿围"
-        case .neck: return "颈围"
+        case .weight: return L10n.string("体重")
+        case .bodyFat: return L10n.string("体脂率")
+        case .muscleMass: return L10n.string("肌肉量")
+        case .bmi: return L10n.string("BMI")
+        case .waist: return L10n.string("腰围")
+        case .hip: return L10n.string("臀围")
+        case .chest: return L10n.string("胸围")
+        case .leftArm: return L10n.string("左臂围")
+        case .rightArm: return L10n.string("右臂围")
+        case .leftThigh: return L10n.string("左腿围")
+        case .rightThigh: return L10n.string("右腿围")
+        case .neck: return L10n.string("颈围")
         }
     }
 
@@ -97,5 +97,9 @@ enum BodyMetricType: String, CaseIterable, Codable, Identifiable {
     enum MetricCategory: String {
         case primary = "核心指标"
         case measurement = "围度测量"
+
+        var localizedName: String {
+            L10n.string(rawValue)
+        }
     }
 }

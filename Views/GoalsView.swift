@@ -314,13 +314,11 @@ struct GoalCardView: View {
     }
 
     private func shareGoal() {
-        let message = """
-        🎉 我在BodyLog达成了身体数据目标！
+        let message = String(format: L10n.string("""
+🎉 我在BodyLog达成了身体数据目标！
 
-        \(goal.metricType.displayName): \(formattedTarget.0)\(formattedTarget.1)
-
-        用数据记录身体变化，见证每一次进步 💪
-        """
+%@: %@%@ 用数据记录身体变化，见证每一次进步 💪
+"""), goal.metricType.displayName, formattedTarget.0, formattedTarget.1)
         shareItems = [message]
         showShareSheet = true
     }
