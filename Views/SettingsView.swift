@@ -21,6 +21,8 @@ struct SettingsView: View {
     @State private var backupResult: String? = nil
     @State private var showAchievementView: Bool = false
     @State private var showShareCardView: Bool = false
+    @State private var showCSVTemplate: Bool = false
+    @State private var csvTemplateURL: URL? = nil
     @State private var exportCSV: String = ""
     @State private var backupData: Data = Data()
     @State private var backupFileURL: URL?
@@ -184,6 +186,13 @@ struct SettingsView: View {
                             Label(L10n.string("导入 CSV"), systemImage: "arrow.up.doc.fill")
                         }
                         .foregroundColor(.formlogPrimary)
+                        
+                        // CSV格式示例
+                        Button(action: exportCSVTemplate) {
+                            Label(L10n.string("查看 CSV 格式示例"), systemImage: "doc.text")
+                        }
+                        .foregroundColor(.secondary)
+                        .font(.system(size: 13))
                     }
                     
                     // Backup / Restore (all users)
@@ -320,6 +329,11 @@ struct SettingsView: View {
                 .environmentObject(appState)
                 .environmentObject(entryStore)
         }
+        .sheet(isPresented: $showCSVTemplate) {
+            if let url = csvTemplateURL {
+                ShareSheet(items: [url])
+            }
+        }
     }
 
     // MARK: - Pro Banner
@@ -375,6 +389,19 @@ struct SettingsView: View {
     private func openSystemSettings() {
         if let url = URL(string: UIApplication.openSettingsURLString) {
             UIApplication.shared.open(url)
+        }
+    }
+    
+    /// 导出CSV格式示例
+    private func exportCSVTemplate() {
+        let csvString = BodyEntryStore.generateCSVTemplate()
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("FormLog_CSV_格式示例.csv")
+        do {
+            try csvString.write(to: tempURL, atomically: true, encoding: .utf8)
+            csvTemplateURL = tempURL
+            showCSVTemplate = true
+        } catch {
+            importResult = String(format: L10n.string("导出失败：%@"), error.localizedDescription)
         }
     }
 
@@ -435,7 +462,7 @@ struct SettingsView: View {
                 do {
                     let data = try Data(contentsOf: url)
                     guard let csvString = String(data: data, encoding: .utf8) else {
-                        message = L10n.string("导入失败：文件编码不支持")
+                        message = L10n.string("导入失败：文件编码不支持，请将CSV文件转换为UTF-8编码")
                         break
                     }
                     let (count, error) = entryStore.importCSV(csvString)

@@ -293,6 +293,10 @@
 "无法解析日期: %@" = "Unable to parse date: %@";
 "%d 行数据跳过" = "%d rows skipped";
 "未找到有效数据" = "No valid data found";
+"View CSV Format Example" = "View CSV Format Example";
+"Line %d: Unable to parse date: %@" = "Line %d: Unable to parse date: %@";
+"...and %d more errors" = "...and %d more errors";
+"Import failed: File encoding not supported, please convert CSV file to UTF-8 encoding" = "Import failed: File encoding not supported, please convert CSV file to UTF-8 encoding";
 
 // MARK: - Share Text
 "🎉 我在FormLog达成了身体数据目标！\n\n%@: %@%@\n用数据记录身体变化，见证每一次进步 💪" = "🎉 I reached my body data goal in FormLog!\n\n%@: %@%@\nTrack your body changes with data, witness every progress 💪";

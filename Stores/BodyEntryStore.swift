@@ -283,7 +283,8 @@ class BodyEntryStore: ObservableObject {
         var errors: [String] = []
         var parsedEntries: [BodyEntry] = []
         
-        for line in lines.dropFirst() {
+        for (index, line) in lines.dropFirst().enumerated() {
+            let lineNumber = index + 2 // +1 for header, +1 for 1-based indexing
             let cols = parseCSVLine(line)
             
             guard cols.count > max(dateColIndex, 1) else { continue }
@@ -291,7 +292,7 @@ class BodyEntryStore: ObservableObject {
             // Parse date (支持多种格式)
             let dateString = cols[dateColIndex].trimmingCharacters(in: .whitespaces)
             guard let date = Self.parseCSVDate(dateString) else {
-                errors.append(String(format: L10n.string("无法解析日期: %@"), dateString))
+                errors.append(String(format: L10n.string("第 %d 行：无法解析日期: %@"), lineNumber, dateString))
                 continue
             }
             
@@ -328,10 +329,48 @@ class BodyEntryStore: ObservableObject {
         }
         
         if importedCount > 0 {
-            return (importedCount, errors.isEmpty ? nil : String(format: L10n.string("%d 行数据跳过"), errors.count))
+            let errorMsg = errors.isEmpty ? nil : String(format: L10n.string("%d 行数据跳过"), errors.count)
+            return (importedCount, errorMsg)
         } else {
-            return (0, errors.isEmpty ? L10n.string("未找到有效数据") : errors.first)
+            if !errors.isEmpty {
+                // 返回所有错误信息（最多显示5条）
+                let displayErrors = errors.prefix(5)
+                let errorMsg = displayErrors.joined(separator: "\n")
+                let fullMsg = errors.count > 5 ? errorMsg + String(format: L10n.string("\n...还有 %d 个错误"), errors.count - 5) : errorMsg
+                return (0, fullMsg)
+            }
+            return (0, L10n.string("未找到有效数据"))
         }
+    }
+    
+    /// 生成CSV格式示例
+    static func generateCSVTemplate() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let today = dateFormatter.string(from: Date())
+        
+        var csv = L10n.string("日期")
+        for type in BodyMetricType.allCases {
+            csv += ",\(type.displayName)"
+        }
+        csv += "," + L10n.string("备注") + "\n"
+        
+        // 示例数据（只添加主要指标）
+        let primaryTypes = BodyMetricType.allCases.filter { $0.category == .primary }
+        var exampleRow = "\(today)"
+        for type in primaryTypes {
+            switch type {
+            case .weight: exampleRow += ",70.5"
+            case .bodyFat: exampleRow += ",18.5"
+            case .muscleMass: exampleRow += ",25.0"
+            case .bmi: exampleRow += ",22.5"
+            default: continue
+            }
+        }
+        exampleRow += ",笔记示例\n"
+        csv += exampleRow
+        
+        return csv
     }
     
     /// CSV 行解析（支持引号包裹字段，处理逗号转义）
