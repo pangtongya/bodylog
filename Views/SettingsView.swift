@@ -19,7 +19,6 @@ struct SettingsView: View {
     @State private var importResult: String? = nil
     @State private var backupResult: String? = nil
     @State private var showAchievementView: Bool = false
-    @State private var showPhotoCompare: Bool = false
     @State private var showShareCardView: Bool = false
     @State private var exportCSV: String = ""
     @State private var backupData: Data = Data()
@@ -287,12 +286,6 @@ struct SettingsView: View {
         }
         .fileImporter(isPresented: $showRestorePicker, allowedContentTypes: [.json], allowsMultipleSelection: false) { result in
             handleRestoreResult(result)
-        }
-        .sheet(isPresented: $showPhotoCompare) {
-            PhotoCompareView()
-                .environmentObject(appState)
-                .environmentObject(entryStore)
-                .environmentObject(purchaseManager)
         }
         .sheet(isPresented: $showAchievementView) {
             AchievementView()

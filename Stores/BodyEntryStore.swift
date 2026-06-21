@@ -141,8 +141,16 @@ class BodyEntryStore: ObservableObject {
         return dates.count
     }
 
-    /// 连续记录天数（streak）
+    /// 连续记录天数（streak）— 缓存优化
+    private var _cachedStreak: Int?
+    private var _cachedStreakEntriesCount: Int = -1
+
     var currentStreak: Int {
+        // 如果 entries 数量没变，直接返回缓存值
+        if _cachedStreakEntriesCount == entries.count, let cached = _cachedStreak {
+            return cached
+        }
+        // 重新计算
         var streak = 0
         var checkDate = Calendar.current.startOfDay(for: Date())
         let recordedDays = Set(entries.map { Calendar.current.startOfDay(for: $0.recordedAt) })
@@ -151,6 +159,8 @@ class BodyEntryStore: ObservableObject {
             streak += 1
             checkDate = Calendar.current.date(byAdding: .day, value: -1, to: checkDate) ?? checkDate
         }
+        _cachedStreak = streak
+        _cachedStreakEntriesCount = entries.count
         return streak
     }
 
