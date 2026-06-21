@@ -30,6 +30,7 @@ struct SettingsView: View {
     @State private var showRestoreConfirm: Bool = false
     @State private var pendingRestoreURL: URL?
     @State private var notificationAuthStatus: UNAuthorizationStatus = .notDetermined
+    @State private var photoStorageSize: Int64 = 0
 
     /// 从 Bundle 动态读取版本号
     private var appVersion: String {
@@ -229,6 +230,14 @@ struct SettingsView: View {
                         Text(String(format: L10n.string("%d 天"), entryStore.totalRecordDays))
                             .foregroundColor(.secondary)
                     }
+                    
+                    // 存储空间
+                    if photoStorageSize > 0 {
+                        LabeledContent(L10n.string("照片存储")) {
+                            Text(formatBytes(photoStorageSize))
+                                .foregroundColor(.secondary)
+                        }
+                    }
                 }
 
                 // Achievements
@@ -267,6 +276,7 @@ struct SettingsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
                 checkNotificationAuthorizationStatus()
+                photoStorageSize = PhotoManager.shared.calculateTotalStorage()
             }
             .overlay {
                 if isImporting {
@@ -555,6 +565,25 @@ struct SettingsView: View {
             pendingRestoreURL = nil
         } catch {
             backupResult = String(format: L10n.string("恢复失败：%@"), error.localizedDescription)
+        }
+    }
+    
+    // MARK: - Helper Methods
+    
+    /// 格式化字节数为可读字符串
+    private func formatBytes(_ bytes: Int64) -> String {
+        let kb = Double(bytes) / 1024.0
+        let mb = kb / 1024.0
+        let gb = mb / 1024.0
+        
+        if gb >= 1.0 {
+            return String(format: "%.1f GB", gb)
+        } else if mb >= 1.0 {
+            return String(format: "%.1f MB", mb)
+        } else if kb >= 1.0 {
+            return String(format: "%.1f KB", kb)
+        } else {
+            return "\(bytes) B"
         }
     }
 }

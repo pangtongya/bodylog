@@ -70,6 +70,23 @@ final class PhotoManager: @unchecked Sendable {
 
     // MARK: - Private
     
+    /// 计算照片目录总大小（字节）
+    func calculateTotalStorage() -> Int64 {
+        var totalSize: Int64 = 0
+        do {
+            let files = try fileManager.contentsOfDirectory(at: photosDirectory, includingPropertiesForKeys: [.fileSizeKey])
+            for file in files {
+                let attributes = try fileManager.attributesOfItem(atPath: file.path)
+                if let size = attributes[.size] as? Int64 {
+                    totalSize += size
+                }
+            }
+        } catch {
+            print("[PhotoManager] Calculate storage error: \(error)")
+        }
+        return totalSize
+    }
+    
     private func ensureDirectoryExists() {
         if !fileManager.fileExists(atPath: photosDirectory.path) {
             do {
