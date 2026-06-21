@@ -280,18 +280,21 @@ struct LogEntryView: View {
             entry.metrics = parsedMetrics
             entry.note = note.isEmpty ? nil : note
             entry.recordedAt = recordDate
-            // 照片处理逻辑（修复编辑模式删除照片 Bug）：
-            // - 有新照片数据 → 保存新照片
-            // - 无照片数据且用户主动删除 → 清除 photoFilename
-            // - 无照片数据但用户没碰照片 → 保留原有 photoFilename（不修改）
+            // 保存旧照片文件名，替换或删除后清理，防止产生孤儿文件
+            let oldPhotoFilename = entry.photoFilename
             if let data = photoData {
                 if let filename = PhotoManager.shared.savePhoto(data) {
                     entry.photoFilename = filename
+                    if let old = oldPhotoFilename, old != filename {
+                        PhotoManager.shared.deletePhoto(filename: old)
+                    }
                 }
             } else if photoWasRemoved {
                 entry.photoFilename = nil
+                if let old = oldPhotoFilename {
+                    PhotoManager.shared.deletePhoto(filename: old)
+                }
             }
-            // else: 保留 entry 原有的 photoFilename
             entryStore.updateEntry(entry)
         } else {
             // 保存照片到文件
