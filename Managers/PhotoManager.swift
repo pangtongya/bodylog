@@ -15,8 +15,14 @@ final class PhotoManager: @unchecked Sendable {
     
     /// 照片存放目录: Documents/FormLogPhotos/
     private var photosDirectory: URL {
-        let docs = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
-        return docs.appendingPathComponent("FormLogPhotos", isDirectory: true)
+        let docsURL: URL
+        if let url = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
+            docsURL = url
+        } else {
+            let tmp = NSTemporaryDirectory()
+            docsURL = URL(fileURLWithPath: tmp)
+        }
+        return docsURL.appendingPathComponent("FormLogPhotos", isDirectory: true)
     }
     
     private init() {

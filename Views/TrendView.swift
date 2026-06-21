@@ -12,6 +12,11 @@ struct TrendView: View {
     @State private var selectedMetric: BodyMetricType = .weight
     @State private var timeRange: TimeRange = .month3
 
+    // 缓存：chartData / displayData 在每次 body 渲染中被访问 ~8 次，
+    // 使用 @State 缓存 + onChange(of:) 触发重新计算，将 O(8n) → O(n)
+    @State private var cachedChartData: [(date: Date, value: Double)] = []
+    @State private var cachedDisplayData: [(date: Date, value: Double)] = []
+
     enum TimeRange: String, CaseIterable {
         case month1 = "1月"
         case month3 = "3月"
@@ -32,22 +37,24 @@ struct TrendView: View {
         }
     }
 
-    private var chartData: [(date: Date, value: Double)] {
+    private func recomputeChartData() {
         let all = entryStore.recentValues(for: selectedMetric, limit: Int.max)
-        guard let days = timeRange.days else { return all }
-        let cutoff = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
-        return all.filter { $0.date >= cutoff }
-    }
+        let chart: [(date: Date, value: Double)] = {
+            guard let days = timeRange.days else { return all }
+            let cutoff = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
+            return all.filter { $0.date >= cutoff }
+        }()
+        cachedChartData = chart
 
-    private var displayData: [(date: Date, value: Double)] {
         if selectedMetric == .weight || selectedMetric == .muscleMass {
-            return chartData.map { point in
+            cachedDisplayData = chart.map { point in
                 let kgVal = point.value
                 let display = appState.displayWeight(kgVal)
                 return (date: point.date, value: display.value)
             }
+        } else {
+            cachedDisplayData = chart
         }
-        return chartData
     }
 
     var body: some View {
@@ -59,13 +66,13 @@ struct TrendView: View {
                         .padding(.horizontal, 20)
 
                     // Insights card
-                    if !displayData.isEmpty {
+                    if !cachedDisplayData.isEmpty {
                         insightsCard
                             .padding(.horizontal, 20)
                     }
 
                     // Summary stats
-                    if !displayData.isEmpty {
+                    if !cachedDisplayData.isEmpty {
                         statsSummary
                             .padding(.horizontal, 20)
                     }
@@ -85,6 +92,11 @@ struct TrendView: View {
             .navigationTitle(L10n.string("趋势"))
             .navigationBarTitleDisplayMode(.inline)
         }
+        .onAppear { recomputeChartData() }
+        .onChange(of: selectedMetric) { _ in recomputeChartData() }
+        .onChange(of: timeRange) { _ in recomputeChartData() }
+        .onChange(of: entryStore.entries) { _ in recomputeChartData() }
+        .onChange(of: appState.weightUnit) { _ in recomputeChartData() }
     }
 
     // MARK: - Metric Picker
@@ -132,8 +144,8 @@ struct TrendView: View {
     // MARK: - Stats Summary
     
     private var statsSummary: some View {
-        let latest = displayData.last?.value
-        let first = displayData.first?.value
+        let latest = cachedDisplayData.last?.value
+        let first = cachedDisplayData.first?.value
         let change = (latest != nil && first != nil) ? latest! - first! : nil
         let changePercent = (latest != nil && first != nil && first! != 0) ? (latest! - first!) / abs(first!) * 100 : nil
         let unitStr = (selectedMetric == .weight || selectedMetric == .muscleMass)
@@ -188,7 +200,7 @@ struct TrendView: View {
                     icon: "number",
                     iconColor: .purple,
                     titleKey: L10n.string("记录次数"),
-                    value: "\(displayData.count)",
+                    value: "\(cachedDisplayData.count)",
                     unit: L10n.string("次"),
                     trend: nil
                 )
@@ -336,7 +348,7 @@ struct TrendView: View {
     
     private var chartCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            if displayData.isEmpty {
+            if cachedDisplayData.isEmpty {
                 VStack(spacing: 16) {
                     ZStack {
                         Circle()
@@ -361,7 +373,7 @@ struct TrendView: View {
                 .frame(height: 220)
             } else {
                 Chart {
-                    ForEach(displayData, id: \.date) { point in
+                    ForEach(cachedDisplayData, id: \.date) { point in
                         // Area gradient
                         AreaMark(
                             x: .value("日期", point.date),
@@ -389,7 +401,7 @@ struct TrendView: View {
                             y: .value(selectedMetric.displayName, point.value)
                         )
                         .foregroundStyle(Color.formlogPrimary)
-                        .symbolSize(displayData.count > 30 ? 0 : 36)
+                        .symbolSize(cachedDisplayData.count > 30 ? 0 : 36)
                     }
                 }
                 .chartYScale(domain: yDomain)
@@ -421,8 +433,8 @@ struct TrendView: View {
     }
 
     private var yDomain: ClosedRange<Double> {
-        guard !displayData.isEmpty else { return 0...100 }
-        let values = displayData.map(\.value)
+        guard !cachedDisplayData.isEmpty else { return 0...100 }
+        let values = cachedDisplayData.map(\.value)
         let minVal = (values.min() ?? 0) - 2
         let maxVal = (values.max() ?? 100) + 2
         return minVal...maxVal
