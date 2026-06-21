@@ -8,6 +8,7 @@ options:
     - iphone
   bundleIdPrefix: com.pangtong
   appIcon: AppIcon
+  developmentLanguage: zh-Hans
 
 settings:
   SWIFT_STRICT_CONCURRENCY: complete
@@ -43,6 +44,7 @@ targets:
       ENABLE_BITCODE: NO
       ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
       GENERATE_INFOPLIST_FILE: NO
+      LOCALIZATION_PREFERS_STRING_CATALOGS: NO
 
   BodyLogTests:
     type: bundle.unit-test
