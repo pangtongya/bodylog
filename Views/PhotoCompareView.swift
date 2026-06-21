@@ -110,18 +110,20 @@ struct PhotoCompareView: View {
     // MARK: - Photo Grid
     
     private var photoGrid: some View {
-        ScrollView {
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 2) {
-                ForEach(entriesWithPhotos) { entry in
-                    photoThumbnail(entry)
+        GeometryReader { geo in
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 2) {
+                    ForEach(entriesWithPhotos) { entry in
+                        photoThumbnail(entry, itemSize: geo.size.width / 3 - 2)
+                    }
                 }
+                .padding(2)
             }
-            .padding(2)
+            .background(Color.systemGroupedBackground)
         }
-        .background(Color.systemGroupedBackground)
     }
     
-    private func photoThumbnail(_ entry: BodyEntry) -> some View {
+    private func photoThumbnail(_ entry: BodyEntry, itemSize: CGFloat) -> some View {
         let isSelected = selectedEntries.contains { $0.id == entry.id }
         
         return Button(action: {
@@ -148,7 +150,7 @@ struct PhotoCompareView: View {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFill()
-                        .frame(width: UIScreen.main.bounds.width / 3 - 2, height: UIScreen.main.bounds.width / 3 - 2)
+                        .frame(width: itemSize, height: itemSize)
                         .clipped()
                 }
                 
