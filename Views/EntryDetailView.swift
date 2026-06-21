@@ -39,7 +39,7 @@ struct EntryDetailView: View {
                         }) {
                             HStack {
                                 Image(systemName: "photo.stack.fill")
-                                Text("对比照片")
+                                Text(L10n.string("对比照片"))
                                     .font(.system(size: 15, weight: .semibold, design: .rounded))
                             }
                             .foregroundColor(.white)
@@ -60,7 +60,7 @@ struct EntryDetailView: View {
                         Button(action: { showPaywall = true }) {
                             HStack {
                                 Image(systemName: "photo.stack.fill")
-                                Text("对比照片")
+                                Text(L10n.string("对比照片"))
                                     .font(.system(size: 15, weight: .semibold, design: .rounded))
                                 Image(systemName: "lock.fill")
                                     .font(.system(size: 12))
@@ -90,10 +90,10 @@ struct EntryDetailView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Menu {
                     Button(action: { showEditSheet = true }) {
-                        Label("编辑", systemImage: "pencil")
+                        Label(L10n.string("编辑"), systemImage: "pencil")
                     }
                     Button(role: .destructive, action: { showDeleteAlert = true }) {
-                        Label("删除", systemImage: "trash")
+                        Label(L10n.string("删除"), systemImage: "trash")
                     }
                 } label: {
                     Image(systemName: "ellipsis.circle")
@@ -101,14 +101,14 @@ struct EntryDetailView: View {
                 }
             }
         }
-        .alert("删除记录", isPresented: $showDeleteAlert) {
-            Button("删除", role: .destructive) {
+        .alert(L10n.string("删除记录"), isPresented: $showDeleteAlert) {
+            Button(L10n.string("删除"), role: .destructive) {
                 entryStore.deleteEntry(id: entry.id)
                 dismiss()
             }
-            Button("取消", role: .cancel) {}
+            Button(L10n.string("取消"), role: .cancel) {}
         } message: {
-            Text("这条记录将被永久删除，无法恢复。")
+            Text(L10n.string("这条记录将被永久删除，无法恢复。"))
         }
         .sheet(isPresented: $showEditSheet) {
             LogEntryView(isPresented: $showEditSheet, editingEntry: entry)

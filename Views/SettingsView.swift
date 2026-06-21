@@ -41,13 +41,13 @@ struct SettingsView: View {
                 }
 
                 // Profile
-                Section("个人信息") {
-                    LabeledContent("名字") {
-                        TextField("昵称", text: $appState.userName)
+                Section(L10n.string("个人信息")) {
+                    LabeledContent(L10n.string("名字")) {
+                        TextField(L10n.string("昵称"), text: $appState.userName)
                             .multilineTextAlignment(.trailing)
                             .onChange(of: appState.userName) { _ in appState.save() }
                     }
-                    LabeledContent("身高") {
+                    LabeledContent(L10n.string("身高")) {
                         HStack {
                             TextField("--", value: $appState.userHeight, format: .number)
                                 .multilineTextAlignment(.trailing)
@@ -56,7 +56,7 @@ struct SettingsView: View {
                             Text("cm").foregroundColor(.secondary)
                         }
                     }
-                    Picker("性别", selection: $appState.userGender) {
+                    Picker(L10n.string("性别"), selection: $appState.userGender) {
                         ForEach(AppState.Gender.allCases, id: \.self) {
                             Text($0.displayName).tag($0)
                         }
@@ -65,8 +65,8 @@ struct SettingsView: View {
                 }
 
                 // Units
-                Section("单位") {
-                    Picker("重量单位", selection: $appState.weightUnit) {
+                Section(L10n.string("单位")) {
+                    Picker(L10n.string("重量单位"), selection: $appState.weightUnit) {
                         ForEach(AppState.WeightUnit.allCases, id: \.self) {
                             Text($0.rawValue).tag($0)
                         }
@@ -75,12 +75,12 @@ struct SettingsView: View {
                 }
 
                 // Tracked Metrics
-                Section("追踪指标") {
+                Section(L10n.string("追踪指标")) {
                     Button(action: { showMetricsPicker = true }) {
                         HStack {
-                            Text("管理指标")
+                            Text(L10n.string("管理指标"))
                             Spacer()
-                            Text("\(appState.enabledMetrics.count) 个")
+                            Text(String(format: L10n.string("%d 个"), appState.enabledMetrics.count))
                                 .foregroundColor(.secondary)
                             Image(systemName: "chevron.right")
                                 .font(.system(size: 12))
@@ -91,8 +91,8 @@ struct SettingsView: View {
                 }
 
                 // Reminder
-                Section("每日提醒") {
-                    Toggle("开启提醒", isOn: $appState.reminderEnabled)
+                Section(L10n.string("每日提醒")) {
+                    Toggle(L10n.string("开启提醒"), isOn: $appState.reminderEnabled)
                         .tint(.formlogPrimary)
                         .onChange(of: appState.reminderEnabled) { enabled in
                             appState.save()
@@ -121,24 +121,19 @@ struct SettingsView: View {
 
                     if appState.reminderEnabled {
                         DatePicker(
-                            "提醒时间",
+                            L10n.string("提醒时间"),
                             selection: Binding(
                                 get: {
-                                    Calendar.current.date(
-                                        bySettingHour: appState.reminderHour,
-                                        minute: appState.reminderMinute,
-                                        second: 0, of: Date()
-                                    ) ?? Date()
+                                    Calendar.current.date(bySettingHour: appState.reminderHour, minute: appState.reminderMinute, second: 0, of: Date())!
                                 },
-                                set: { newDate in
-                                    let c = Calendar.current
-                                    appState.reminderHour = c.component(.hour, from: newDate)
-                                    appState.reminderMinute = c.component(.minute, from: newDate)
+                                set: { newValue in
+                                    let components = Calendar.current.dateComponents([.hour, .minute], from: newValue)
+                                    appState.reminderHour = components.hour!
+                                    appState.reminderMinute = components.minute!
                                     appState.save()
-                                    NotificationManager.shared.scheduleDailyReminder(
-                                        hour: appState.reminderHour,
-                                        minute: appState.reminderMinute
-                                    )
+                                    if appState.reminderEnabled {
+                                        NotificationManager.shared.scheduleDailyReminder(hour: components.hour!, minute: components.minute!)
+                                    }
                                 }
                             ),
                             displayedComponents: .hourAndMinute
@@ -147,20 +142,20 @@ struct SettingsView: View {
                 }
 
                 // Appearance
-                Section("外观") {
-                    Picker("主题", selection: $appState.theme) {
-                        Text("跟随系统").tag(AppState.AppTheme.system)
-                        Text("浅色").tag(AppState.AppTheme.light)
-                        Text("深色").tag(AppState.AppTheme.dark)
+                Section(L10n.string("外观")) {
+                    Picker(L10n.string("主题"), selection: $appState.theme) {
+                        Text(L10n.string("跟随系统")).tag(AppState.AppTheme.system)
+                        Text(L10n.string("浅色")).tag(AppState.AppTheme.light)
+                        Text(L10n.string("深色")).tag(AppState.AppTheme.dark)
                     }
                     .onChange(of: appState.theme) { _ in appState.save() }
                 }
 
                 // Data
-                Section("数据") {
+                Section(L10n.string("数据")) {
                     Button(action: exportData) {
                         HStack {
-                            Label("导出 CSV", systemImage: "arrow.down.doc.fill")
+                            Label(L10n.string("导出 CSV"), systemImage: "arrow.down.doc.fill")
                             Spacer()
                             if !appState.isPro {
                                 Image(systemName: "lock.fill")
@@ -172,14 +167,14 @@ struct SettingsView: View {
                     
                     if appState.isPro {
                         Button(action: { showImportPicker = true }) {
-                            Label("导入 CSV", systemImage: "arrow.up.doc.fill")
+                            Label(L10n.string("导入 CSV"), systemImage: "arrow.up.doc.fill")
                         }
                         .foregroundColor(.formlogPrimary)
                     }
                     
                     // Backup / Restore (all users)
                     Button(action: createBackup) {
-                        Label("备份数据", systemImage: "square.and.arrow.up")
+                        Label(L10n.string("备份数据"), systemImage: "square.and.arrow.up")
                     }
                     .foregroundColor(.formlogPrimary)
                     
@@ -191,7 +186,7 @@ struct SettingsView: View {
                     }
                     
                     Button(action: { showRestorePicker = true }) {
-                        Label("恢复数据", systemImage: "square.and.arrow.down")
+                        Label(L10n.string("恢复数据"), systemImage: "square.and.arrow.down")
                     }
                     .foregroundColor(.orange)
 
@@ -203,21 +198,21 @@ struct SettingsView: View {
                             .padding(.top, 4)
                     }
 
-                    LabeledContent("总记录数") {
+                    LabeledContent(L10n.string("总记录数")) {
                         Text("\(entryStore.entries.count)")
                             .foregroundColor(.secondary)
                     }
-                    LabeledContent("记录天数") {
-                        Text("\(entryStore.totalRecordDays) 天")
+                    LabeledContent(L10n.string("记录天数")) {
+                        Text(String(format: L10n.string("%d 天"), entryStore.totalRecordDays))
                             .foregroundColor(.secondary)
                     }
                 }
 
                 // Achievements
-                Section("成就") {
+                Section(L10n.string("成就")) {
                     Button(action: { showAchievementView = true }) {
                         HStack {
-                            Label("查看成就", systemImage: "trophy.fill")
+                            Label(L10n.string("查看成就"), systemImage: "trophy.fill")
                             Spacer()
                             Text("\(appState.achievements.count)/\(AchievementType.allCases.count)")
                                 .foregroundColor(.secondary)
@@ -231,19 +226,19 @@ struct SettingsView: View {
 
                     // Share progress (all users)
                     Button(action: { showShareCardView = true }) {
-                        Label("分享进度", systemImage: "square.and.arrow.up")
+                        Label(L10n.string("分享进度"), systemImage: "square.and.arrow.up")
                     }
                     .foregroundColor(.formlogPrimary)
 
                 // About
-                Section("关于") {
-                    LabeledContent("版本", value: appVersion)
+                Section(L10n.string("关于")) {
+                    LabeledContent(L10n.string("版本"), value: appVersion)
                     Link(destination: URL(string: "https://pangtongya.github.io/formlog-privacy/privacy-policy.html")!) {
-                        Label("隐私政策", systemImage: "hand.raised.fill")
+                        Label(L10n.string("隐私政策"), systemImage: "hand.raised.fill")
                     }
                 }
             }
-            .navigationTitle("设置")
+            .navigationTitle(L10n.string("设置"))
             .navigationBarTitleDisplayMode(.inline)
             .overlay {
                 if isImporting {
@@ -254,7 +249,7 @@ struct SettingsView: View {
                             ProgressView()
                                 .scaleEffect(1.2)
                                 .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                            Text("导入中...")
+                            Text(L10n.string("导入中..."))
                                 .font(.system(size: 15, weight: .medium))
                                 .foregroundColor(.white)
                         }
@@ -311,9 +306,9 @@ struct SettingsView: View {
                         .foregroundStyle(LinearGradient.formlogGradient)
 
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("升级到 Pro")
+                        Text(L10n.string("升级到 Pro"))
                             .font(.system(size: 15, weight: .semibold))
-                        Text("无限目标 · 导出 · 提醒 · 照片记录")
+                        Text(L10n.string("无限目标 · 导出 · 提醒 · 照片记录"))
                             .font(.system(size: 12))
                             .foregroundColor(.secondary)
                     }
@@ -498,7 +493,7 @@ struct MetricsPickerView: View {
                     }
                 }
             }
-            .navigationTitle("追踪指标")
+            .navigationTitle(L10n.string("追踪指标"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {

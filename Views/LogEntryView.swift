@@ -63,7 +63,7 @@ struct LogEntryView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("取消") {
+                    Button(L10n.string("取消")) {
                         if hasUserInput {
                             showCancelConfirmation = true
                         } else {
@@ -100,7 +100,7 @@ struct LogEntryView: View {
 
     private var datePicker: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label("记录时间", systemImage: "calendar")
+            Label(L10n.string("记录时间"), systemImage: "calendar")
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(.secondary)
             DatePicker("", selection: $recordDate, displayedComponents: [.date, .hourAndMinute])
@@ -114,7 +114,7 @@ struct LogEntryView: View {
 
     private var metricsSection: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("身体指标")
+            Text(L10n.string("身体指标"))
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(.secondary)
                 .padding(.bottom, 8)
@@ -164,7 +164,7 @@ struct LogEntryView: View {
 
     private var photoSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Label("形体照片（可选）", systemImage: "camera.fill")
+            Label(L10n.string("形体照片（可选）"), systemImage: "camera.fill")
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(.secondary)
 
@@ -195,7 +195,7 @@ struct LogEntryView: View {
                 }) {
                     HStack {
                         Image(systemName: "camera.badge.plus")
-                        Text("添加照片")
+                        Text(L10n.string("添加照片"))
                             .font(.system(size: 15))
                     }
                     .foregroundColor(.formlogPrimary)
@@ -204,14 +204,14 @@ struct LogEntryView: View {
                     .background(Color.formlogPrimary.opacity(0.1))
                     .cornerRadius(12)
                 }
-                .confirmationDialog("选择照片来源", isPresented: $showPhotoSourceDialog, titleVisibility: .visible) {
-                    Button("拍照") {
+                .confirmationDialog(L10n.string("选择照片来源"), isPresented: $showPhotoSourceDialog, titleVisibility: .visible) {
+                    Button(L10n.string("拍照")) {
                         showCamera = true
                     }
-                    Button("从相册选取") {
+                    Button(L10n.string("从相册选取")) {
                         showPhotoPicker = true
                     }
-                    Button("取消", role: .cancel) {}
+                    Button(L10n.string("取消"), role: .cancel) {}
                 }
                 .sheet(isPresented: $showCamera) {
                     CameraPicker(imageData: $photoData)
@@ -235,10 +235,10 @@ struct LogEntryView: View {
 
     private var noteSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label("备注（可选）", systemImage: "text.bubble")
+            Label(L10n.string("备注（可选）"), systemImage: "text.bubble")
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(.secondary)
-            TextField("今天感觉怎么样...", text: $note, axis: .vertical)
+            TextField(L10n.string("今天感觉怎么样..."), text: $note, axis: .vertical)
                 .font(.system(size: 15))
                 .lineLimit(3...6)
         }

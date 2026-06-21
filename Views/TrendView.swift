@@ -82,7 +82,7 @@ struct TrendView: View {
                 .padding(.bottom, 40)
             }
             .background(Color.systemGroupedBackground)
-            .navigationTitle("趋势")
+            .navigationTitle(L10n.string("趋势"))
             .navigationBarTitleDisplayMode(.inline)
         }
     }
@@ -154,7 +154,7 @@ struct TrendView: View {
                 statCell(
                     icon: "circle.fill",
                     iconColor: .formlogPrimary,
-                    titleKey: "当前值",
+                    titleKey: L10n.string("当前值"),
                     value: latest.map { String(format: "%.1f", $0) } ?? "--",
                     unit: unitStr,
                     trend: nil
@@ -165,7 +165,7 @@ struct TrendView: View {
                 statCell(
                     icon: "arrow.up.arrow.down",
                     iconColor: isGoodChange(change ?? 0, for: selectedMetric) ? .formlogDecrease : .formlogDanger,
-                    titleKey: "总变化",
+                    titleKey: L10n.string("总变化"),
                     value: change.map { ($0 >= 0 ? "+" : "") + String(format: "%.1f", $0) } ?? "--",
                     unit: unitStr,
                     trend: change.map { $0 >= 0 ? "up" : "down" }
@@ -176,7 +176,7 @@ struct TrendView: View {
                 statCell(
                     icon: "percent",
                     iconColor: isGoodChange(changePercent ?? 0, for: selectedMetric) ? .formlogDecrease : .formlogDanger,
-                    titleKey: "变化率",
+                    titleKey: L10n.string("变化率"),
                     value: changePercent.map { ($0 >= 0 ? "+" : "") + String(format: "%.1f", $0) } ?? "--",
                     unit: "%",
                     trend: changePercent.map { $0 >= 0 ? "up" : "down" }
@@ -187,7 +187,7 @@ struct TrendView: View {
                 statCell(
                     icon: "number",
                     iconColor: .purple,
-                    titleKey: "记录次数",
+                    titleKey: L10n.string("记录次数"),
                     value: "\(displayData.count)",
                     unit: L10n.string("次"),
                     trend: nil
@@ -236,7 +236,7 @@ struct TrendView: View {
             HStack {
                 Image(systemName: "lightbulb.fill")
                     .foregroundColor(.orange)
-                Text("数据洞察")
+                Text(L10n.string("数据洞察"))
                     .font(.system(size: 16, weight: .bold))
                     .foregroundColor(.primary)
             }
@@ -347,10 +347,10 @@ struct TrendView: View {
                             .foregroundColor(.formlogPrimary)
                     }
                     VStack(spacing: 6) {
-                        Text("还没有\(selectedMetric.displayName)的记录")
+                        Text(String(format: L10n.string("还没有%@的记录"), selectedMetric.displayName))
                             .font(.system(size: 16, weight: .semibold))
                             .foregroundColor(.primary)
-                        Text("开始记录你的身体数据\n用图表见证你的变化 ✨")
+                        Text(L10n.string("开始记录你的身体数据\n用图表见证你的变化 ✨"))
                             .font(.system(size: 14))
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)

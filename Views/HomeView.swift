@@ -90,7 +90,7 @@ struct HomeView: View {
                     Text("👋 \(greetingSuffix)")
                         .font(.system(size: 24, weight: .bold, design: .rounded))
                         .foregroundColor(.primary)
-                    Text("用数据见证你的变化")
+                    Text(L10n.string("用数据见证你的变化"))
                         .font(.system(size: 15, weight: .medium))
                         .foregroundColor(.secondary)
                 }
@@ -170,7 +170,7 @@ struct HomeView: View {
     private var summaryCard: some View {
         VStack(spacing: 16) {
             HStack {
-                Text("今日数据")
+                Text(L10n.string("今日数据"))
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(.secondary)
                 Spacer()
@@ -244,14 +244,14 @@ struct HomeView: View {
                             .font(.system(size: 10))
                         Text(String(format: "%.1f", abs(change)))
                             .font(.system(size: 11, design: .rounded).monospacedDigit())
-                        Text("30天")
+                        Text(L10n.string("30天"))
                             .font(.system(size: 10))
                             .foregroundColor(.secondary)
                     }
                     .foregroundColor(isGood ? .formlogDecrease : .formlogDanger)
                 }
             } else {
-                Text("未记录")
+                Text(L10n.string("未记录"))
                     .font(.system(size: 18, weight: .medium, design: .rounded))
                     .foregroundColor(.systemGray3)
             }
@@ -278,17 +278,17 @@ struct HomeView: View {
             }
             
             VStack(spacing: 8) {
-                Text("开始记录你的身体变化")
+                Text(L10n.string("开始记录你的身体变化"))
                     .font(.system(size: 20, weight: .bold, design: .rounded))
                     .foregroundColor(.primary)
-                Text("记录体重、体脂、围度，见证每一次进步")
+                Text(L10n.string("记录体重、体脂、围度，见证每一次进步"))
                     .font(.system(size: 14))
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
             }
             
             Button(action: { showLogSheet = true }) {
-                Text("开始记录")
+                Text(L10n.string("开始记录"))
                     .font(.system(size: 15, weight: .semibold, design: .rounded))
                     .foregroundColor(.white)
                     .padding(.horizontal, 32)
@@ -329,7 +329,7 @@ struct HomeView: View {
 
                 VStack(alignment: .leading, spacing: 3) {
                     HStack(spacing: 4) {
-                        Text("照片对比")
+                        Text(L10n.string("照片对比"))
                             .font(.system(size: 15, weight: .semibold))
                             .foregroundColor(.primary)
                         if !appState.isPro {
@@ -387,12 +387,12 @@ struct HomeView: View {
 
     private var historySection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("历史记录")
+            Text(L10n.string("历史记录"))
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(.primary)
 
             if entryStore.entries.isEmpty {
-                Text("暂无记录")
+                Text(L10n.string("暂无记录"))
                     .font(.system(size: 14))
                     .foregroundColor(.secondary)
                     .frame(maxWidth: .infinity, alignment: .center)

@@ -51,7 +51,7 @@ struct OnboardingView: View {
                 // CTA
                 Button(action: nextStep) {
                     HStack {
-                        Text(step == totalSteps - 1 ? "开始记录" : "下一步")
+                        Text(step == totalSteps - 1 ? L10n.string("开始记录") : L10n.string("下一步"))
                             .font(.system(size: 17, weight: .semibold, design: .rounded))
                         Image(systemName: step == totalSteps - 1 ? "checkmark" : "arrow.right")
                     }
@@ -86,12 +86,12 @@ struct OnboardingView: View {
             .padding(.bottom, 8)
             
             VStack(spacing: 12) {
-                Text("你的身体变化\n值得被记录")
+                Text(L10n.string("你的身体变化\n值得被记录"))
                     .font(.system(size: 32, weight: .bold, design: .rounded))
                     .multilineTextAlignment(.center)
                     .foregroundColor(.primary)
                 
-                Text("用数据和照片，见证每一次进步 💪")
+                Text(L10n.string("用数据和照片，见证每一次进步 💪"))
                     .font(.system(size: 17))
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
@@ -99,10 +99,10 @@ struct OnboardingView: View {
             
             // Differentiators
             VStack(alignment: .leading, spacing: 14) {
-                differenceBullet(icon: "lock.shield.fill", title: "隐私优先", description: "数据只存在你的手机，不上云")
-                differenceBullet(icon: "creditcard.fill", title: "一次买断", description: "没有订阅，永久使用")
-                differenceBullet(icon: "photo.stack.fill", title: "照片对比", description: "见证形体变化（独家功能）")
-                differenceBullet(icon: "chart.line.uptrend.xyaxis", title: "智能洞察", description: "自动分析你的变化趋势")
+                differenceBullet(icon: "lock.shield.fill", title: L10n.string("隐私优先"), description: L10n.string("数据只存在你的手机，不上云"))
+                differenceBullet(icon: "creditcard.fill", title: L10n.string("一次买断"), description: L10n.string("没有订阅，永久使用"))
+                differenceBullet(icon: "photo.stack.fill", title: L10n.string("照片对比"), description: L10n.string("见证形体变化（独家功能）"))
+                differenceBullet(icon: "chart.line.uptrend.xyaxis", title: L10n.string("智能洞察"), description: L10n.string("自动分析你的变化趋势"))
             }
             .padding(.horizontal, 16)
             .padding(.top, 8)
@@ -134,16 +134,16 @@ struct OnboardingView: View {
 
     private var profileStep: some View {
         VStack(spacing: 28) {
-            Text("填写基本信息")
+            Text(L10n.string("填写基本信息"))
                 .font(.system(size: 24, weight: .bold, design: .rounded))
 
             VStack(spacing: 20) {
                 // 姓名
                 VStack(alignment: .leading, spacing: 8) {
-                    Label("你的名字（可选）", systemImage: "person.fill")
+                    Label(L10n.string("你的名字（可选）"), systemImage: "person.fill")
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(.secondary)
-                    TextField("昵称", text: $name)
+                    TextField(L10n.string("昵称"), text: $name)
                         .font(.system(size: 16))
                         .padding(12)
                         .background(Color.systemGray6)
@@ -152,10 +152,10 @@ struct OnboardingView: View {
 
                 // 身高
                 VStack(alignment: .leading, spacing: 8) {
-                    Label("身高（cm）", systemImage: "ruler.fill")
+                    Label(L10n.string("身高（cm）"), systemImage: "ruler.fill")
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(.secondary)
-                    TextField("例如：175", text: $heightStr)
+                    TextField(L10n.string("例如：175"), text: $heightStr)
                         .font(.system(size: 16))
                         .keyboardType(.decimalPad)
                         .padding(12)
@@ -165,7 +165,7 @@ struct OnboardingView: View {
 
                 // 性别
                 VStack(alignment: .leading, spacing: 8) {
-                    Label("性别", systemImage: "person.2.fill")
+                    Label(L10n.string("性别"), systemImage: "person.2.fill")
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(.secondary)
                     HStack(spacing: 12) {
@@ -186,7 +186,7 @@ struct OnboardingView: View {
 
                 // 重量单位
                 VStack(alignment: .leading, spacing: 8) {
-                    Label("重量单位", systemImage: "scalemass.fill")
+                    Label(L10n.string("重量单位"), systemImage: "scalemass.fill")
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(.secondary)
                     HStack(spacing: 12) {
@@ -211,9 +211,9 @@ struct OnboardingView: View {
 
     private var metricsStep: some View {
         VStack(spacing: 24) {
-            Text("选择要追踪的指标")
+            Text(L10n.string("选择要追踪的指标"))
                 .font(.system(size: 24, weight: .bold, design: .rounded))
-            Text("至少选择一个，之后可以在设置中修改")
+            Text(L10n.string("至少选择一个，之后可以在设置中修改"))
                 .font(.system(size: 14))
                 .foregroundColor(.secondary)
 
