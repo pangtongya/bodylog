@@ -146,6 +146,7 @@ class AppState: ObservableObject {
             achievements = decoded.achievements
         } catch {
             // 首次启动，使用默认值
+            print("[AppState] Load warning: \(error). Starting with default values.")
         }
     }
 

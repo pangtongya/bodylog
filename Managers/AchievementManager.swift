@@ -66,9 +66,9 @@ final class AchievementManager {
 
         // 照片成就
         case .photoFirst:
-            return entryStore.entries.contains { $0.hasPhoto }
+            return entryStore.photoCount > 0
         case .photos10:
-            return entryStore.entries.filter { $0.hasPhoto }.count >= 10
+            return entryStore.photoCount >= 10
 
         // 目标成就
         case .goalComplete:
@@ -96,11 +96,9 @@ final class AchievementManager {
         case .records100:
             return (entryStore.entries.count, 100)
         case .photoFirst:
-            let photoCount = entryStore.entries.filter { $0.hasPhoto }.count
-            return (min(photoCount, 1), 1)
+            return (min(entryStore.photoCount, 1), 1)
         case .photos10:
-            let photoCount = entryStore.entries.filter { $0.hasPhoto }.count
-            return (photoCount, 10)
+            return (entryStore.photoCount, 10)
         case .goalComplete:
             let completedCount = goalStore.goals.filter { $0.isAchieved }.count
             return (min(completedCount, 1), 1)

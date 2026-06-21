@@ -310,3 +310,5 @@
 "日期" = "Date";
 "备注" = "Note";
 "cm" = "cm";
+"🎉 恭喜！你已达成「%@」目标！" = "Congratulations! You've achieved your %@ goal!";
+"🎉 成就解锁！" = "Achievement Unlocked!";

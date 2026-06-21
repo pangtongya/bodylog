@@ -103,6 +103,9 @@ class BodyEntryStore: ObservableObject {
 
     // MARK: - Queries
 
+    /// 照片数量
+    var photoCount: Int { entries.filter { $0.hasPhoto }.count }
+
     /// 最新一条记录
     var latestEntry: BodyEntry? { entries.first }
 
@@ -394,7 +397,15 @@ class BodyEntryStore: ObservableObject {
             entries = try JSONDecoder().decode([BodyEntry].self, from: data)
             sortEntries()
         } catch {
+            // 数据文件不存在或损坏，首次启动或数据损坏
+            print("[BodyEntryStore] Load warning: \(error). Starting with empty data.")
             entries = []
+            // 可选：备份损坏的文件用于恢复
+            if FileManager.default.fileExists(atPath: Self.storeURL.path) {
+                let backupURL = Self.storeURL.deletingPathExtension().appendingPathExtension("backup.json")
+                try? FileManager.default.copyItem(at: Self.storeURL, to: backupURL)
+                print("[BodyEntryStore] Backup created at: \(backupURL.path)")
+            }
         }
     }
 
