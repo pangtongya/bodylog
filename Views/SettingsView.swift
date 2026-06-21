@@ -383,7 +383,7 @@ struct SettingsView: View {
     // MARK: - Backup / Restore
     
     private func createBackup() {
-        let appStateData = (try? JSONEncoder().encode(appState)) ?? Data()
+        let appStateData = appState.encodeForBackup()
         let entriesData = (try? JSONEncoder().encode(entryStore.entries)) ?? Data()
         let goalsData = (try? JSONEncoder().encode(goalStore.goals)) ?? Data()
         let backupDict: [String: Any] = [
@@ -434,18 +434,8 @@ struct SettingsView: View {
                 }
                 
                 // Restore app state
-                if let appStateData = json["appState"] as? Data,
-                   let restoredState = try? JSONDecoder().decode(AppState.self, from: appStateData) {
-                    appState.hasCompletedOnboarding = restoredState.hasCompletedOnboarding
-                    appState.userName = restoredState.userName
-                    appState.userHeight = restoredState.userHeight
-                    appState.userGender = restoredState.userGender
-                    appState.weightUnit = restoredState.weightUnit
-                    appState.theme = restoredState.theme
-                    appState.enabledMetrics = restoredState.enabledMetrics
-                    appState.reminderEnabled = restoredState.reminderEnabled
-                    appState.reminderHour = restoredState.reminderHour
-                    appState.reminderMinute = restoredState.reminderMinute
+                if let appStateData = json["appState"] as? Data {
+                    appState.restoreFromBackup(appStateData)
                     appState.save()
                 }
                 

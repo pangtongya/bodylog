@@ -152,6 +152,46 @@ class AppState: ObservableObject {
         }
     }
 
+    // MARK: - Backup / Restore（用于 SettingsView 全量备份恢复）
+
+    /// 将当前状态编码为 Data（用于备份）
+    func encodeForBackup() -> Data {
+        let data = CodableData(
+            hasCompletedOnboarding: hasCompletedOnboarding,
+            userName: userName,
+            userHeight: userHeight,
+            userBirthYear: userBirthYear,
+            userGender: userGender,
+            weightUnit: weightUnit,
+            theme: theme,
+            reminderEnabled: reminderEnabled,
+            reminderHour: reminderHour,
+            reminderMinute: reminderMinute,
+            isPro: isPro,
+            enabledMetrics: enabledMetrics,
+            achievements: achievements
+        )
+        return (try? JSONEncoder().encode(data)) ?? Data()
+    }
+
+    /// 从备份数据恢复状态
+    func restoreFromBackup(_ data: Data) {
+        guard let decoded = try? JSONDecoder().decode(CodableData.self, from: data) else { return }
+        hasCompletedOnboarding = decoded.hasCompletedOnboarding
+        userName = decoded.userName
+        userHeight = decoded.userHeight
+        userBirthYear = decoded.userBirthYear
+        userGender = decoded.userGender
+        weightUnit = decoded.weightUnit
+        theme = decoded.theme
+        reminderEnabled = decoded.reminderEnabled
+        reminderHour = decoded.reminderHour
+        reminderMinute = decoded.reminderMinute
+        isPro = decoded.isPro
+        enabledMetrics = decoded.enabledMetrics
+        achievements = decoded.achievements
+    }
+
     // MARK: - Helpers
 
     /// 将 kg 值根据用户单位换算
