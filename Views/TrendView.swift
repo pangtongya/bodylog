@@ -374,6 +374,21 @@ struct TrendView: View {
                             .multilineTextAlignment(.center)
                             .lineSpacing(4)
                     }
+                    
+                    // 添加引导按钮
+                    Button(action: {
+                        // 切换到首页Tab（通过TabView的selection）
+                        NotificationCenter.default.post(name: .init("SwitchToHomeTab"), object: nil)
+                    }) {
+                        Label(L10n.string("去记录"), systemImage: "plus.circle.fill")
+                            .font(.system(size: 15, weight: .medium))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 10)
+                            .background(Color.formlogPrimary)
+                            .cornerRadius(8)
+                    }
+                    .padding(.top, 8)
                 }
                 .frame(maxWidth: .infinity)
                 .frame(height: 220)
