@@ -4,6 +4,7 @@
 import Foundation
 import StoreKit
 import SwiftUI
+import Network
 
 @MainActor
 final class PurchaseManager: ObservableObject {
@@ -16,11 +17,14 @@ final class PurchaseManager: ObservableObject {
     @Published var purchaseError: String?
     @Published var isLoadingProducts: Bool = false
     @Published var loadProductsError: String?
+    @Published var isConnected: Bool = true
 
     private var updateListenerTask: Task<Void, Never>?
+    private var networkMonitor: NWPathMonitor?
 
     private init() {
         updateListenerTask = listenForTransactions()
+        setupNetworkMonitor()
     }
 
     /// Start loading products and verifying purchases - call this after init
@@ -31,6 +35,17 @@ final class PurchaseManager: ObservableObject {
 
     deinit {
         updateListenerTask?.cancel()
+        networkMonitor?.cancel()
+    }
+
+    private func setupNetworkMonitor() {
+        networkMonitor = NWPathMonitor()
+        networkMonitor?.pathUpdateHandler = { [weak self] path in
+            Task { @MainActor in
+                self?.isConnected = path.status == .satisfied
+            }
+        }
+        networkMonitor?.start(queue: DispatchQueue(label: "NetworkMonitor"))
     }
 
     // MARK: - Load Products
@@ -60,6 +75,11 @@ final class PurchaseManager: ObservableObject {
     // MARK: - Purchase
 
     func purchasePro() async {
+        guard isConnected else {
+            purchaseError = L10n.string("网络不可用，请检查网络连接后重试。")
+            return
+        }
+
         guard let product = proProduct else {
             purchaseError = L10n.string("无法加载商品，请检查网络后重试。")
             return

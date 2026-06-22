@@ -122,8 +122,8 @@ class AppState: ObservableObject {
         func convert(_ value: Double, from source: WeightUnit) -> Double {
             if source == self { return value }
             switch self {
-            case .kg: return value / 2.20462
-            case .lb: return value * 2.20462
+            case .kg: return value * 0.45359237
+            case .lb: return value * 2.20462262185
             }
         }
     }

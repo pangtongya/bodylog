@@ -97,9 +97,23 @@ struct TrendView: View {
     private func computeYDomain() -> ClosedRange<Double> {
         guard !cachedDisplayData.isEmpty else { return 0...100 }
         let values = cachedDisplayData.map(\.value)
-        let minVal = (values.min() ?? 0) - 2
-        let maxVal = (values.max() ?? 100) + 2
-        return minVal...maxVal
+        let minVal = values.min() ?? 0
+        let maxVal = values.max() ?? 100
+        
+        let padding: Double
+        switch selectedMetric {
+        case .bodyFat, .bmi:
+            padding = 1.0
+        case .weight, .muscleMass:
+            padding = 2.0
+        case .waist, .hip, .chest, .leftArm, .rightArm, .leftThigh, .rightThigh, .neck:
+            padding = 3.0
+        }
+        
+        let range = maxVal - minVal
+        let adaptivePadding = max(padding, range * 0.05)
+        
+        return (minVal - adaptivePadding)...(maxVal + adaptivePadding)
     }
     
     private func computeInsights() -> [(id: String, icon: String, text: String, subtitle: String?, color: Color)] {

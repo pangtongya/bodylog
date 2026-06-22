@@ -58,6 +58,7 @@ struct CameraPicker: UIViewControllerRepresentable {
         }
 
         picker.delegate = context.coordinator
+        context.coordinator.picker = picker
         picker.allowsEditing = false
         return picker
     }
@@ -71,13 +72,17 @@ struct CameraPicker: UIViewControllerRepresentable {
     final class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
         let parent: CameraPicker
         var showPermissionDeniedAlert = false
+        weak var picker: UIImagePickerController?
 
         init(_ parent: CameraPicker) {
             self.parent = parent
         }
 
         func setCameraMode(_ useCamera: Bool) {
-            // This will be called when camera permission is granted
+            if useCamera, let picker = picker {
+                picker.sourceType = .camera
+                picker.cameraDevice = .rear
+            }
         }
 
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {

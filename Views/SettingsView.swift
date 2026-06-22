@@ -23,7 +23,7 @@ struct SettingsView: View {
     @State private var showShareCardView: Bool = false
     @State private var showCSVTemplate: Bool = false
     @State private var csvTemplateURL: URL? = nil
-    @State private var exportCSV: String = ""
+    @State private var exportCSVURL: URL? = nil
     @State private var backupData: Data = Data()
     @State private var backupFileURL: URL?
     @State private var isImporting: Bool = false
@@ -322,7 +322,7 @@ struct SettingsView: View {
                 .environmentObject(purchaseManager)
         }
         .sheet(isPresented: $showExportSheet) {
-            if let url = URL(string: exportCSV) {
+            if let url = exportCSVURL {
                 ShareSheet(items: [url])
             }
         }
@@ -473,7 +473,7 @@ struct SettingsView: View {
         let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("FormLog_\(Date().formatted(date: .abbreviated, time: .omitted)).csv")
         do {
             try csvString.write(to: tempURL, atomically: true, encoding: .utf8)
-            exportCSV = tempURL.absoluteString
+            exportCSVURL = tempURL
             showExportSheet = true
         } catch {
             backupResult = String(format: L10n.string("导出失败：%@"), error.localizedDescription)

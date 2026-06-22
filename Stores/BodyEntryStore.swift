@@ -291,13 +291,16 @@ class BodyEntryStore: ObservableObject {
         var errors: [String] = []
         var parsedEntries: [BodyEntry] = []
         var duplicateDates: Set<Date> = []
+        let totalRows = lines.count - 1
+        let progressBatchSize = max(1, totalRows / 20)
 
         for (index, line) in lines.dropFirst().enumerated() {
-            let lineNumber = index + 2 // +1 for header, +1 for 1-based indexing
+            let lineNumber = index + 2
             let cols = parseCSVLine(line)
-            
-            // 进度回调
-            progressCallback?(index + 1, lines.count - 1)
+
+            if progressCallback != nil && (index + 1) % progressBatchSize == 0 {
+                progressCallback?(index + 1, totalRows)
+            }
 
             guard cols.count > max(dateColIndex, 1) else { continue }
 

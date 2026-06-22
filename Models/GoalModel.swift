@@ -52,8 +52,13 @@ struct GoalModel: Identifiable, Codable, Equatable {
 
     var isAchieved: Bool { achievedAt != nil }
 
-    /// Tolerance for goal achievement (0.5 for all types)
-    private var tolerance: Double { 0.5 }
+    private var tolerance: Double {
+        switch metricType {
+        case .bodyFat: return 1.0
+        case .waist, .hip: return 2.0
+        case .weight, .muscle, .bmi: return 0.5
+        }
+    }
 
     /// Calculate progress 0...1 based on current value and initial value
     func progress(currentValue: Double, startValue: Double) -> Double {

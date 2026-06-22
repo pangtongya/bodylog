@@ -331,3 +331,6 @@
 // MARK: - Share Card
 "保存失败" = "Save Failed";
 "无法保存照片，请检查系统照片权限设置。" = "Unable to save photo. Please check system photo permission settings.";
+
+// MARK: - Network Status
+"网络不可用，请检查网络连接后重试。" = "Network is unavailable. Please check your network connection and try again.";

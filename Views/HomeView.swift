@@ -388,10 +388,17 @@ struct HomeView: View {
 
     private var statsRow: some View {
         HStack(spacing: 12) {
-            statCell(value: "\(entryStore.totalRecordDays)", labelKey: "记录天数")
-            statCell(value: "\(entryStore.currentStreak)", labelKey: "连续天数")
-            statCell(value: "\(entryStore.thisWeekCount)", labelKey: "本周记录")
+            statCell(value: Self.formatNumber(entryStore.totalRecordDays), labelKey: "记录天数")
+            statCell(value: Self.formatNumber(entryStore.currentStreak), labelKey: "连续天数")
+            statCell(value: Self.formatNumber(entryStore.thisWeekCount), labelKey: "本周记录")
         }
+    }
+
+    private static func formatNumber(_ number: Int) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumFractionDigits = 0
+        return formatter.string(from: NSNumber(value: number)) ?? "\(number)"
     }
 
     private func statCell(value: String, labelKey: String) -> some View {

@@ -78,29 +78,32 @@ final class PhotoManager: @unchecked Sendable {
     
     /// 根据文件名加载照片数据
     func loadPhoto(filename: String) -> Data? {
-        // Validate filename to prevent path traversal attacks
-        guard !filename.contains("/") && !filename.contains("..") else {
+        guard !filename.isEmpty else {
+            print("[PhotoManager] Empty filename rejected")
+            return nil
+        }
+
+        guard filename.rangeOfCharacter(from: CharacterSet(charactersIn: "/\\..~")) == nil else {
             print("[PhotoManager] Invalid filename rejected: \(filename)")
             return nil
         }
-        let url = photosDirectory.appendingPathComponent(filename)
-        // Ensure the resolved path is within photosDirectory
-        guard url.path.hasPrefix(photosDirectory.path) else {
+
+        let url = photosDirectory.appendingPathComponent(filename).standardizedFileURL
+        let photosDirStandardized = photosDirectory.standardizedFileURL
+
+        guard url.pathComponents.starts(with: photosDirStandardized.pathComponents) else {
             print("[PhotoManager] Path traversal attempt detected: \(filename)")
             return nil
         }
 
-        // 尝试从内存缓存读取
         let cacheKey = filename as NSString
         if let cachedData = memoryCache.object(forKey: cacheKey) {
             return Data(referencing: cachedData)
         }
 
-        // 从文件系统加载
         do {
             let data = try Data(contentsOf: url)
 
-            // 缓存到内存
             let nsData = data as NSData
             memoryCache.setObject(nsData, forKey: cacheKey, cost: data.count)
 
