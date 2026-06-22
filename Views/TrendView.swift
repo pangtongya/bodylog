@@ -1,9 +1,25 @@
 // TrendView.swift
-// 趋势图 + 全部历史
+// 趋势图 + 全部历史视图
+// 显示身体指标的随时间变化趋势，包括统计摘要、数据洞察和交互式图表
 
 import SwiftUI
 import Charts
 
+/// 趋势图视图
+/// 主视图组件，展示身体指标的随时间变化趋势
+///
+/// # 主要功能
+/// - 多指标切换（weight, bodyFat, muscleMass 等）
+/// - 多时间范围选择（1月、3月、6月、全部）
+/// - 统计摘要（当前值、总变化、变化率、记录次数）
+/// - 智能数据洞察（30天变化、连续记录、目标进度）
+/// - 交互式图表（SwiftUI Charts）
+///
+/// # 性能优化
+/// - 使用 @State 缓存计算结果，避免重复计算
+/// - 实现了数据预计算、统计缓存、洞察缓存、Y轴域缓存
+/// - 图表渐变使用 GradientCache 避免重复创建
+/// - 大数据集（100+ 点）自动调整线条宽度
 struct TrendView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var entryStore: BodyEntryStore
@@ -16,6 +32,11 @@ struct TrendView: View {
     // 使用 @State 缓存 + onChange(of:) 触发重新计算，将 O(8n) → O(n)
     @State private var cachedChartData: [(date: Date, value: Double)] = []
     @State private var cachedDisplayData: [(date: Date, value: Double)] = []
+    
+    // 性能优化：缓存计算结果，避免重复计算
+    @State private var cachedStats: (latest: Double?, first: Double?, change: Double?, changePercent: Double?) = (nil, nil, nil, nil)
+    @State private var cachedYDomain: ClosedRange<Double> = 0...100
+    @State private var cachedInsights: [(id: String, icon: String, text: String, subtitle: String?, color: Color)] = []
 
     enum TimeRange: String, CaseIterable {
         case month1 = "1月"
@@ -55,6 +76,90 @@ struct TrendView: View {
         } else {
             cachedDisplayData = chart
         }
+        
+        // 性能优化：预计算统计数据和领域
+        computeCachedStats()
+        cachedYDomain = computeYDomain()
+        cachedInsights = computeInsights()
+    }
+    
+    private func computeCachedStats() {
+        let latest = cachedDisplayData.last?.value
+        let first = cachedDisplayData.first?.value
+        let change: Double? = {
+            guard let l = latest, let f = first else { return nil }
+            return l - f
+        }()
+        let changePercent: Double? = {
+            guard let l = latest, let f = first, f != 0 else { return nil }
+            return (l - f) / abs(f) * 100
+        }()
+        
+        cachedStats = (latest, first, change, changePercent)
+    }
+    
+    private func computeYDomain() -> ClosedRange<Double> {
+        guard !cachedDisplayData.isEmpty else { return 0...100 }
+        let values = cachedDisplayData.map(\.value)
+        let minVal = (values.min() ?? 0) - 2
+        let maxVal = (values.max() ?? 100) + 2
+        return minVal...maxVal
+    }
+    
+    private func computeInsights() -> [(id: String, icon: String, text: String, subtitle: String?, color: Color)] {
+        var result: [(id: String, icon: String, text: String, subtitle: String?, color: Color)] = []
+
+        // Insight 1: Recent change (30 days)
+        if let change30d = entryStore.change30Days(for: selectedMetric) {
+            let absChange = abs(change30d)
+            let sign = change30d >= 0 ? "+" : ""
+            let unit = (selectedMetric == .weight || selectedMetric == .muscleMass) ? appState.weightUnit.rawValue : selectedMetric.unit
+
+            let (text, subtitle, color): (String, String?, Color) = if change30d > 0 {
+                (String(format: L10n.string("30天增长了%@%.1f%@"), sign, absChange, unit), L10n.string("继续保持，进步明显 💪"), .formlogDanger)
+            } else if change30d < 0 {
+                (String(format: L10n.string("30天减少了%@%.1f%@"), sign, absChange, unit), L10n.string("做得好，继续坚持 🎯"), .formlogDecrease)
+            } else {
+                (L10n.string("30天无变化"), L10n.string("保持现状也很重要 😊"), .secondary)
+            }
+
+            result.append((id: "insight_30d", icon: "calendar.badge.clock", text: text, subtitle: subtitle, color: color))
+        }
+
+        // Insight 2: Streak
+        let streak = entryStore.currentStreak
+        if streak > 0 {
+            let (text, subtitle, color): (String, String?, Color) = if streak >= 7 {
+                (String(format: L10n.string("已连续记录%d天"), streak), L10n.string("习惯正在养成，太棒了 🔥"), .orange)
+            } else if streak >= 3 {
+                (String(format: L10n.string("已连续记录%d天"), streak), L10n.string("继续保持这个节奏 👍"), .formlogPrimary)
+            } else {
+                (String(format: L10n.string("已连续记录%d天"), streak), L10n.string("好的开始 💪"), .formlogPrimary)
+            }
+            result.append((id: "insight_streak", icon: "flame.fill", text: text, subtitle: subtitle, color: color))
+        } else if let lastEntry = entryStore.latestEntry {
+            let days = Calendar.current.dateComponents([.day], from: lastEntry.recordedAt, to: Date()).day ?? 0
+            result.append((id: "insight_streak", icon: "flame", text: String(format: L10n.string("已%d天没有记录"), days), subtitle: L10n.string("别忘了记录今天的身体数据哦 😊"), color: .secondary))
+        }
+
+        // Insight 3: Goal progress (if has active goal)
+        if let goal = goalStore.activeGoal(for: selectedMetric), let current = entryStore.latestValue(for: goal.metricType) {
+            let remaining = abs(goal.targetValue - current)
+            let unit = (selectedMetric == .weight || selectedMetric == .muscleMass) ? appState.weightUnit.rawValue : selectedMetric.unit
+            let progress = goal.progress(currentValue: current, startValue: entryStore.startValue(for: goal.metricType) ?? current)
+
+            let (text, subtitle, color): (String, String?, Color) = if progress >= 1.0 {
+                (L10n.string("目标已达成 🎉"), L10n.string("恭喜你，继续保持良好的状态"), .formlogDecrease)
+            } else if progress >= 0.8 {
+                (String(format: L10n.string("距离目标还差%.1f%@"), remaining, unit), L10n.string("马上就要达成了，加油！💪"), .formlogPrimary)
+            } else {
+                (String(format: L10n.string("距离目标还差%.1f%@"), remaining, unit), L10n.string("一步一步来，你可以的 ✨"), .formlogPrimary)
+            }
+
+            result.append((id: "insight_goal", icon: "target", text: text, subtitle: subtitle, color: color))
+        }
+
+        return Array(result.prefix(3))
     }
 
     var body: some View {
@@ -144,16 +249,6 @@ struct TrendView: View {
     // MARK: - Stats Summary
     
     private var statsSummary: some View {
-        let latest = cachedDisplayData.last?.value
-        let first = cachedDisplayData.first?.value
-        let change: Double? = {
-            guard let l = latest, let f = first else { return nil }
-            return l - f
-        }()
-        let changePercent: Double? = {
-            guard let l = latest, let f = first, f != 0 else { return nil }
-            return (l - f) / abs(f) * 100
-        }()
         let unitStr = (selectedMetric == .weight || selectedMetric == .muscleMass)
             ? appState.weightUnit.rawValue : selectedMetric.unit
         
@@ -259,7 +354,7 @@ struct TrendView: View {
                     .foregroundColor(.primary)
             }
             
-            ForEach(Array(insights.enumerated()), id: \.element.id) { index, insight in
+            ForEach(Array(cachedInsights.enumerated()), id: \.element.id) { index, insight in
                 HStack(spacing: 12) {
                     ZStack {
                         Circle()
@@ -283,7 +378,7 @@ struct TrendView: View {
                 }
                 .padding(.vertical, 4)
                 
-                if index < insights.count - 1 {
+                if index < cachedInsights.count - 1 {
                     Divider()
                 }
             }
@@ -292,62 +387,6 @@ struct TrendView: View {
         .background(Color.systemBackground)
         .cornerRadius(16)
         .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
-    }
-    
-    private var insights: [(id: String, icon: String, text: String, subtitle: String?, color: Color)] {
-        var result: [(id: String, icon: String, text: String, subtitle: String?, color: Color)] = []
-
-        // Insight 1: Recent change (30 days)
-        if let change30d = entryStore.change30Days(for: selectedMetric) {
-            let absChange = abs(change30d)
-            let sign = change30d >= 0 ? "+" : ""
-            let unit = (selectedMetric == .weight || selectedMetric == .muscleMass) ? appState.weightUnit.rawValue : selectedMetric.unit
-
-            let (text, subtitle, color): (String, String?, Color) = if change30d > 0 {
-                (String(format: L10n.string("30天增长了%@%.1f%@"), sign, absChange, unit), L10n.string("继续保持，进步明显 💪"), .formlogDanger)
-            } else if change30d < 0 {
-                (String(format: L10n.string("30天减少了%@%.1f%@"), sign, absChange, unit), L10n.string("做得好，继续坚持 🎯"), .formlogDecrease)
-            } else {
-                (L10n.string("30天无变化"), L10n.string("保持现状也很重要 😊"), .secondary)
-            }
-
-            result.append((id: "insight_30d", icon: "calendar.badge.clock", text: text, subtitle: subtitle, color: color))
-        }
-
-        // Insight 2: Streak
-        let streak = entryStore.currentStreak
-        if streak > 0 {
-            let (text, subtitle, color): (String, String?, Color) = if streak >= 7 {
-                (String(format: L10n.string("已连续记录%d天"), streak), L10n.string("习惯正在养成，太棒了 🔥"), .orange)
-            } else if streak >= 3 {
-                (String(format: L10n.string("已连续记录%d天"), streak), L10n.string("继续保持这个节奏 👍"), .formlogPrimary)
-            } else {
-                (String(format: L10n.string("已连续记录%d天"), streak), L10n.string("好的开始 💪"), .formlogPrimary)
-            }
-            result.append((id: "insight_streak", icon: "flame.fill", text: text, subtitle: subtitle, color: color))
-        } else if let lastEntry = entryStore.latestEntry {
-            let days = Calendar.current.dateComponents([.day], from: lastEntry.recordedAt, to: Date()).day ?? 0
-            result.append((id: "insight_streak", icon: "flame", text: String(format: L10n.string("已%d天没有记录"), days), subtitle: L10n.string("别忘了记录今天的身体数据哦 😊"), color: .secondary))
-        }
-
-        // Insight 3: Goal progress (if has active goal)
-        if let goal = goalStore.activeGoal(for: selectedMetric), let current = entryStore.latestValue(for: goal.metricType) {
-            let remaining = abs(goal.targetValue - current)
-            let unit = (selectedMetric == .weight || selectedMetric == .muscleMass) ? appState.weightUnit.rawValue : selectedMetric.unit
-            let progress = goal.progress(currentValue: current, startValue: entryStore.startValue(for: goal.metricType) ?? current)
-
-            let (text, subtitle, color): (String, String?, Color) = if progress >= 1.0 {
-                (L10n.string("目标已达成 🎉"), L10n.string("恭喜你，继续保持良好的状态"), .formlogDecrease)
-            } else if progress >= 0.8 {
-                (String(format: L10n.string("距离目标还差%.1f%@"), remaining, unit), L10n.string("马上就要达成了，加油！💪"), .formlogPrimary)
-            } else {
-                (String(format: L10n.string("距离目标还差%.1f%@"), remaining, unit), L10n.string("一步一步来，你可以的 ✨"), .formlogPrimary)
-            }
-
-            result.append((id: "insight_goal", icon: "target", text: text, subtitle: subtitle, color: color))
-        }
-
-        return Array(result.prefix(3))
     }
 
     // MARK: - Chart
@@ -401,19 +440,20 @@ struct TrendView: View {
                             y: .value(selectedMetric.displayName, point.value)
                         )
                         .foregroundStyle(
-                            LinearGradient(
-                                colors: [.formlogPrimary.opacity(0.35), .formlogPrimary.opacity(0.02)],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
+                            // 性能优化：创建渐变对象缓存
+                            GradientCache.gradient(for: selectedMetric)
                         )
-                        // Line
+                        // Line - 性能优化：为大数据集减少抗锯齿
                         LineMark(
                             x: .value("日期", point.date),
                             y: .value(selectedMetric.displayName, point.value)
                         )
                         .foregroundStyle(Color.formlogPrimary)
-                        .lineStyle(StrokeStyle(lineWidth: 2.5))
+                        .lineStyle(StrokeStyle(
+                            lineWidth: cachedDisplayData.count > 100 ? 2.0 : 2.5,
+                            lineCap: .round,
+                            lineJoin: .round
+                        ))
                         .interpolationMethod(.catmullRom)
 
                         // Points
@@ -425,7 +465,7 @@ struct TrendView: View {
                         .symbolSize(cachedDisplayData.count > 30 ? 0 : 36)
                     }
                 }
-                .chartYScale(domain: yDomain)
+                .chartYScale(domain: cachedYDomain)
                 .chartXAxis {
                     AxisMarks(values: .automatic(desiredCount: 5)) { _ in
                         AxisGridLine()
@@ -453,13 +493,7 @@ struct TrendView: View {
         .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
     }
 
-    private var yDomain: ClosedRange<Double> {
-        guard !cachedDisplayData.isEmpty else { return 0...100 }
-        let values = cachedDisplayData.map(\.value)
-        let minVal = (values.min() ?? 0) - 2
-        let maxVal = (values.max() ?? 100) + 2
-        return minVal...maxVal
-    }
+    // 性能优化：yDomain 现在使用缓存值
 
     /// 变化对于该指标是否是"好的"（区分指标类型）
     private func isGoodChange(_ change: Double, for type: BodyMetricType) -> Bool {

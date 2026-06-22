@@ -1,8 +1,24 @@
 // HomeView.swift
 // 首页：今日摘要 + 历史记录列表
+// 应用主视图，展示今日身体数据摘要、统计信息、照片对比入口和历史记录列表
 
 import SwiftUI
 
+/// 首页视图
+/// 应用的主要导航入口，提供用户最常用的功能入口和今日数据概览
+///
+/// # 主要功能模块
+/// 1. **今日洞察卡片**：显示今日的身体数据状态和主要洞察
+/// 2. **今日摘要卡片**：提供关键指标的总览和进度
+/// 3. **快速统计**：横向显示的快速数据指标
+/// 4. **照片对比入口**：Pro 功能的核心卖点入口（需要购买）
+/// 5. **历史记录**：最近的历史记录列表
+///
+/// # 用户体验优化
+/// - 成就通知横幅：解锁新成就时自动显示动画通知
+/// - 即时反馈：所有按钮都有触觉反馈
+/// - 空状态处理：没有数据时显示引导界面
+/// - 响应式布局：适配不同屏幕尺寸
 struct HomeView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var entryStore: BodyEntryStore
@@ -13,6 +29,9 @@ struct HomeView: View {
     @State private var showPhotoCompare: Bool = false
     @State private var showPaywall: Bool = false
 
+    /// 主视图主体
+    /// 使用 ZStack 实现成就通知横幅的悬浮效果
+    /// 包含导航栏、可滚动内容和固定位置的通知横幅
     var body: some View {
         NavigationStack {
             ZStack(alignment: .top) {
@@ -184,13 +203,22 @@ struct HomeView: View {
             if entryStore.entries.isEmpty {
                 emptyStateView
             } else {
-                // 已启用指标的网格
-                let enabled = appState.enabledMetrics
+                // 已启用指标的网格（确保至少有一个指标）
+                let enabled = appState.enabledMetrics.isEmpty ? [.weight] : appState.enabledMetrics
                 let columns = [GridItem(.flexible()), GridItem(.flexible())]
                 LazyVGrid(columns: columns, spacing: 12) {
                     ForEach(enabled) { metric in
                         metricCell(metric)
                     }
+                }
+                
+                // 如果用户禁用了所有指标，显示提示信息
+                if appState.enabledMetrics.isEmpty {
+                    Text(L10n.string("请在设置中选择至少一个追踪指标"))
+                        .font(.system(size: 12))
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.vertical, 8)
                 }
             }
 

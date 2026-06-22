@@ -250,8 +250,9 @@ class BodyEntryStore: ObservableObject {
     }
     
     /// 从 CSV 字符串导入数据
+    /// - Parameter progressCallback: 进度回调函数 (当前进度, 总进度)
     /// - Returns: (成功数, 失败原因)
-    func importCSV(_ csvString: String) -> (imported: Int, error: String?) {
+    func importCSV(_ csvString: String, progressCallback: ((Int, Int) -> Void)? = nil) -> (imported: Int, error: String?) {
         let lines = csvString.components(separatedBy: .newlines)
             .map { $0.trimmingCharacters(in: .whitespaces) }
             .filter { !$0.isEmpty }
@@ -294,6 +295,9 @@ class BodyEntryStore: ObservableObject {
         for (index, line) in lines.dropFirst().enumerated() {
             let lineNumber = index + 2 // +1 for header, +1 for 1-based indexing
             let cols = parseCSVLine(line)
+            
+            // 进度回调
+            progressCallback?(index + 1, lines.count - 1)
 
             guard cols.count > max(dateColIndex, 1) else { continue }
 

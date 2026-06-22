@@ -27,6 +27,7 @@ struct SettingsView: View {
     @State private var backupData: Data = Data()
     @State private var backupFileURL: URL?
     @State private var isImporting: Bool = false
+    @State private var importProgress: (current: Int, total: Int) = (0, 0)
     @State private var showRestoreConfirm: Bool = false
     @State private var pendingRestoreURL: URL?
     @State private var notificationAuthStatus: UNAuthorizationStatus = .notDetermined
@@ -87,7 +88,7 @@ struct SettingsView: View {
                         HStack {
                             Text(L10n.string("管理指标"))
                             Spacer()
-                            Text(L10n.string("%d 个", "\(appState.enabledMetrics.count)"))
+                            Text(L10n.string("%d 个", appState.enabledMetrics.count))
                                 .foregroundColor(.secondary)
                             Image(systemName: "chevron.right")
                                 .font(.system(size: 12))
@@ -183,10 +184,28 @@ struct SettingsView: View {
                     .foregroundColor(appState.isPro ? .formlogPrimary : .secondary)
                     
                     if appState.isPro {
-                        Button(action: { showImportPicker = true }) {
-                            Label(L10n.string("导入 CSV"), systemImage: "arrow.up.doc.fill")
+                        Button(action: { 
+                            if !isImporting {
+                                showImportPicker = true 
+                            }
+                        }) {
+                            HStack {
+                                Label(L10n.string("导入 CSV"), systemImage: isImporting ? "arrow.up.doc.circle" : "arrow.up.doc.fill")
+                                Spacer()
+                                if isImporting && importProgress.total > 0 {
+                                    ProgressView(value: Double(importProgress.current) / Double(importProgress.total))
+                                        .scaleEffect(0.7)
+                                }
+                            }
                         }
-                        .foregroundColor(.formlogPrimary)
+                        .disabled(isImporting)
+                        .foregroundColor(isImporting ? .secondary : .formlogPrimary)
+                        
+                        if isImporting && importProgress.total > 0 {
+                            Text(String(format: L10n.string("导入中... %d/%d"), importProgress.current, importProgress.total))
+                                .font(.system(size: 12))
+                                .foregroundColor(.secondary)
+                        }
                         
                         // CSV格式示例
                         Button(action: exportCSVTemplate) {
@@ -463,6 +482,7 @@ struct SettingsView: View {
 
     private func handleImportResult(_ result: Result<[URL], Error>) {
         isImporting = true
+        importProgress = (0, 0)
         Task {
             let message: String
             switch result {
@@ -485,7 +505,11 @@ struct SettingsView: View {
                         message = L10n.string("导入失败：文件编码不支持，请将CSV文件转换为UTF-8编码")
                         break
                     }
-                    let (count, error) = entryStore.importCSV(csvString)
+                    let (count, error) = entryStore.importCSV(csvString) { current, total in
+                            DispatchQueue.main.async {
+                                importProgress = (current, total)
+                            }
+                        }
                     if let err = error, count == 0 {
                         message = String(format: L10n.string("导入失败：%@"), err)
                     } else {
