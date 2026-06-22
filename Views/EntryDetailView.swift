@@ -21,6 +21,11 @@ struct EntryDetailView: View {
         entryStore.entries.first { $0.id == entryID }
     }
 
+    // 检查是否有照片
+    private var hasPhoto: Bool {
+        entry?.loadedPhotoData != nil
+    }
+
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
@@ -111,7 +116,11 @@ struct EntryDetailView: View {
             }
             Button(L10n.string("取消"), role: .cancel) {}
         } message: {
-            Text(L10n.string("这条记录将被永久删除，无法恢复。"))
+            if hasPhoto {
+                Text(L10n.string("这条记录和照片将被永久删除，无法恢复。"))
+            } else {
+                Text(L10n.string("这条记录将被永久删除，无法恢复。"))
+            }
         }
         .sheet(isPresented: $showEditSheet) {
             if let entry = entry {

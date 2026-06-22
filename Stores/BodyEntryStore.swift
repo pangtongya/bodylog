@@ -255,19 +255,19 @@ class BodyEntryStore: ObservableObject {
         let lines = csvString.components(separatedBy: .newlines)
             .map { $0.trimmingCharacters(in: .whitespaces) }
             .filter { !$0.isEmpty }
-        
+
         guard lines.count >= 2 else {
             return (0, L10n.string("CSV 文件格式不正确，至少需要标题行和一行数据"))
         }
-        
+
         // Parse header to find column indices
         let header = parseCSVLine(lines[0])
-        
+
         // Find date column index (try common Chinese/English headers)
         let dateColIndex = header.firstIndex(where: {
             $0.contains("日期") || $0.contains("Date") || $0.contains("date")
         }) ?? 0
-        
+
         // Build metric type mapping from header columns
         var metricMap: [Int: BodyMetricType] = [:]
         for (idx, col) in header.enumerated() {
@@ -280,46 +280,74 @@ class BodyEntryStore: ObservableObject {
                 }
             }
         }
-        
+
         // Find note column
         let noteColIndex = header.firstIndex(where: {
             $0.contains("备注") || $0.contains("Note") || $0.contains("note")
         })
-        
+
         var importedCount = 0
         var errors: [String] = []
         var parsedEntries: [BodyEntry] = []
-        
+        var duplicateDates: Set<Date> = []
+
         for (index, line) in lines.dropFirst().enumerated() {
             let lineNumber = index + 2 // +1 for header, +1 for 1-based indexing
             let cols = parseCSVLine(line)
-            
+
             guard cols.count > max(dateColIndex, 1) else { continue }
-            
+
             // Parse date (支持多种格式)
             let dateString = cols[dateColIndex].trimmingCharacters(in: .whitespaces)
             guard let date = Self.parseCSVDate(dateString) else {
                 errors.append(String(format: L10n.string("第 %d 行：无法解析日期: %@"), lineNumber, dateString))
                 continue
             }
-            
-            // Parse metrics
+
+            // Check for duplicate dates in the same import
+            if duplicateDates.contains(date) {
+                errors.append(String(format: L10n.string("第 %d 行：重复日期: %@"), lineNumber, dateString))
+                continue
+            }
+            duplicateDates.insert(date)
+
+            // Parse metrics with validation
             var metrics: [String: Double] = [:]
+            var metricErrors: [String] = []
+
             for (colIdx, type) in metricMap where colIdx < cols.count {
                 let valStr = cols[colIdx].trimmingCharacters(in: .whitespaces)
-                guard !valStr.isEmpty, let val = Double(valStr) else { continue }
+                guard !valStr.isEmpty else { continue }
+
+                guard let val = Double(valStr) else {
+                    metricErrors.append(String(format: L10n.string("%@ 格式错误: %@"), type.displayName, valStr))
+                    continue
+                }
+
+                // Validate value range
+                let validRange = type.validRange
+                if !validRange.contains(val) {
+                    metricErrors.append(String(format: L10n.string("%@ 值超出合理范围 (%.1f-%.1f): %.1f"),
+                                               type.displayName, validRange.lowerBound, validRange.upperBound, val))
+                    continue
+                }
+
                 metrics[type.rawValue] = val
             }
-            
+
+            if !metricErrors.isEmpty {
+                errors.append(String(format: L10n.string("第 %d 行 (%@): %@"), lineNumber, dateString, metricErrors.joined(separator: "; ")))
+            }
+
             guard !metrics.isEmpty else { continue }
-            
+
             // Parse note
             var note: String? = nil
             if let nIdx = noteColIndex, nIdx < cols.count {
                 let noteStr = cols[nIdx].trimmingCharacters(in: .whitespaces)
                 if !noteStr.isEmpty { note = noteStr }
             }
-            
+
             // Create entry
             let entry = BodyEntry(
                 recordedAt: date,
@@ -329,12 +357,12 @@ class BodyEntryStore: ObservableObject {
             importedCount += 1
             parsedEntries.append(entry)
         }
-        
+
         // 批量添加（只保存一次）
         if !parsedEntries.isEmpty {
             addEntries(parsedEntries)
         }
-        
+
         if importedCount > 0 {
             let errorMsg = errors.isEmpty ? nil : String(format: L10n.string("%d 行数据跳过"), errors.count)
             return (importedCount, errorMsg)
@@ -348,6 +376,94 @@ class BodyEntryStore: ObservableObject {
             }
             return (0, L10n.string("未找到有效数据"))
         }
+    }
+
+    /// 预览 CSV 数据（导入前验证）
+    /// - Returns: (预览数据行, 错误信息)
+    func previewCSV(_ csvString: String, maxRows: Int = 10) -> (previewRows: [CSVPreviewRow], errors: [String]) {
+        let lines = csvString.components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+
+        var previewRows: [CSVPreviewRow] = []
+        var errors: [String] = []
+
+        guard lines.count >= 2 else {
+            errors.append(L10n.string("CSV 文件格式不正确，至少需要标题行和一行数据"))
+            return ([], errors)
+        }
+
+        // Parse header
+        let header = parseCSVLine(lines[0])
+        let dateColIndex = header.firstIndex(where: {
+            $0.contains("日期") || $0.contains("Date") || $0.contains("date")
+        }) ?? 0
+
+        // Build metric type mapping
+        var metricMap: [Int: BodyMetricType] = [:]
+        for (idx, col) in header.enumerated() {
+            if idx == dateColIndex { continue }
+            for type in BodyMetricType.allCases where !type.unit.isEmpty {
+                if col.contains(type.displayName) || col.contains(type.rawValue) ||
+                   col.contains(type.unit) {
+                    metricMap[idx] = type
+                    break
+                }
+            }
+        }
+
+        let noteColIndex = header.firstIndex(where: {
+            $0.contains("备注") || $0.contains("Note") || $0.contains("note")
+        })
+
+        // Parse preview rows
+        let linesToPreview = lines.dropFirst().prefix(maxRows)
+        for (index, line) in linesToPreview.enumerated() {
+            let lineNumber = index + 2
+            let cols = parseCSVLine(line)
+
+            guard cols.count > max(dateColIndex, 1) else {
+                previewRows.append(CSVPreviewRow(lineNumber: lineNumber, date: nil, metrics: [:], note: nil, isValid: false))
+                continue
+            }
+
+            // Parse date
+            let dateString = cols[dateColIndex].trimmingCharacters(in: .whitespaces)
+            let date = Self.parseCSVDate(dateString)
+
+            // Parse metrics
+            var metrics: [BodyMetricType: (value: Double, isValid: Bool)] = [:]
+            for (colIdx, type) in metricMap where colIdx < cols.count {
+                let valStr = cols[colIdx].trimmingCharacters(in: .whitespaces)
+                guard !valStr.isEmpty else { continue }
+
+                if let val = Double(valStr) {
+                    let isValid = type.validRange.contains(val)
+                    metrics[type] = (val, isValid)
+                }
+            }
+
+            // Parse note
+            var note: String? = nil
+            if let nIdx = noteColIndex, nIdx < cols.count {
+                let noteStr = cols[nIdx].trimmingCharacters(in: .whitespaces)
+                if !noteStr.isEmpty { note = noteStr }
+            }
+
+            let isValid = date != nil && !metrics.isEmpty && metrics.values.allSatisfy { $0.isValid }
+            previewRows.append(CSVPreviewRow(lineNumber: lineNumber, date: date, metrics: metrics, note: note, isValid: isValid))
+        }
+
+        // Check for overall issues
+        if metricMap.isEmpty {
+            errors.append(L10n.string("未找到有效的指标列"))
+        }
+
+        if previewRows.allSatisfy({ !$0.isValid }) {
+            errors.append(L10n.string("预览的所有行都包含无效数据"))
+        }
+
+        return (previewRows, errors)
     }
     
     /// 生成CSV格式示例
@@ -458,6 +574,18 @@ class BodyEntryStore: ObservableObject {
     private func sortEntries() {
         entries.sort { $0.recordedAt > $1.recordedAt }
     }
+}
+
+// MARK: - CSV Preview Support
+
+/// CSV 预览行数据结构
+struct CSVPreviewRow: Identifiable {
+    let id = UUID()
+    let lineNumber: Int
+    let date: Date?
+    let metrics: [BodyMetricType: (value: Double, isValid: Bool)]
+    let note: String?
+    let isValid: Bool
 }
 
 // MARK: - Calendar Extension

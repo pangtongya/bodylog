@@ -129,6 +129,8 @@ struct AchievementView: View {
                 .foregroundColor(.formlogPrimary)
             } else if let prog = progress {
                 // Progress bar
+                                    let progressFraction = prog.target > 0 ? CGFloat(prog.current) / CGFloat(prog.target) : 0
+
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
                         RoundedRectangle(cornerRadius: 2)
@@ -136,7 +138,7 @@ struct AchievementView: View {
                             .frame(height: 4)
                         RoundedRectangle(cornerRadius: 2)
                             .fill(Color.formlogPrimary.opacity(0.6))
-                            .frame(width: geo.size.width * min(CGFloat(prog.current) / max(CGFloat(prog.target), 1), 1), height: 4)
+                            .frame(width: geo.size.width * min(max(progressFraction, 0), 1), height: 4)
                     }
                 }
                 .frame(height: 4)

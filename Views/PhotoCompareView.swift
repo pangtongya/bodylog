@@ -159,7 +159,7 @@ struct PhotoCompareView: View {
                         Circle()
                             .fill(Color.formlogPrimary)
                             .frame(width: 24, height: 24)
-                        Text("\(selectedEntries.firstIndex { $0.id == entry.id }! + 1)")
+                        Text("\((selectedEntries.firstIndex { $0.id == entry.id } ?? 0) + 1)")
                             .font(.system(size: 12, weight: .bold))
                             .foregroundColor(.white)
                     }
@@ -321,8 +321,8 @@ struct PhotoCompareView: View {
             let allMetrics = BodyMetricType.allCases.filter { type in
                 entry1.value(for: type) != nil || entry2.value(for: type) != nil
             }
-            
-            ForEach(allMetrics, id: \.self) { type in
+
+            ForEach(Array(allMetrics.enumerated()), id: \.element) { index, type in
                 let value1 = entry1.value(for: type) ?? 0
                 let value2 = entry2.value(for: type) ?? 0
                 let change = value2 - value1
@@ -358,8 +358,9 @@ struct PhotoCompareView: View {
                         .foregroundColor(changeColor(change, type: type))
                 }
                 .padding(.vertical, 12)
-                
-                if type != allMetrics.last {
+
+                // Use index to determine if we need a divider
+                if index < allMetrics.count - 1 {
                     Divider()
                 }
             }

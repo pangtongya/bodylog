@@ -283,7 +283,13 @@ struct OnboardingView: View {
         } else {
             // Save and complete onboarding
             appState.userName = name
-            if let h = Double(heightStr), h > 0 && h <= 300 { appState.userHeight = h }
+            // 身高验证：成年人正常范围 100-250cm
+            if let h = Double(heightStr), h >= 100 && h <= 250 {
+                appState.userHeight = h
+            } else {
+                // 如果身高无效，使用默认值
+                appState.userHeight = 170.0
+            }
             appState.userGender = gender
             appState.weightUnit = weightUnit
             appState.enabledMetrics = Array(selectedMetrics)

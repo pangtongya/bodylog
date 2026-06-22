@@ -9,10 +9,10 @@ import UIKit
 /// 2. 根据 filename 加载照片 Data
 /// 3. 删除指定照片文件
 final class PhotoManager: @unchecked Sendable {
-    
+
     static let shared = PhotoManager()
     private let fileManager = FileManager.default
-    
+
     /// 照片存放目录: Documents/FormLogPhotos/
     private var photosDirectory: URL {
         let docsURL: URL
@@ -24,9 +24,40 @@ final class PhotoManager: @unchecked Sendable {
         }
         return docsURL.appendingPathComponent("FormLogPhotos", isDirectory: true)
     }
-    
+
+    // MARK: - Memory Cache
+
+    /// 内存缓存配置
+    private struct CacheConfig {
+        static let maxCacheSize = 50 // 最大缓存照片数量
+        static let maxMemoryBytes: Int64 = 100 * 1024 * 1024 // 最大内存使用 100MB
+    }
+
+    /// 内存缓存（使用 NSCache）
+    private let memoryCache = NSCache<NSString, NSData>()
+
     private init() {
         ensureDirectoryExists()
+        setupCache()
+    }
+
+    private func setupCache() {
+        memoryCache.countLimit = CacheConfig.maxCacheSize
+        // 设置总成本限制（使用内存字节数作为成本）
+        memoryCache.totalCostLimit = Int(CacheConfig.maxMemoryBytes)
+
+        // 监听内存警告
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleMemoryWarning),
+            name: UIApplication.didReceiveMemoryWarningNotification,
+            object: nil
+        )
+    }
+
+    @objc private func handleMemoryWarning() {
+        memoryCache.removeAllObjects()
+        print("[PhotoManager] Memory warning - cache cleared")
     }
     
     // MARK: - Public API
@@ -58,16 +89,51 @@ final class PhotoManager: @unchecked Sendable {
             print("[PhotoManager] Path traversal attempt detected: \(filename)")
             return nil
         }
+
+        // 尝试从内存缓存读取
+        let cacheKey = filename as NSString
+        if let cachedData = memoryCache.object(forKey: cacheKey) {
+            return Data(referencing: cachedData)
+        }
+
+        // 从文件系统加载
         do {
-            return try Data(contentsOf: url)
+            let data = try Data(contentsOf: url)
+
+            // 缓存到内存
+            let nsData = data as NSData
+            memoryCache.setObject(nsData, forKey: cacheKey, cost: data.count)
+
+            return data
         } catch {
             print("[PhotoManager] Load error for \(filename): \(error)")
             return nil
         }
     }
+
+    /// 从缓存中移除指定照片
+    func removePhotoFromCache(filename: String) {
+        let cacheKey = filename as NSString
+        memoryCache.removeObject(forKey: cacheKey)
+    }
+
+    /// 清空所有缓存
+    func clearCache() {
+        memoryCache.removeAllObjects()
+        print("[PhotoManager] Memory cache cleared")
+    }
+
+    /// 获取缓存统计信息
+    func getCacheStats() -> (count: Int, totalSize: Int64) {
+        // NSCache 不直接提供遍历方法
+        return (0, 0)
+    }
     
     /// 删除指定照片文件
     func deletePhoto(filename: String) {
+        // 从缓存中移除
+        removePhotoFromCache(filename: filename)
+
         let url = photosDirectory.appendingPathComponent(filename)
         do {
             if fileManager.fileExists(atPath: url.path) {

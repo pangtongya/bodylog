@@ -77,8 +77,10 @@ final class PurchaseManager: ObservableObject {
                     await transaction.finish()
                     AppState.shared.isPro = true
                     AppState.shared.save()
-                case .unverified:
-                    purchaseError = L10n.string("购买验证失败，请联系支持。")
+                case .unverified(_, let error):
+                    // 提供更详细的错误信息和建议
+                    let errorMsg = String(format: L10n.string("购买验证失败：%@。可能原因：设备时间不正确、App Store 连接异常。请检查设备时间与网络后重试。"), error.localizedDescription)
+                    purchaseError = errorMsg
                 }
             case .userCancelled:
                 break
@@ -113,6 +115,8 @@ final class PurchaseManager: ObservableObject {
 
     func checkPurchases() async {
         var foundValid = false
+        var unverifiedCount = 0
+        
         for await result in Transaction.currentEntitlements {
             if case .verified(let transaction) = result,
                transaction.productID == Self.proProductID {
@@ -124,13 +128,22 @@ final class PurchaseManager: ObservableObject {
                 }
             } else {
                 // Log unverified transactions for debugging
-                print("[PurchaseManager] Unverified transaction found: \(result)")
+                unverifiedCount += 1
+                if case .unverified(_, let error) = result {
+                    print("[PurchaseManager] Unverified transaction: \(error.localizedDescription)")
+                } else {
+                    print("[PurchaseManager] Unverified transaction found: \(result)")
+                }
             }
         }
         // No valid entitlement found (including refunds/revocations)
         if !foundValid {
             AppState.shared.isPro = false
             AppState.shared.save()
+            // 如果有未验证的交易，提供提示
+            if unverifiedCount > 0 {
+                print("[PurchaseManager] Found \(unverifiedCount) unverified transaction(s)")
+            }
         }
     }
 

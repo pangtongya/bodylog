@@ -24,9 +24,13 @@ struct LogEntryView: View {
     @State private var showValidationError: Bool = false
     @State private var validationMessage: String = ""
     @State private var showCancelConfirmation: Bool = false
+    @State private var showPhotoSizeWarning: Bool = false
     /// 标记用户是否主动删除了照片（编辑模式下用于区分"没碰照片"和"主动删除"）
     @State private var photoWasRemoved: Bool = false
     @State private var prefillCompleted: Bool = false
+
+    /// 照片最大大小：5MB
+    private let maxPhotoSize: Int64 = 5 * 1024 * 1024
 
     /// 检查用户是否已输入任何内容
     private var hasUserInput: Bool {
@@ -223,8 +227,17 @@ struct LogEntryView: View {
         .onChange(of: selectedPhotoItem) { newItem in
             Task {
                 if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                    // 检查照片大小
+                    if data.count > maxPhotoSize {
+                        let sizeMB = Double(data.count) / (1024.0 * 1024.0)
+                        validationMessage = String(format: L10n.string("照片过大（%.1fMB），最大支持 5MB"), sizeMB)
+                        showValidationError = true
+                        return
+                    }
+
                     if let image = UIImage(data: data) {
-                        photoData = image.jpegData(compressionQuality: 0.6)
+                        // 压缩照片，目标大小约 500KB-1MB
+                        photoData = compressImage(image, targetSizeKB: 800)
                     }
                 }
             }
@@ -347,6 +360,32 @@ struct LogEntryView: View {
         if !newAchievements.isEmpty {
             appState.unlockAchievements(newAchievements)
         }
+    }
+
+    /// 压缩照片到目标大小
+    /// - Parameters:
+    ///   - image: 原始图片
+    ///   - targetSizeKB: 目标大小（KB）
+    /// - Returns: 压缩后的图片数据
+    private func compressImage(_ image: UIImage, targetSizeKB: Int) -> Data {
+        let compression: CGFloat = 0.8
+        var data = image.jpegData(compressionQuality: compression) ?? Data()
+
+        // 如果大小合适，直接返回
+        if data.count <= targetSizeKB * 1024 {
+            return data
+        }
+
+        // 逐步降低质量
+        var quality: CGFloat = 0.7
+        while quality > 0.1 && data.count > targetSizeKB * 1024 {
+            if let compressed = image.jpegData(compressionQuality: quality) {
+                data = compressed
+            }
+            quality -= 0.1
+        }
+
+        return data
     }
 }
 

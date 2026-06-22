@@ -166,7 +166,7 @@ class AppState: ObservableObject {
 
     private func migrateFromSchema(_ fromVersion: Int, to toVersion: Int, decoded: CodableData) {
         // Apply migrations incrementally
-        var current = decoded
+        let current = decoded
         // Future: add migration steps here when schema version increases
         // e.g., if fromVersion < 2 { migrateToV2(&current) }
         applyDecodedData(current)

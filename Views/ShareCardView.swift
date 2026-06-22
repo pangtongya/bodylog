@@ -213,10 +213,15 @@ struct ShareCardView: View {
     private func saveToPhotos() {
         guard let image = renderAsImage() else { return }
         PHPhotoLibrary.requestAuthorization(for: .addOnly) { status in
-            if status == .authorized || status == .limited {
-                UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
-            } else {
-                print("[ShareCardView] Photo library access denied")
+            Task { @MainActor in
+                if status == .authorized || status == .limited {
+                    UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+                    // Show success feedback
+                    print("[ShareCardView] Photo saved successfully")
+                } else {
+                    print("[ShareCardView] Photo library access denied")
+                    // TODO: Show error alert to user
+                }
             }
         }
     }

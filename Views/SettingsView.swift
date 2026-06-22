@@ -87,7 +87,7 @@ struct SettingsView: View {
                         HStack {
                             Text(L10n.string("管理指标"))
                             Spacer()
-                            Text(String(format: L10n.string("%d 个"), appState.enabledMetrics.count))
+                            Text(L10n.string("%d 个", "\(appState.enabledMetrics.count)"))
                                 .foregroundColor(.secondary)
                             Image(systemName: "chevron.right")
                                 .font(.system(size: 12))
@@ -256,11 +256,13 @@ struct SettingsView: View {
                     .foregroundColor(.primary)
                 }
 
-                    // Share progress (all users)
+                // Share progress (all users)
+                Section {
                     Button(action: { showShareCardView = true }) {
                         Label(L10n.string("分享进度"), systemImage: "square.and.arrow.up")
                     }
                     .foregroundColor(.formlogPrimary)
+                }
 
                 // About
                 Section(L10n.string("关于")) {
@@ -467,6 +469,7 @@ struct SettingsView: View {
             case .success(let urls):
                 guard let url = urls.first else {
                     message = L10n.string("未选择文件")
+                    isImporting = false
                     break
                 }
                 // Start accessing security scoped resource
@@ -491,17 +494,18 @@ struct SettingsView: View {
                 } catch {
                     message = String(format: L10n.string("读取文件失败：%@"), error.localizedDescription)
                 }
+                isImporting = false
             case .failure(let error):
                 message = String(format: L10n.string("选择文件失败：%@"), error.localizedDescription)
+                isImporting = false
             }
 
             importResult = message
-            isImporting = false
         }
     }
-    
+
     // MARK: - Backup / Restore
-    
+
     private func createBackup() {
         let appStateData = appState.encodeForBackup()
         let entriesData = (try? JSONEncoder().encode(entryStore.entries)) ?? Data()
@@ -513,7 +517,7 @@ struct SettingsView: View {
             "entries": entriesData,
             "goals": goalsData
         ]
-        
+
         do {
             let data = try JSONSerialization.data(withJSONObject: backupDict, options: [.prettyPrinted, .sortedKeys])
             backupData = data
@@ -526,7 +530,7 @@ struct SettingsView: View {
             backupResult = String(format: L10n.string("备份失败：%@"), error.localizedDescription)
         }
     }
-    
+
     private func handleRestorePickerResult(_ result: Result<[URL], Error>) {
         switch result {
         case .success(let urls):
@@ -537,7 +541,7 @@ struct SettingsView: View {
             backupResult = String(format: L10n.string("选择文件失败：%@"), error.localizedDescription)
         }
     }
-    
+
     private func performRestore() {
         guard let url = pendingRestoreURL else { return }
         // Start accessing security scoped resource
@@ -549,7 +553,7 @@ struct SettingsView: View {
         }
         do {
             let data = try Data(contentsOf: url)
-            guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+            guard var json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
                   let backupVersion = json["version"] as? String else {
                 backupResult = L10n.string("恢复失败：无效的备份文件")
                 return
@@ -559,6 +563,12 @@ struct SettingsView: View {
             let currentVersion = "1.0"
             if backupVersion != currentVersion {
                 print("[SettingsView] Backup version \(backupVersion), current version \(currentVersion), migration may be needed")
+
+                // Attempt migration
+                guard BackupMigrationManager.shared.migrateBackup(from: backupVersion, to: currentVersion, json: &json) else {
+                    backupResult = String(format: L10n.string("恢复失败：不支持从版本 %@ 迁移到当前版本"), backupVersion)
+                    return
+                }
             }
 
             // Restore entries

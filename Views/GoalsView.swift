@@ -81,21 +81,30 @@ struct GoalsView: View {
 
     private var emptyState: some View {
         VStack(spacing: 20) {
-            // Free tier hint
-            if !appState.isPro && goalStore.activeGoals.count >= 2 {
+            // Free tier hint with remaining count
+            if !appState.isPro {
+                let remaining = max(0, 2 - goalStore.activeGoals.count)
                 VStack(spacing: 8) {
-                    HStack {
-                        Image(systemName: "lock.fill")
+                    HStack(spacing: 6) {
+                        Image(systemName: remaining == 0 ? "lock.fill" : "info.circle.fill")
                             .font(.system(size: 12))
-                            .foregroundColor(.orange)
-                        Text(L10n.string("免费版最多 2 个目标"))
-                            .font(.system(size: 13))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(remaining == 0 ? .orange : .blue)
+                        if remaining == 0 {
+                            Text(L10n.string("免费版最多 2 个目标"))
+                                .font(.system(size: 13))
+                                .foregroundColor(.secondary)
+                        } else {
+                            Text(String(format: L10n.string("免费版还可创建 %d 个目标"), remaining))
+                                .font(.system(size: 13))
+                                .foregroundColor(.secondary)
+                        }
                     }
-                    Button(action: { showPaywall = true }) {
-                        Text(L10n.string("升级到 Pro，无限目标"))
-                            .font(.system(size: 13, weight: .medium))
-                            .foregroundColor(.formlogPrimary)
+                    if remaining == 0 {
+                        Button(action: { showPaywall = true }) {
+                            Text(L10n.string("升级到 Pro，无限目标"))
+                                .font(.system(size: 13, weight: .medium))
+                                .foregroundColor(.formlogPrimary)
+                        }
                     }
                 }
                 .padding(.top, 8)
