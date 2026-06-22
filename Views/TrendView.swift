@@ -78,12 +78,6 @@ struct TrendView: View {
         }
         
         // 性能优化：预计算统计数据和领域
-        computeCachedStats()
-        cachedYDomain = computeYDomain()
-        cachedInsights = computeInsights()
-    }
-    
-    private func computeCachedStats() {
         let latest = cachedDisplayData.last?.value
         let first = cachedDisplayData.first?.value
         let change: Double? = {
@@ -96,6 +90,8 @@ struct TrendView: View {
         }()
         
         cachedStats = (latest, first, change, changePercent)
+        cachedYDomain = computeYDomain()
+        cachedInsights = computeInsights()
     }
     
     private func computeYDomain() -> ClosedRange<Double> {
@@ -134,7 +130,7 @@ struct TrendView: View {
             } else if streak >= 3 {
                 (String(format: L10n.string("已连续记录%d天"), streak), L10n.string("继续保持这个节奏 👍"), .formlogPrimary)
             } else {
-                (String(format: L10n.string("已连续记录%d天"), streak), L10n.string("好的开始 💪"), .formlogPrimary)
+                (String(format: L10n.string("已连续记录d天"), streak), L10n.string("好的开始 💪"), .formlogPrimary)
             }
             result.append((id: "insight_streak", icon: "flame.fill", text: text, subtitle: subtitle, color: color))
         } else if let lastEntry = entryStore.latestEntry {
@@ -160,6 +156,21 @@ struct TrendView: View {
         }
 
         return Array(result.prefix(3))
+    }
+    
+    private func computeCachedStats() {
+        let latest = cachedDisplayData.last?.value
+        let first = cachedDisplayData.first?.value
+        let change: Double? = {
+            guard let l = latest, let f = first else { return nil }
+            return l - f
+        }()
+        let changePercent: Double? = {
+            guard let l = latest, let f = first, f != 0 else { return nil }
+            return (l - f) / abs(f) * 100
+        }()
+        
+        cachedStats = (latest, first, change, changePercent)
     }
 
     var body: some View {
@@ -251,6 +262,7 @@ struct TrendView: View {
     private var statsSummary: some View {
         let unitStr = (selectedMetric == .weight || selectedMetric == .muscleMass)
             ? appState.weightUnit.rawValue : selectedMetric.unit
+        let (latest, _, change, changePercent) = cachedStats
         
         return VStack(spacing: 12) {
             // Title
@@ -440,8 +452,14 @@ struct TrendView: View {
                             y: .value(selectedMetric.displayName, point.value)
                         )
                         .foregroundStyle(
-                            // 性能优化：创建渐变对象缓存
-                            GradientCache.gradient(for: selectedMetric)
+                            LinearGradient(
+                                colors: [
+                                    Color(red: 0.196, green: 0.651, blue: 0.533).opacity(0.3),
+                                    Color(red: 0.118, green: 0.502, blue: 0.408)
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
                         )
                         // Line - 性能优化：为大数据集减少抗锯齿
                         LineMark(

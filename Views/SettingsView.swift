@@ -88,7 +88,7 @@ struct SettingsView: View {
                         HStack {
                             Text(L10n.string("管理指标"))
                             Spacer()
-                            Text(L10n.string("%d 个", appState.enabledMetrics.count))
+                            Text("\(appState.enabledMetrics.count) 个")
                                 .foregroundColor(.secondary)
                             Image(systemName: "chevron.right")
                                 .font(.system(size: 12))
