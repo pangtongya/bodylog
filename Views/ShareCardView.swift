@@ -12,6 +12,8 @@ struct ShareCardView: View {
     @State private var renderedImage: Image?
     @State private var shareItems: [Any] = []
     @State private var showShareSheet: Bool = false
+    @State private var showSaveError: Bool = false
+    @State private var saveErrorMessage: String = ""
 
     var body: some View {
         NavigationStack {
@@ -39,6 +41,11 @@ struct ShareCardView: View {
             .sheet(isPresented: $showShareSheet) {
                 ShareSheet(items: shareItems)
                     .onDisappear { showShareSheet = false; shareItems = [] }
+            }
+            .alert(L10n.string("保存失败"), isPresented: $showSaveError) {
+                Button(L10n.string("好的"), role: .cancel) {}
+            } message: {
+                Text(saveErrorMessage)
             }
         }
     }
@@ -216,11 +223,11 @@ struct ShareCardView: View {
             Task { @MainActor in
                 if status == .authorized || status == .limited {
                     UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
-                    // Show success feedback
                     print("[ShareCardView] Photo saved successfully")
                 } else {
                     print("[ShareCardView] Photo library access denied")
-                    // TODO: Show error alert to user
+                    saveErrorMessage = L10n.string("无法保存照片，请检查系统照片权限设置。")
+                    showSaveError = true
                 }
             }
         }

@@ -396,4 +396,129 @@ class AppState: ObservableObject {
     func isAchievementUnlocked(_ type: AchievementType) -> Bool {
         achievements.contains { $0.id == type.id }
     }
+
+    // MARK: - Test API (for AppStateTests compatibility)
+
+    /// Pro 功能别名（用于测试兼容）
+    var hasProFeatures: Bool {
+        get { isPro }
+        set { isPro = newValue }
+    }
+
+    /// 切换指标启用状态
+    func toggleMetric(_ metric: BodyMetricType) {
+        if isEnabled(metric) {
+            if enabledMetrics.count > 1 {
+                enabledMetrics.removeAll { $0 == metric }
+                disabledMetrics.append(metric)
+            }
+        } else {
+            enabledMetrics.append(metric)
+            disabledMetrics.removeAll { $0 == metric }
+        }
+        save()
+    }
+
+    /// 检查指标是否启用
+    func isEnabled(_ metric: BodyMetricType) -> Bool {
+        enabledMetrics.contains(metric)
+    }
+
+    /// 启用所有指标
+    func enableAllMetrics() {
+        enabledMetrics = BodyMetricType.allCases
+        disabledMetrics = []
+        save()
+    }
+
+    /// 禁用所有指标
+    func disableAllMetrics() {
+        enabledMetrics = []
+        disabledMetrics = BodyMetricType.allCases
+        save()
+    }
+
+    /// 验证启用的指标列表
+    func validateEnabledMetrics() -> Bool {
+        let previousCount = enabledMetrics.count
+        enabledMetrics = enabledMetrics.filter { validateMetricType($0) != nil }
+        let cleanedCount = enabledMetrics.count
+
+        if previousCount != cleanedCount {
+            // Update disabled metrics to maintain consistency
+            disabledMetrics = BodyMetricType.allCases.filter { !enabledMetrics.contains($0) }
+            save()
+        }
+
+        return previousCount == cleanedCount
+    }
+
+    /// 验证禁用的指标列表
+    func validateDisabledMetrics() -> Bool {
+        let previousDisabledCount = disabledMetrics.count
+        disabledMetrics = disabledMetrics.filter { validateMetricType($0) != nil }
+        let cleanedCount = disabledMetrics.count
+
+        if previousDisabledCount != cleanedCount {
+            // Update enabled metrics to maintain consistency
+            enabledMetrics = BodyMetricType.allCases.filter { !disabledMetrics.contains($0) }
+            save()
+        }
+
+        return previousDisabledCount == cleanedCount
+    }
+
+    /// 检查数据一致性
+    func isDataConsistent() -> Bool {
+        // 检查 enabledMetrics 和 disabledMetrics 没有重叠
+        let overlap = enabledMetrics.filter { disabledMetrics.contains($0) }
+        if !overlap.isEmpty { return false }
+
+        // 检查两个列表加起来覆盖所有指标
+        let allCovered = enabledMetrics.count + disabledMetrics.count == BodyMetricType.allCases.count
+        return allCovered
+    }
+
+    /// 备份数据结构
+    struct Backup: Codable {
+        var enabledMetrics: [BodyMetricType]
+        var disabledMetrics: [BodyMetricType]
+        var weightUnit: WeightUnit
+        var hasProFeatures: Bool
+    }
+
+    /// 创建备份
+    func backup() -> Backup {
+        return Backup(
+            enabledMetrics: enabledMetrics,
+            disabledMetrics: disabledMetrics,
+            weightUnit: weightUnit,
+            hasProFeatures: hasProFeatures
+        )
+    }
+
+    /// 从备份恢复
+    func restoreFromBackup(_ backup: Backup) -> Bool {
+        // 验证数据有效性
+        let validEnabled = backup.enabledMetrics.filter { validateMetricType($0) != nil }
+        let validDisabled = backup.disabledMetrics.filter { validateMetricType($0) != nil }
+
+        // 检查重叠
+        let overlap = validEnabled.filter { validDisabled.contains($0) }
+        if !overlap.isEmpty { return false }
+
+        // 检查是否覆盖所有指标
+        let allCovered = validEnabled.count + validDisabled.count == BodyMetricType.allCases.count
+
+        if allCovered {
+            enabledMetrics = validEnabled
+            disabledMetrics = validDisabled
+            weightUnit = validateWeightUnit(backup.weightUnit) ?? .kg
+            hasProFeatures = backup.hasProFeatures
+            save()
+            return true
+        }
+
+        return false
+    }
 }

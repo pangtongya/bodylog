@@ -18,6 +18,9 @@ struct FormLogApp: App {
                 .environmentObject(goalStore)
                 .environmentObject(purchaseManager)
                 .preferredColorScheme(colorScheme)
+                .onAppear {
+                    purchaseManager.start()
+                }
         }
     }
 

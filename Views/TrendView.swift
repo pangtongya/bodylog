@@ -130,7 +130,7 @@ struct TrendView: View {
             } else if streak >= 3 {
                 (String(format: L10n.string("已连续记录%d天"), streak), L10n.string("继续保持这个节奏 👍"), .formlogPrimary)
             } else {
-                (String(format: L10n.string("已连续记录d天"), streak), L10n.string("好的开始 💪"), .formlogPrimary)
+                (String(format: L10n.string("已连续记录%d天"), streak), L10n.string("好的开始 💪"), .formlogPrimary)
             }
             result.append((id: "insight_streak", icon: "flame.fill", text: text, subtitle: subtitle, color: color))
         } else if let lastEntry = entryStore.latestEntry {

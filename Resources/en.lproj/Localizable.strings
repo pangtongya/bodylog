@@ -327,3 +327,7 @@
 "确认恢复数据" = "Confirm Data Restore";
 "恢复将覆盖当前所有数据，此操作不可撤销。" = "Restore will overwrite all current data. This action cannot be undone.";
 "确认恢复" = "Confirm Restore";
+
+// MARK: - Share Card
+"保存失败" = "Save Failed";
+"无法保存照片，请检查系统照片权限设置。" = "Unable to save photo. Please check system photo permission settings.";
