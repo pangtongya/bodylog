@@ -8,6 +8,10 @@ import SwiftUI
 class BodyEntryStore: ObservableObject {
     @Published var entries: [BodyEntry] = []
 
+    // Error callbacks for UI feedback
+    private var saveErrorHandler: ((String) -> Void)?
+    private var loadErrorHandler: ((String) -> Void)?
+
     private static let storeURL: URL = {
         let docsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
         let fallbackDir = FileManager.default.temporaryDirectory
@@ -53,6 +57,18 @@ class BodyEntryStore: ObservableObject {
 
     init() {
         load()
+    }
+
+    // MARK: - Error Handling Setup
+
+    /// 设置保存错误处理器
+    func setSaveErrorHandler(_ handler: @escaping (String) -> Void) {
+        saveErrorHandler = handler
+    }
+
+    /// 设置加载错误处理器
+    func setLoadErrorHandler(_ handler: @escaping (String) -> Void) {
+        loadErrorHandler = handler
     }
 
     // MARK: - CRUD
@@ -248,7 +264,7 @@ class BodyEntryStore: ObservableObject {
         }
         return ([header] + rows).joined(separator: "\n")
     }
-    
+
     /// 从 CSV 字符串导入数据
     /// - Parameter progressCallback: 进度回调函数 (当前进度, 总进度)
     /// - Returns: (成功数, 失败原因)
@@ -295,7 +311,7 @@ class BodyEntryStore: ObservableObject {
         for (index, line) in lines.dropFirst().enumerated() {
             let lineNumber = index + 2 // +1 for header, +1 for 1-based indexing
             let cols = parseCSVLine(line)
-            
+
             // 进度回调
             progressCallback?(index + 1, lines.count - 1)
 
@@ -469,19 +485,19 @@ class BodyEntryStore: ObservableObject {
 
         return (previewRows, errors)
     }
-    
+
     /// 生成CSV格式示例
     static func generateCSVTemplate() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
         let today = dateFormatter.string(from: Date())
-        
+
         var csv = L10n.string("日期")
         for type in BodyMetricType.allCases {
             csv += ",\(type.displayName)"
         }
         csv += "," + L10n.string("备注") + "\n"
-        
+
         // 示例数据（只添加主要指标）
         let primaryTypes = BodyMetricType.allCases.filter { $0.category == .primary }
         var exampleRow = "\(today)"
@@ -496,10 +512,10 @@ class BodyEntryStore: ObservableObject {
         }
         exampleRow += ",笔记示例\n"
         csv += exampleRow
-        
+
         return csv
     }
-    
+
     /// CSV 行解析（支持引号包裹字段，处理逗号转义）
     private func parseCSVLine(_ line: String) -> [String] {
         let quote: Character = "\u{0022}"
@@ -507,7 +523,7 @@ class BodyEntryStore: ObservableObject {
         var current = ""
         var inQuotes = false
         var chars = line.makeIterator()
-        
+
         while let ch = chars.next() {
             if inQuotes {
                 if ch == quote {
@@ -542,36 +558,128 @@ class BodyEntryStore: ObservableObject {
     }
 
     // MARK: - Persistence
-    
+
     func save() {
         // 立即保存，不使用延迟防抖，避免 App 被杀死时数据丢失
         performSave()
     }
-    
+
     private func performSave() {
         do {
             let data = try JSONEncoder().encode(entries)
             try data.write(to: Self.storeURL, options: [.atomic, .completeFileProtection])
         } catch {
+            let errorMsg = String(format: L10n.string("保存数据失败：%@\n\n提示：您的数据已被写入备份文件，但无法保存到主存储。"), error.localizedDescription)
             print("[BodyEntryStore] Save error: \(error)")
+
+            // 创建备份
+            if let backupURL = createBackup() {
+                print("[BodyEntryStore] Backup created at: \(backupURL.path)")
+            }
+
+            // 触发错误回调
+            if let errorHandler = saveErrorHandler {
+                DispatchQueue.main.async {
+                    errorHandler(errorMsg)
+                }
+            }
+        }
+    }
+
+    private func createBackup() -> URL? {
+        guard !entries.isEmpty else { return nil }
+
+        let timestamp = ISO8601DateFormatter().string(from: Date())
+        let backupURL = Self.storeURL.deletingPathExtension()
+            .appendingPathExtension("backup_\(timestamp).json")
+
+        do {
+            let data = try JSONEncoder().encode(entries)
+            try data.write(to: backupURL, options: [.atomic, .completeFileProtection])
+            return backupURL
+        } catch {
+            print("[BodyEntryStore] Backup creation error: \(error)")
+            return nil
         }
     }
 
     private func load() {
+        // 检查是否有备份文件
+        if let backupURL = findLatestBackup() {
+            print("[BodyEntryStore] Found backup file: \(backupURL.path)")
+            // 尝试从备份恢复
+            if restoreFromBackup(backupURL) {
+                let msg = String(format: L10n.string("已从备份恢复数据：\n%@", backupURL.lastPathComponent))
+                if let errorHandler = loadErrorHandler {
+                    DispatchQueue.main.async {
+                        errorHandler(msg)
+                    }
+                }
+                return
+            }
+        }
+
         do {
             let data = try Data(contentsOf: Self.storeURL)
             entries = try JSONDecoder().decode([BodyEntry].self, from: data)
             sortEntries()
+            print("[BodyEntryStore] Successfully loaded \(entries.count) entries")
         } catch {
-            // 数据文件不存在或损坏，首次启动或数据损坏
-            print("[BodyEntryStore] Load warning: \(error). Starting with empty data.")
+            let errorMsg = String(format: L10n.string("加载数据失败：%@\n\n提示：将使用空数据开始。"), error.localizedDescription)
+            print("[BodyEntryStore] Load error: \(error)")
+
             entries = []
-            // 可选：备份损坏的文件用于恢复
-            if FileManager.default.fileExists(atPath: Self.storeURL.path) {
-                let backupURL = Self.storeURL.deletingPathExtension().appendingPathExtension("backup.json")
-                try? FileManager.default.copyItem(at: Self.storeURL, to: backupURL)
-                print("[BodyEntryStore] Backup created at: \(backupURL.path)")
+
+            // 创建备份
+            if let backupURL = createBackup() {
+                print("[BodyEntryStore] Original data backed up at: \(backupURL.path)")
             }
+
+            // 触发错误回调
+            if let errorHandler = loadErrorHandler {
+                DispatchQueue.main.async {
+                    errorHandler(errorMsg)
+                }
+            }
+        }
+    }
+
+    /// 查找最新的备份文件
+    private func findLatestBackup() -> URL? {
+        let dirURL = Self.storeURL.deletingLastPathComponent()
+
+        let backupFiles: [URL]
+        do {
+            backupFiles = try FileManager.default.contentsOfDirectory(at: dirURL,
+                                                                     includingPropertiesForKeys: nil,
+                                                                     options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
+                .filter { $0.pathExtension == "json" && $0.lastPathComponent.contains("backup_") }
+                .sorted(by: { $0.lastPathComponent < $1.lastPathComponent })
+        } catch {
+            return nil
+        }
+
+        return backupFiles.last
+    }
+
+    /// 从指定备份恢复
+    private func restoreFromBackup(_ backupURL: URL) -> Bool {
+        do {
+            let data = try Data(contentsOf: backupURL)
+            entries = try JSONDecoder().decode([BodyEntry].self, from: data)
+            sortEntries()
+            // 删除旧的备份文件，保留最新的一个
+            let oldBackups = try? FileManager.default.contentsOfDirectory(at: backupURL.deletingLastPathComponent(),
+                                                                          includingPropertiesForKeys: nil,
+                                                                          options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
+                .filter { $0.pathExtension == "json" && $0.lastPathComponent.contains("backup_") && $0 != backupURL }
+                .sorted(by: { $0.lastPathComponent < $1.lastPathComponent })
+            oldBackups?.forEach { try? FileManager.default.removeItem(at: $0) }
+            print("[BodyEntryStore] Successfully restored from backup: \(backupURL.lastPathComponent)")
+            return true
+        } catch {
+            print("[BodyEntryStore] Restore from backup error: \(error)")
+            return false
         }
     }
 
