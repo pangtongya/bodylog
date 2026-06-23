@@ -16,33 +16,10 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pages: write
-    steps:
-      - name: Enable GitHub Pages
-        run: |
-          curl -X PUT \
-            -H "Accept: application/vnd.github.v3+json" \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            https://api.github.com/repos/${{ github.repository }}/pages \
-            -d '{
-              "source": {
-                "branch": "main",
-                "path": "/"
-              },
-              "status": "active"
-            }'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
