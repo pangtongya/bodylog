@@ -79,12 +79,31 @@ struct ContentView: View {
                 selectedTab = .home
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: .switchToTrendTab)) { _ in
+            withAnimation(.easeInOut(duration: 0.2)) {
+                selectedTab = .trend
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .switchToGoalsTab)) { _ in
+            withAnimation(.easeInOut(duration: 0.2)) {
+                selectedTab = .goals
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .quickActionNewEntry)) { _ in
+            selectedTab = .home
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                showLogSheet = true
+            }
+        }
     }
 }
 
 // MARK: - Notification Names
 extension Notification.Name {
     static let switchToHomeTab = Notification.Name("SwitchToHomeTab")
+    static let switchToTrendTab = Notification.Name("SwitchToTrendTab")
+    static let switchToGoalsTab = Notification.Name("SwitchToGoalsTab")
+    static let quickActionNewEntry = Notification.Name("QuickActionNewEntry")
 }
 
 #Preview {

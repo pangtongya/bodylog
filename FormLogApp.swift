@@ -1,7 +1,5 @@
-// FormLogApp.swift
-// @main 入口
-
 import SwiftUI
+import UIKit
 
 @main
 struct FormLogApp: App {
@@ -22,6 +20,7 @@ struct FormLogApp: App {
                 .preferredColorScheme(colorScheme)
                 .onAppear {
                     purchaseManager.start()
+                    setupQuickActions()
                     if appState.isPro {
                         autoBackupManager.checkAndPerformAutoBackup()
                     }
@@ -34,6 +33,51 @@ struct FormLogApp: App {
         case .system: return nil
         case .light: return .light
         case .dark: return .dark
+        }
+    }
+
+    private func setupQuickActions() {
+        let newEntryAction = UIApplicationShortcutItem(
+            type: "com.pangtong.formlog.newEntry",
+            localizedTitle: L10n.string("快速记录"),
+            localizedSubtitle: L10n.string("添加今天的身体数据"),
+            icon: UIApplicationShortcutIcon(systemImageName: "plus.circle.fill"),
+            userInfo: nil
+        )
+
+        let trendAction = UIApplicationShortcutItem(
+            type: "com.pangtong.formlog.viewTrend",
+            localizedTitle: L10n.string("查看趋势"),
+            localizedSubtitle: L10n.string("查看数据变化趋势"),
+            icon: UIApplicationShortcutIcon(systemImageName: "chart.line.uptrend.xyaxis"),
+            userInfo: nil
+        )
+
+        let goalsAction = UIApplicationShortcutItem(
+            type: "com.pangtong.formlog.viewGoals",
+            localizedTitle: L10n.string("我的目标"),
+            localizedSubtitle: L10n.string("查看目标进度"),
+            icon: UIApplicationShortcutIcon(systemImageName: "target"),
+            userInfo: nil
+        )
+
+        UIApplication.shared.shortcutItems = [newEntryAction, trendAction, goalsAction]
+    }
+}
+
+final class QuickActionManager {
+    static let shared = QuickActionManager()
+
+    func handleShortcutItem(_ item: UIApplicationShortcutItem) {
+        switch item.type {
+        case "com.pangtong.formlog.newEntry":
+            NotificationCenter.default.post(name: .quickActionNewEntry, object: nil)
+        case "com.pangtong.formlog.viewTrend":
+            NotificationCenter.default.post(name: .switchToTrendTab, object: nil)
+        case "com.pangtong.formlog.viewGoals":
+            NotificationCenter.default.post(name: .switchToGoalsTab, object: nil)
+        default:
+            break
         }
     }
 }
