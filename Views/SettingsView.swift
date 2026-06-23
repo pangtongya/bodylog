@@ -9,6 +9,7 @@ struct SettingsView: View {
     @EnvironmentObject var entryStore: BodyEntryStore
     @EnvironmentObject var goalStore: GoalStore
     @EnvironmentObject var purchaseManager: PurchaseManager
+    @EnvironmentObject var autoBackupManager: AutoBackupManager
 
     @State private var showPaywall: Bool = false
     @State private var showExportSheet: Bool = false
@@ -32,6 +33,8 @@ struct SettingsView: View {
     @State private var pendingRestoreURL: URL?
     @State private var notificationAuthStatus: UNAuthorizationStatus = .notDetermined
     @State private var photoStorageSize: Int64 = 0
+    @State private var showBackupManager: Bool = false
+    @State private var showBackupPaywall: Bool = false
 
     /// 从 Bundle 动态读取版本号
     private var appVersion: String {
@@ -171,6 +174,33 @@ struct SettingsView: View {
 
                 // Data
                 Section(L10n.string("数据")) {
+                    Button(action: {
+                        if appState.isPro {
+                            showBackupManager = true
+                        } else {
+                            showBackupPaywall = true
+                        }
+                    }) {
+                        HStack {
+                            Label(L10n.string("自动备份"), systemImage: "clock.arrow.circlepath")
+                            Spacer()
+                            if appState.isPro {
+                                if autoBackupManager.isAutoBackupEnabled {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundColor(.formlogPrimary)
+                                } else {
+                                    Image(systemName: "chevron.right")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.systemGray3)
+                                }
+                            } else {
+                                Image(systemName: "lock.fill")
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+                    .foregroundColor(appState.isPro ? .formlogPrimary : .secondary)
+
                     Button(action: exportData) {
                         HStack {
                             Label(L10n.string("导出 CSV"), systemImage: "arrow.down.doc.fill")
@@ -364,6 +394,18 @@ struct SettingsView: View {
             if let url = csvTemplateURL {
                 ShareSheet(items: [url])
             }
+        }
+        .sheet(isPresented: $showBackupManager) {
+            BackupManagerView()
+                .environmentObject(appState)
+                .environmentObject(entryStore)
+                .environmentObject(goalStore)
+                .environmentObject(autoBackupManager)
+        }
+        .sheet(isPresented: $showBackupPaywall) {
+            PaywallView(isPresented: $showBackupPaywall)
+                .environmentObject(appState)
+                .environmentObject(purchaseManager)
         }
     }
 

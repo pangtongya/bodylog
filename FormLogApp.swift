@@ -9,6 +9,7 @@ struct FormLogApp: App {
     @StateObject private var entryStore = BodyEntryStore()
     @StateObject private var goalStore = GoalStore()
     @ObservedObject private var purchaseManager = PurchaseManager.shared
+    @StateObject private var autoBackupManager = AutoBackupManager()
 
     var body: some Scene {
         WindowGroup {
@@ -17,9 +18,13 @@ struct FormLogApp: App {
                 .environmentObject(entryStore)
                 .environmentObject(goalStore)
                 .environmentObject(purchaseManager)
+                .environmentObject(autoBackupManager)
                 .preferredColorScheme(colorScheme)
                 .onAppear {
                     purchaseManager.start()
+                    if appState.isPro {
+                        autoBackupManager.checkAndPerformAutoBackup()
+                    }
                 }
         }
     }
