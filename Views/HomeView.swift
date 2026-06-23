@@ -28,6 +28,8 @@ struct HomeView: View {
 
     @State private var showPhotoCompare: Bool = false
     @State private var showPaywall: Bool = false
+    @State private var showInsights: Bool = false
+    @State private var showInsightsPaywall: Bool = false
 
     /// 主视图主体
     /// 使用 ZStack 实现成就通知横幅的悬浮效果
@@ -47,6 +49,10 @@ struct HomeView: View {
 
                         // 快速统计
                         statsRow
+                            .padding(.horizontal, 20)
+
+                        // 数据洞察入口（Pro 功能）
+                        insightsEntry
                             .padding(.horizontal, 20)
 
                         // 照片对比入口（Pro 核心卖点）
@@ -93,6 +99,17 @@ struct HomeView: View {
             }
             .sheet(isPresented: $showPaywall) {
                 PaywallView(isPresented: $showPaywall)
+                    .environmentObject(appState)
+                    .environmentObject(purchaseManager)
+            }
+            .sheet(isPresented: $showInsights) {
+                InsightsView()
+                    .environmentObject(appState)
+                    .environmentObject(entryStore)
+                    .environmentObject(goalStore)
+            }
+            .sheet(isPresented: $showInsightsPaywall) {
+                PaywallView(isPresented: $showInsightsPaywall)
                     .environmentObject(appState)
                     .environmentObject(purchaseManager)
             }
@@ -327,6 +344,59 @@ struct HomeView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 40)
+    }
+
+    // MARK: - Insights Entry
+
+    private var insightsEntry: some View {
+        let hasData = entryStore.entries.count >= 3
+
+        return Button(action: {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            if appState.isPro {
+                showInsights = true
+            } else {
+                showInsightsPaywall = true
+            }
+        }) {
+            HStack(spacing: 14) {
+                ZStack {
+                    Circle()
+                        .fill(Color.purple.opacity(0.12))
+                        .frame(width: 44, height: 44)
+                    Image(systemName: "chart.line.uptrend.xyaxis")
+                        .font(.system(size: 18))
+                        .foregroundColor(.purple)
+                }
+
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack(spacing: 4) {
+                        Text(L10n.string("数据洞察"))
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(.primary)
+                        if !appState.isPro {
+                            Image(systemName: "lock.fill")
+                                .font(.system(size: 10))
+                                .foregroundColor(.orange)
+                        }
+                    }
+                    Text(hasData ? L10n.string("查看你的变化趋势和智能分析") : L10n.string("记录更多数据以获取洞察"))
+                        .font(.system(size: 13))
+                        .foregroundColor(.secondary)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(.systemGray3)
+            }
+            .padding(16)
+            .background(Color.systemBackground)
+            .cornerRadius(16)
+            .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Photo Compare Entry
