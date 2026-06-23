@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>支持中心 - BodyLog</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #1a5490;
+        }
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #e1e8ed;
+            padding-bottom: 0.5rem;
+        }
+        .faq-item {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #1a5490;
+        }
+        .faq-question {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+        .faq-answer {
+            color: #555;
+            margin-bottom: 1rem;
+        }
+        .faq-answer ul {
+            padding-left: 20px;
+            margin: 0.5rem 0;
+        }
+        .faq-answer li {
+            margin: 0.3rem 0;
+        }
+        .contact-box {
+            background: #e1e8ed;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+        .contact-box h3 {
+            margin-top: 0;
+        }
+        .contact-box ul {
+            padding-left: 20px;
+            margin: 1rem 0;
+        }
+        .contact-box li {
+            margin: 0.8rem 0;
+        }
+        .contact-box a {
+            color: #007AFF;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .contact-box a:hover {
+            text-decoration: underline;
+        }
+        .version-list {
+            margin: 1rem 0;
+        }
+        .version-list li {
+            margin: 0.8rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        .version-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #1a5490;
+            font-weight: bold;
+        }
+        .badge {
+            display: inline-block;
+            background: #1a5490;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+        }
+        .tip {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 4px solid #ffc107;
+        }
+        .tip strong {
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <h1>支持中心</h1>
+    <p>欢迎使用 BodyLog！如果您遇到任何问题或需要帮助，请查看下面的常见问题（FAQ）或直接联系我们。</p>
+
+    <section>
+        <h2>常见问题 (FAQ)</h2>
+
+        <div class="faq-item">
+            <div class="faq-question">1. 数据会丢失吗？</div>
+            <div class="faq-answer">
+                不会。我们实现了自动备份机制：
+                <ul>
+                    <li>应用会定期自动备份数据到本地</li>
+                    <li>支持手动导出和恢复数据</li>
+                    <li>支持从 CSV 文件导入数据</li>
+                    <li>即使设备损坏，只要备份文件还在，就能恢复数据</li>
+                </ul>
+                <p>建议定期手动导出备份，以确保数据安全。</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">2. 支持哪些平台？</div>
+            <div class="faq-answer">
+                <ul>
+                    <li><strong>iOS 16.0+</strong> - iPhone 和 iPad</li>
+                    <li><strong>iPadOS 16.0+</strong> - iPad 专用版本</li>
+                    <li><strong>macOS 13.0+</strong> - Mac 版本（可选功能）</li>
+                </ul>
+                <p>我们的目标是在未来支持更多平台。</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">3. 数据存储在哪里？</div>
+            <div class="faq-answer">
+                <p>所有数据均存储在您的设备本地：</p>
+                <ul>
+                    <li>✅ <strong>完全本地化</strong> - 无云端同步</li>
+                    <li>✅ <strong>AES-256 加密</strong> - 文件加密保护</li>
+                    <li>✅ <strong>沙盒隔离</strong> - 数据严格隔离</li>
+                    <li>✅ <strong>无网络追踪</strong> - 完全离线运行</li>
+                </ul>
+                <p>数据绝不会上传到任何服务器。</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">4. 如何导出或备份我的数据？</div>
+            <div class="faq-answer">
+                <p>在 App 的设置页面中，您可以：</p>
+                <ul>
+                    <li>导出完整数据为 JSON 格式</li>
+                    <li>导出 CSV 格式，可在 Excel 中查看</li>
+                    <li>导出所有照片到相册</li>
+                    <li>从备份文件恢复数据</li>
+                </ul>
+                <div class="tip">
+                    <strong>提示：</strong>建议每月导出一次备份，以防意外丢失。
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">5. 订阅如何取消？</div>
+            <div class="faq-answer">
+                <p>您可以随时在 App Store 中取消订阅：</p>
+                <ol>
+                    <li>打开 App Store 应用</li>
+                    <li>点击右上角头像进入账户页面</li>
+                    <li>点击"订阅"</li>
+                    <li>找到 BodyLog 并点击"取消订阅"</li>
+                </ol>
+                <div class="tip">
+                    <strong>提示：</strong>取消后，订阅期内功能仍可正常使用，直到订阅结束。
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">6. 为什么需要照片权限？</div>
+            <div class="faq-answer">
+                <p>照片权限用于记录身体对比照片，帮助您：</p>
+                <ul>
+                    <li>拍摄和保存身体照片</li>
+                    <li>与历史照片对比查看变化</li>
+                    <li>支持相册内的照片选择</li>
+                </ul>
+                <p>照片文件使用 AES-256 加密存储，且不会上传到任何服务器。</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">7. Pro 版本有哪些功能？</div>
+            <div class="faq-answer">
+                <p>Pro 版本包含以下高级功能：</p>
+                <ul>
+                    <li>✨ 解锁所有图表和趋势分析</li>
+                    <li>✨ 目标追踪和成就系统</li>
+                    <li>✨ 无限历史记录</li>
+                    <li>✨ 数据导出（JSON、CSV）</li>
+                    <li>✨ 相机直接拍摄照片</li>
+                    <li>✨ 优先更新和新功能体验</li>
+                </ul>
+                <p>Pro 版本按月或按年订阅，价格详见 App Store。</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">8. 如何联系支持团队？</div>
+            <div class="faq-answer">
+                <p>您可以：</p>
+                <ul>
+                    <li>📧 <strong>邮箱:</strong> support@bodylog.app</li>
+                    <li>⏰ <strong>响应时间:</strong> 24-48 小时内回复</li>
+                    <li>📝 <strong>反馈渠道:</strong> 通过 App 内的反馈功能提交</li>
+                </ul>
+                <p>我们会在收到您的消息后尽快回复。</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">9. 是否支持多设备同步？</div>
+            <div class="faq-answer">
+                <p>当前版本不支持多设备同步，所有数据存储在您的设备上。原因：</p>
+                <ul>
+                    <li>隐私保护 - 数据完全本地化</li>
+                    <li>安全 - 无云端数据泄露风险</li>
+                    <li>简单 - 无需网络，随时随地使用</li>
+                </ul>
+                <p>我们正在考虑在未来版本中添加可选的云端同步功能。</p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>联系我们</h2>
+        <div class="contact-box">
+            <h3>📬 邮件支持</h3>
+            <p>遇到问题？发送邮件至：</p>
+            <p style="font-size: 1.2rem; font-weight: bold; color: #1a5490; margin: 1rem 0;">
+                support@bodylog.app
+            </p>
+
+            <h3>📝 反馈建议</h3>
+            <p>在 App 的设置页面中，可以找到"反馈"选项，直接向我们发送您的建议或问题。</p>
+
+            <h3>⏰ 响应时间</h3>
+            <ul>
+                <li>工作日: 24 小时内回复</li>
+                <li>周末: 48 小时内回复</li>
+                <li>紧急问题: 会优先处理</li>
+            </ul>
+
+            <h3>💬 社交媒体</h3>
+            <p>关注我们的社交媒体获取最新动态：</p>
+            <ul>
+                <li>微信公众号: BodyLog</li>
+                <li>微博: @BodyLogApp</li>
+            </ul>
+        </div>
+    </section>
+
+    <section>
+        <h2>版本历史</h2>
+        <h3><span class="badge">最新版本</span>v1.0.0 (2026年6月23日)</h3>
+        <ul class="version-list">
+            <li><strong>核心功能</strong></li>
+            <ul>
+                <li>✅ 体重、体脂率等身体指标追踪</li>
+                <li>✅ 照片对比功能，记录形体变化</li>
+                <li>✅ 趋势图表和分析</li>
+                <li>✅ 目标设定和成就系统</li>
+            </ul>
+
+            <li><strong>数据管理</strong></li>
+            <ul>
+                <li>✅ 自动备份和恢复</li>
+                <li>✅ 导出 CSV、JSON 格式</li>
+                <li>✅ 照片加密存储</li>
+                <li>✅ 数据导入功能</li>
+            </ul>
+
+            <li><strong>通知功能</strong></li>
+            <ul>
+                <li>✅ 每日提醒功能</li>
+                <li>✅ 目标达成通知</li>
+                <li>✅ 自定义提醒时间</li>
+            </ul>
+
+            <li><strong>Pro 版本</strong></li>
+            <ul>
+                <li>✅ 解锁所有图表和分析</li>
+                <li>✅ 优先更新体验</li>
+                <li>✅ 无限历史记录</li>
+            </ul>
+        </ul>
+
+        <h3>未来计划</h3>
+        <ul class="version-list">
+            <li>🚀 支持更多身体指标</li>
+            <li>🚀 多设备同步功能</li>
+            <li>🚀 云端备份选项</li>
+            <li>🚀 更多图表和分析</li>
+            <li>🚀 社区分享功能</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>常见问题延伸</h2>
+        <div class="tip">
+            <strong>💡 更多帮助：</strong>
+            <ul>
+                <li>查看 <a href="privacy.html">隐私政策</a> 了解数据保护措施</li>
+                <li>查看 <a href="#">用户手册</a> 获取详细使用指南</li>
+            </ul>
+        </div>
+    </section>
+
+    <div class="footer" style="margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #e1e8ed; font-size: 0.85rem; color: #666;">
+        <p><strong>BodyLog</strong> - 您的私人健康数据管家</p>
+        <p>保护您的隐私，就是保护您的健康数据安全。</p>
+        <p>© 2026 BodyLog. 保留所有权利。</p>
+    </div>
+</body>
+</html>
