@@ -110,7 +110,9 @@ struct SettingsView: View {
                                     let minute = appState.reminderMinute
                                     NotificationManager.shared.requestAuthorization { granted in
                                         if granted {
-                                            NotificationManager.shared.scheduleDailyReminder(hour: hour, minute: minute)
+                                            Task { @MainActor in
+                                                NotificationManager.shared.scheduleDailyReminder(hour: hour, minute: minute)
+                                            }
                                         } else {
                                             Task { @MainActor in
                                                 appState.reminderEnabled = false
@@ -147,7 +149,9 @@ struct SettingsView: View {
                                     appState.reminderMinute = minute
                                     appState.save()
                                     if appState.reminderEnabled {
-                                        NotificationManager.shared.scheduleDailyReminder(hour: hour, minute: minute)
+                                        Task { @MainActor in
+                                            NotificationManager.shared.scheduleDailyReminder(hour: hour, minute: minute)
+                                        }
                                     }
                                 }
                             ),

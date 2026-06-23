@@ -2,7 +2,7 @@
 // 本地通知管理（每日记录提醒）
 
 import Foundation
-import UserNotifications
+@preconcurrency import UserNotifications
 
 @MainActor
 final class NotificationManager: NSObject, ObservableObject, @unchecked Sendable {
@@ -103,7 +103,7 @@ final class NotificationManager: NSObject, ObservableObject, @unchecked Sendable
 // MARK: - UNUserNotificationCenterDelegate
 
 extension NotificationManager: UNUserNotificationCenterDelegate {
-    func userNotificationCenter(
+    nonisolated func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
@@ -111,5 +111,14 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
         // 前台也显示通知
         print("[NotificationManager] Notification will present in foreground")
         completionHandler([.banner, .sound])
+    }
+
+    nonisolated func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
+        // 处理通知响应
+        completionHandler()
     }
 }
