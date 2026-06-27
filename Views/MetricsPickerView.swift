@@ -130,6 +130,7 @@ struct MetricsPickerView: View {
                 set: { _ in toggleMetric(metric) }
             ))
             .labelsHidden()
+            .accessibilityLabel(metric.displayName)
             .tint(.formlogPrimary)
             .disabled(!canDisable && isEnabled)
         }

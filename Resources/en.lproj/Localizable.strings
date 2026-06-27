@@ -431,3 +431,10 @@
 // MARK: - General Additions
 "关闭" = "Close";
 "笔记示例" = "Note example";
+
+// MARK: - Additional Localization
+"至少保留一个指标" = "Keep at least one metric";
+"更多操作" = "More Actions";
+"这条记录和照片将被永久删除，无法恢复。" = "This entry and its photos will be permanently deleted and cannot be recovered.";
+"总记录" = "Total Entries";
+"暂无照片" = "No Photos";

@@ -66,12 +66,6 @@ final class AchievementManager {
             }
         }
 
-        // 限制返回数量（防止通知过载）
-        if newAchievements.count > 3 {
-            logger.info("Throttling notification — \(newAchievements.count) achievements unlocked, returning first 3")
-            return Array(newAchievements.prefix(3))
-        }
-
         if !newAchievements.isEmpty {
             logger.info("Returning \(newAchievements.count) new achievement(s)")
         }

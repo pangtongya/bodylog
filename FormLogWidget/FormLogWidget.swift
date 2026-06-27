@@ -306,7 +306,7 @@ struct MediumWidgetView: View {
                 Spacer(minLength: 0)
 
                 // Quick Action Button
-                Link(destination: URL(string: "formlog://record")!) {
+                Link(destination: URL(string: "formlog://record") ?? URL(string: "https://pangtongya.github.io/bodylog/support.html")!) {
                     HStack(spacing: WidgetMetrics.spacingXs) {
                         Image(systemName: "plus.circle.fill")
                             .font(.system(size: 12))
@@ -365,7 +365,7 @@ struct MediumWidgetView: View {
 
     private static let dateFormatter: DateFormatter = {
         let f = DateFormatter()
-        f.dateFormat = "M/d"
+        f.setLocalizedDateFormatFromTemplate("MMdd")
         return f
     }()
 

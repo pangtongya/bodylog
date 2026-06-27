@@ -134,6 +134,11 @@ final class PhotoManager: @unchecked Sendable {
     
     /// 删除指定照片文件
     func deletePhoto(filename: String) {
+        guard !filename.contains("/") && !filename.contains("..") else {
+            Self.logger.warning("Invalid filename rejected: \(filename)")
+            return
+        }
+
         // 从缓存中移除
         removePhotoFromCache(filename: filename)
 

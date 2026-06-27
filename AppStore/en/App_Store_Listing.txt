@@ -149,12 +149,12 @@ Rating
 
 Copyright
 ---------
-(c) 2026 pangtong. All rights reserved.
+© 2026 Pang Tong. All rights reserved.
 
 Support URL
 -----------
-https://formlog.app/support
+https://pangtongya.github.io/bodylog/support.html
 
 Privacy Policy URL
 ------------------
-https://formlog.app/privacy
+https://pangtongya.github.io/bodylog/privacy.html

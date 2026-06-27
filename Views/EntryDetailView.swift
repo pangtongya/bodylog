@@ -296,6 +296,7 @@ struct EntryDetailView: View {
                 .padding(.vertical, 10)
                 .background(.ultraThinMaterial, in: Capsule())
             }
+            .accessibilityLabel(L10n.string("对比照片"))
             .padding(.bottom, .spacingMd)
         } else {
             Button {
@@ -322,6 +323,7 @@ struct EntryDetailView: View {
                 .padding(.vertical, 10)
                 .background(Color.formlogPrimary.opacity(0.12), in: Capsule())
             }
+            .accessibilityLabel(L10n.string("对比照片"))
             .padding(.bottom, .spacingMd)
         }
     }

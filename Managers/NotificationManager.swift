@@ -40,12 +40,12 @@ final class NotificationManager: NSObject, ObservableObject, @unchecked Sendable
         // Daily reminder actions
         let recordNowAction = UNNotificationAction(
             identifier: recordNowActionID,
-            title: String(localized: "现在记录"),
+            title: L10n.string("现在记录"),
             options: [.foreground]
         )
         let snoozeAction = UNNotificationAction(
             identifier: snoozeActionID,
-            title: String(localized: "稍后提醒"),
+            title: L10n.string("稍后提醒"),
             options: []
         )
 
@@ -125,8 +125,8 @@ final class NotificationManager: NSObject, ObservableObject, @unchecked Sendable
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
 
         let content = UNMutableNotificationContent()
-        content.title = String(localized: "该记录了")
-        content.body = String(localized: "记录今天的身体数据")
+        content.title = L10n.string("该记录了")
+        content.body = L10n.string("记录今天的身体数据")
         content.sound = .default
         content.categoryIdentifier = dailyReminderCategoryID
 
@@ -172,8 +172,8 @@ final class NotificationManager: NSObject, ObservableObject, @unchecked Sendable
         }
 
         let content = UNMutableNotificationContent()
-        content.title = String(localized: "目标达成！🎉")
-        content.body = String(format: String(localized: "恭喜你，%@ 已达到目标值！"), metricName)
+        content.title = L10n.string("目标达成！🎉")
+        content.body = L10n.string("恭喜你，%@ 已达到目标值！", metricName)
         content.sound = .default
         content.badge = 1
         content.categoryIdentifier = goalAchievedCategoryID
@@ -272,8 +272,8 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
             notificationLogger.info("User tapped 'Snooze' — scheduling a 30-minute follow-up")
             // Schedule a one-time reminder 30 minutes from now
             let snoozeContent = UNMutableNotificationContent()
-            snoozeContent.title = String(localized: "该记录了")
-            snoozeContent.body = String(localized: "别忘了记录今天的身体数据哦 😊")
+            snoozeContent.title = L10n.string("该记录了")
+            snoozeContent.body = L10n.string("别忘了记录今天的身体数据哦 😊")
             snoozeContent.sound = .default
             snoozeContent.categoryIdentifier = dailyReminderCategoryID
 
