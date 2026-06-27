@@ -1,0 +1,410 @@
+{
+  "data": [
+    {
+      "id": "page-onboarding-welcome",
+      "title": "引导 - 欢迎",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1750780800000,
+      "canvasData": {
+        "x": 0,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/onboarding-welcome.html",
+        "interactions": [
+          {
+            "domId": "btn-next-1",
+            "targetPageId": "page-onboarding-profile"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-onboarding-profile",
+      "title": "引导 - 个人信息",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1750780800000,
+      "canvasData": {
+        "x": 420,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/onboarding-profile.html",
+        "interactions": [
+          {
+            "domId": "btn-next-2",
+            "targetPageId": "page-onboarding-metrics"
+          },
+          {
+            "domId": "btn-back-2",
+            "targetPageId": "page-onboarding-welcome"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-onboarding-metrics",
+      "title": "引导 - 选择指标",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1750780800000,
+      "canvasData": {
+        "x": 0,
+        "y": 590,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/onboarding-metrics.html",
+        "interactions": [
+          {
+            "domId": "btn-done-3",
+            "targetPageId": "page-home"
+          },
+          {
+            "domId": "btn-back-3",
+            "targetPageId": "page-onboarding-profile"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-home",
+      "title": "首页",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1750780800000,
+      "canvasData": {
+        "x": 0,
+        "y": 1220,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/home.html",
+        "interactions": [
+          {
+            "domId": "cta-log",
+            "targetPageId": "page-log-entry"
+          },
+          {
+            "domId": "tab-trend",
+            "targetPageId": "page-trend",
+            "hideEdge": true
+          },
+          {
+            "domId": "tab-goals",
+            "targetPageId": "page-goals",
+            "hideEdge": true
+          },
+          {
+            "domId": "tab-settings",
+            "targetPageId": "page-settings",
+            "hideEdge": true
+          },
+          {
+            "domId": "card-report-weekly",
+            "targetPageId": "page-report"
+          },
+          {
+            "domId": "row-entry-1",
+            "targetPageId": "page-entry-detail"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-trend",
+      "title": "趋势",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1750780800000,
+      "canvasData": {
+        "x": 0,
+        "y": 4913,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/trend.html",
+        "interactions": [
+          {
+            "domId": "tab-home",
+            "targetPageId": "page-home",
+            "hideEdge": true
+          },
+          {
+            "domId": "tab-goals",
+            "targetPageId": "page-goals",
+            "hideEdge": true
+          },
+          {
+            "domId": "tab-settings",
+            "targetPageId": "page-settings",
+            "hideEdge": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-goals",
+      "title": "目标",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1750780800000,
+      "canvasData": {
+        "x": 0,
+        "y": 4276,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/goals.html",
+        "interactions": [
+          {
+            "domId": "tab-home",
+            "targetPageId": "page-home",
+            "hideEdge": true
+          },
+          {
+            "domId": "tab-trend",
+            "targetPageId": "page-trend",
+            "hideEdge": true
+          },
+          {
+            "domId": "tab-settings",
+            "targetPageId": "page-settings",
+            "hideEdge": true
+          },
+          {
+            "domId": "btn-add-goal",
+            "targetPageId": "page-add-goal"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-log-entry",
+      "title": "记录数据",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1750780800000,
+      "canvasData": {
+        "x": 0,
+        "y": 2059,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/log-entry.html",
+        "interactions": [
+          {
+            "domId": "btn-save-log",
+            "targetPageId": "page-home",
+            "hideEdge": true
+          },
+          {
+            "domId": "btn-cancel-log",
+            "targetPageId": "page-home",
+            "hideEdge": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-settings",
+      "title": "设置",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1750780800000,
+      "canvasData": {
+        "x": 420,
+        "y": 4913,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/settings.html",
+        "interactions": [
+          {
+            "domId": "tab-home",
+            "targetPageId": "page-home",
+            "hideEdge": true
+          },
+          {
+            "domId": "tab-trend",
+            "targetPageId": "page-trend",
+            "hideEdge": true
+          },
+          {
+            "domId": "tab-goals",
+            "targetPageId": "page-goals",
+            "hideEdge": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-entry-detail",
+      "title": "记录详情",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1750780800000,
+      "canvasData": {
+        "x": 0,
+        "y": 3621,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/entry-detail.html",
+        "interactions": [
+          {
+            "domId": "btn-back-detail",
+            "targetPageId": "page-home",
+            "hideEdge": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-photo-compare",
+      "title": "照片对比",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1750780800000,
+      "canvasData": {
+        "x": 840,
+        "y": 4913,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/photo-compare.html",
+        "interactions": [
+          {
+            "domId": "btn-back-photo",
+            "targetPageId": "page-home",
+            "hideEdge": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-add-goal",
+      "title": "设置目标",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1750780800000,
+      "canvasData": {
+        "x": 420,
+        "y": 4276,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/add-goal.html",
+        "interactions": [
+          {
+            "domId": "btn-cancel-goal",
+            "targetPageId": "page-goals",
+            "hideEdge": true
+          },
+          {
+            "domId": "btn-create-goal",
+            "targetPageId": "page-goals",
+            "hideEdge": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-achievements",
+      "title": "成就",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1750780800000,
+      "canvasData": {
+        "x": 1260,
+        "y": 4913,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/achievements.html",
+        "interactions": [
+          {
+            "domId": "btn-back-achievements",
+            "targetPageId": "page-home",
+            "hideEdge": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-paywall",
+      "title": "Pro 付费墙",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1750780800000,
+      "canvasData": {
+        "x": 1680,
+        "y": 4913,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/paywall.html",
+        "interactions": [
+          {
+            "domId": "btn-close-paywall",
+            "targetPageId": "page-home",
+            "hideEdge": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-report",
+      "title": "周报",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1750780800000,
+      "canvasData": {
+        "x": 0,
+        "y": 2737,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/report.html",
+        "interactions": [
+          {
+            "domId": "btn-back-report",
+            "targetPageId": "page-home",
+            "hideEdge": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-share-card",
+      "title": "分享卡片",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1750780800000,
+      "canvasData": {
+        "x": 2100,
+        "y": 4913,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/share-card.html",
+        "interactions": [
+          {
+            "domId": "btn-close-share",
+            "targetPageId": "page-home",
+            "hideEdge": true
+          }
+        ]
+      }
+    }
+  ],
+  "config": {
+    "autoLayout": true,
+    "deviceType": "mobile",
+    "projectName": "BodyLog — Apple 风格完整重设计"
+  }
+}

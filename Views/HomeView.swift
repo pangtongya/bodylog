@@ -1,24 +1,9 @@
 // HomeView.swift
-// 首页：今日摘要 + 历史记录列表
-// 应用主视图，展示今日身体数据摘要、统计信息、照片对比入口和历史记录列表
+// Home screen: Apple HIG-style premium layout
+// Calm, spacious, data-forward with ring progress and generous white space
 
 import SwiftUI
 
-/// 首页视图
-/// 应用的主要导航入口，提供用户最常用的功能入口和今日数据概览
-///
-/// # 主要功能模块
-/// 1. **今日洞察卡片**：显示今日的身体数据状态和主要洞察
-/// 2. **今日摘要卡片**：提供关键指标的总览和进度
-/// 3. **快速统计**：横向显示的快速数据指标
-/// 4. **照片对比入口**：Pro 功能的核心卖点入口（需要购买）
-/// 5. **历史记录**：最近的历史记录列表
-///
-/// # 用户体验优化
-/// - 成就通知横幅：解锁新成就时自动显示动画通知
-/// - 即时反馈：所有按钮都有触觉反馈
-/// - 空状态处理：没有数据时显示引导界面
-/// - 响应式布局：适配不同屏幕尺寸
 struct HomeView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var entryStore: BodyEntryStore
@@ -28,427 +13,162 @@ struct HomeView: View {
 
     @State private var showPhotoCompare: Bool = false
     @State private var showPaywall: Bool = false
+    @State private var showWeeklyReport: Bool = false
+    @State private var showMonthlyReport: Bool = false
 
-    /// 主视图主体
-    /// 使用 ZStack 实现成就通知横幅的悬浮效果
-    /// 包含导航栏、可滚动内容和固定位置的通知横幅
     var body: some View {
         NavigationStack {
-            ZStack(alignment: .top) {
-                ScrollView {
-                    VStack(spacing: 20) {
-                        // 今日洞察卡片
-                        todayInsightsCard
-                            .padding(.horizontal, 20)
+            if appState.hasCompletedOnboarding {
+                homeContent
+            } else {
+                OnboardingView()
+            }
+        }
+        .sheet(isPresented: $showPhotoCompare) {
+            PhotoCompareView()
+                .environmentObject(appState)
+                .environmentObject(entryStore)
+                .environmentObject(purchaseManager)
+        }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView(isPresented: $showPaywall)
+                .environmentObject(appState)
+                .environmentObject(purchaseManager)
+        }
+        .sheet(isPresented: $showWeeklyReport) {
+            WeeklyReportView()
+                .environmentObject(appState)
+                .environmentObject(entryStore)
+                .environmentObject(goalStore)
+        }
+        .sheet(isPresented: $showMonthlyReport) {
+            MonthlyReportView()
+                .environmentObject(appState)
+                .environmentObject(entryStore)
+                .environmentObject(goalStore)
+        }
+    }
 
-                        // 今日摘要卡片
-                        summaryCard
-                            .padding(.horizontal, 20)
+    // MARK: - Home Content
 
-                        // 快速统计
-                        statsRow
-                            .padding(.horizontal, 20)
+    private var homeContent: some View {
+        ZStack(alignment: .bottomTrailing) {
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 0) {
+                    // Safe area top spacer
+                    Color.clear.frame(height: 8)
 
-                        // 照片对比入口（Pro 核心卖点）
-                        photoCompareEntry
-                            .padding(.horizontal, 20)
-
-                        // 历史记录
-                        historySection
-                            .padding(.horizontal, 20)
-                    }
-                    .padding(.top, 8)
-                    .padding(.bottom, 100)
-                }
-
-                // Achievement notification banner (fixed position overlay)
-                if appState.showAchievementNotification,
-                   let achievement = appState.latestUnlockedAchievement {
-                    AchievementNotificationBanner(achievement: achievement, isPresented: $appState.showAchievementNotification)
-                        .padding(.horizontal, 16)
+                    // 1. Greeting Section
+                    greetingSection
+                        .padding(.horizontal, 20)
                         .padding(.top, 8)
-                        .transition(.move(edge: .top).combined(with: .opacity))
+
+                    // 2. Achievement Progress Banner
+                    achievementBanner
+                        .padding(.horizontal, 20)
+                        .padding(.top, 24)
+
+                    // 3. Hero Ring Section
+                    heroRingSection
+                        .padding(.horizontal, 20)
+                        .padding(.top, 28)
+
+                    // 4. Metric Pills
+                    metricPillsRow
+                        .padding(.horizontal, 20)
+                        .padding(.top, 20)
+
+                    // 5. Insight Cards
+                    insightCardsSection
+                        .padding(.horizontal, 20)
+                        .padding(.top, 24)
+
+                    // 6. Quick Stats
+                    quickStatsRow
+                        .padding(.horizontal, 20)
+                        .padding(.top, 24)
+
+                    // 7. Reports Section
+                    reportsSection
+                        .padding(.horizontal, 20)
+                        .padding(.top, 28)
+
+                    // 8. History Section
+                    historySection
+                        .padding(.horizontal, 20)
+                        .padding(.top, 28)
+                        .padding(.bottom, 120)
                 }
             }
-            .background(Color.systemGroupedBackground)
-            .navigationTitle(greeting)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
-                        showLogSheet = true
-                    }) {
-                        Image(systemName: "plus.circle.fill")
-                            .font(.system(size: 24))
-                            .foregroundColor(.formlogPrimary)
-                    }
+            .scrollContentBackground(.hidden)
+            .background(Color.formlogBgGrouped)
+            .refreshable {
+                entryStore.reloadFromDisk()
+            }
+
+            // Floating Action Button
+            floatingActionButton
+
+            // Achievement notification banner
+            if appState.showAchievementNotification,
+               let achievement = appState.latestUnlockedAchievement {
+                VStack {
+                    AchievementNotificationBanner(
+                        achievement: achievement,
+                        isPresented: $appState.showAchievementNotification
+                    )
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+                    Spacer()
                 }
-            }
-            .sheet(isPresented: $showPhotoCompare) {
-                PhotoCompareView()
-                    .environmentObject(appState)
-                    .environmentObject(entryStore)
-                    .environmentObject(purchaseManager)
-            }
-            .sheet(isPresented: $showPaywall) {
-                PaywallView(isPresented: $showPaywall)
-                    .environmentObject(appState)
-                    .environmentObject(purchaseManager)
+                .transition(.move(edge: .top).combined(with: .opacity))
             }
         }
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .navigationBar)
     }
 
-    // MARK: - Today Insights Card
-    
-    private var todayInsightsCard: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            // Title - more emotional
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("👋 \(greetingSuffix)")
-                        .font(.system(size: 24, weight: .bold, design: .rounded))
-                        .foregroundColor(.primary)
-                    Text(L10n.string("用数据见证你的变化"))
-                        .font(.system(size: 15, weight: .medium))
-                        .foregroundColor(.secondary)
-                }
-                Spacer()
-            }
-            
-            // Insights
-            let insights = todaysInsights
-            if !insights.isEmpty {
-                VStack(alignment: .leading, spacing: 10) {
-                    ForEach(insights, id: \.self) { insight in
-                        HStack(alignment: .top, spacing: 8) {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.formlogPrimary)
-                                .font(.system(size: 14))
-                                .padding(.top, 2)
-                            Text(insight)
-                                .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(.primary)
-                                .lineSpacing(4)
-                        }
-                    }
-                }
-            }
-            // 记录按钮已移至 summaryCard，此处不再重复
-        }
-        .padding(20)
-        .background(Color.systemBackground)
-        .cornerRadius(16)
-        .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
-    }
-    
-    private var greetingSuffix: String {
-        appState.userName.isEmpty ? "" : "\(L10n.string("，"))\(appState.userName)"
-    }
+    // MARK: - Floating Action Button
 
-    private var todaysInsights: [String] {
-        var result: [String] = []
-
-        // Insight 1: Streak
-        let streak = entryStore.currentStreak
-        if streak > 0 {
-            if streak >= 7 {
-                result.append(String(format: L10n.string("🔥 已连续记录%d天，你太棒了！"), streak))
-            } else {
-                result.append(String(format: L10n.string("💪 已连续记录%d天，继续保持！"), streak))
-            }
-        } else if let lastEntry = entryStore.latestEntry {
-            let days = Calendar.current.dateComponents([.day], from: lastEntry.recordedAt, to: Date()).day ?? 0
-            if days == 1 {
-                result.append(L10n.string("昨天记录了，今天继续吗？"))
-            } else if days <= 7 {
-                result.append(String(format: L10n.string("已%d天没有记录，今天开始吧"), days))
-            } else {
-                result.append(L10n.string("好久不见！记录一下今天的变化吧"))
-            }
-        } else {
-            result.append(L10n.string("开始记录你的身体变化吧 💪"))
-        }
-
-        // Insight 2: Goal progress (if has active goal)
-        if let goal = goalStore.activeGoals.first, let current = entryStore.latestValue(for: goal.metricType) {
-            let remaining = abs(goal.targetValue - current)
-            let unit = (goal.metricType == .weight || goal.metricType == .muscleMass) ? appState.weightUnit.rawValue : goal.metricType.unit
-            if goal.isAchieved {
-                result.append(String(format: L10n.string("🎉 恭喜！你已达成「%@」目标！"), goal.metricType.displayName))
-            } else {
-                result.append(String(format: L10n.string("距离「%@」目标还差%.1f%@"), goal.metricType.displayName, remaining, unit))
-            }
-        }
-
-        return Array(result.prefix(2))
-    }
-
-    // MARK: - Summary Card
-
-    private var summaryCard: some View {
-        VStack(spacing: 16) {
-            HStack {
-                Text(L10n.string("今日数据"))
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(.secondary)
-                Spacer()
-                if let latest = entryStore.latestEntry {
-                    Text(relativeDate(latest.recordedAt))
-                        .font(.system(size: 12))
-                        .foregroundColor(.secondary)
-                }
-            }
-
-            if entryStore.entries.isEmpty {
-                emptyStateView
-            } else {
-                // 已启用指标的网格（确保至少有一个指标）
-                let enabled = appState.enabledMetrics.isEmpty ? [.weight] : appState.enabledMetrics
-                let columns = [GridItem(.flexible()), GridItem(.flexible())]
-                LazyVGrid(columns: columns, spacing: 12) {
-                    ForEach(enabled) { metric in
-                        metricCell(metric)
-                    }
-                }
-                
-                // 如果用户禁用了所有指标，显示提示信息
-                if appState.enabledMetrics.isEmpty {
-                    Text(L10n.string("请在设置中选择至少一个追踪指标"))
-                        .font(.system(size: 12))
-                        .foregroundColor(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        .padding(.vertical, 8)
-                }
-            }
-
-            Button(action: {
-                UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
-                showLogSheet = true
-            }) {
-                HStack {
-                    Image(systemName: "plus.circle.fill")
-                    Text(entryStore.entries.isEmpty ? L10n.string("记录第一条数据") : L10n.string("记录今天数据"))
-                        .font(.system(size: 15, weight: .semibold, design: .rounded))
-                }
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
-                .background(Color.formlogPrimary)
-                .cornerRadius(12)
-            }
-            .contentShape(Rectangle())
-        }
-        .padding(20)
-        .background(Color.systemBackground)
-        .cornerRadius(16)
-        .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
-    }
-
-    private func metricCell(_ type: BodyMetricType) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Image(systemName: type.icon)
-                    .font(.system(size: 12))
-                    .foregroundColor(.formlogPrimary)
-                Text(type.displayName)
-                    .font(.system(size: 12))
-                    .foregroundColor(.secondary)
-            }
-            if let val = entryStore.latestValue(for: type) {
-                let display = displayValue(val, for: type)
-                HStack(alignment: .lastTextBaseline, spacing: 2) {
-                    Text(display.value)
-                        .font(.system(size: 22, weight: .bold, design: .rounded).monospacedDigit())
-                    Text(display.unit)
-                        .font(.system(size: 12))
-                        .foregroundColor(.secondary)
-                }
-                // Change indicator
-                if let change = entryStore.change30Days(for: type) {
-                    let isGood = isGoodChange(change, for: type)
-                    HStack(spacing: 2) {
-                        Image(systemName: change > 0 ? "arrow.up" : "arrow.down")
-                            .font(.system(size: 10))
-                        Text(String(format: "%.1f", abs(change)))
-                            .font(.system(size: 11, design: .rounded).monospacedDigit())
-                        Text(L10n.string("30天"))
-                            .font(.system(size: 10))
-                            .foregroundColor(.secondary)
-                    }
-                    .foregroundColor(isGood ? .formlogDecrease : .formlogDanger)
-                }
-            } else {
-                Text(L10n.string("未记录"))
-                    .font(.system(size: 18, weight: .medium, design: .rounded))
-                    .foregroundColor(.systemGray3)
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(12)
-        .background(Color.systemGray6)
-        .cornerRadius(12)
-    }
-
-    private var emptyStateView: some View {
-        VStack(spacing: 20) {
-            // Icons row
-            HStack(spacing: 16) {
-                Image(systemName: "figure.stand")
-                    .font(.system(size: 32))
-                    .foregroundColor(.formlogPrimary)
-                Image(systemName: "chart.line.uptrend.xyaxis")
-                    .font(.system(size: 32))
-                    .foregroundColor(.formlogPrimary)
-                Image(systemName: "photo.stack")
-                    .font(.system(size: 32))
-                    .foregroundColor(.formlogPrimary)
-            }
-            
-            VStack(spacing: 8) {
-                Text(L10n.string("开始记录你的身体变化"))
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
-                    .foregroundColor(.primary)
-                Text(L10n.string("记录体重、体脂、围度，见证每一次进步"))
-                    .font(.system(size: 14))
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-            }
-            
-            Button(action: { showLogSheet = true }) {
-                Text(L10n.string("开始记录"))
-                    .font(.system(size: 15, weight: .semibold, design: .rounded))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 32)
-                    .padding(.vertical, 12)
-                    .background(Color.formlogPrimary)
-                    .cornerRadius(12)
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 40)
-    }
-
-    // MARK: - Photo Compare Entry
-
-    private var photoCompareEntry: some View {
-        let titleText = entryStore.photoCount > 0
-            ? String(format: L10n.string("已记录 %d 张形体照片"), entryStore.photoCount)
-            : L10n.string("用照片见证你的形体变化")
-
-        return Button(action: {
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
-            if appState.isPro {
-                showPhotoCompare = true
-            } else {
-                showPaywall = true
-            }
+    private var floatingActionButton: some View {
+        Button(action: {
+            BodyLogHaptics.heavy()
+            showLogSheet = true
         }) {
-            HStack(spacing: 14) {
-                ZStack {
-                    Circle()
-                        .fill(Color.formlogPrimary.opacity(0.1))
-                        .frame(width: 44, height: 44)
-                    Image(systemName: "photo.stack.fill")
-                        .font(.system(size: 18))
-                        .foregroundColor(.formlogPrimary)
-                }
-
-                VStack(alignment: .leading, spacing: 3) {
-                    HStack(spacing: 4) {
-                        Text(L10n.string("照片对比"))
-                            .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(.primary)
-                        if !appState.isPro {
-                            Image(systemName: "lock.fill")
-                                .font(.system(size: 10))
-                                .foregroundColor(.orange)
-                        }
-                    }
-                    Text(titleText)
-                        .font(.system(size: 12))
-                        .foregroundColor(.secondary)
-                }
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 13))
-                    .foregroundColor(.systemGray3)
-            }
-            .padding(16)
-            .background(Color.systemBackground)
-            .cornerRadius(16)
-            .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
-        }
-        .buttonStyle(.plain)
-    }
-
-    // MARK: - Stats Row
-
-    private var statsRow: some View {
-        HStack(spacing: 12) {
-            statCell(value: "\(entryStore.totalRecordDays)", labelKey: "记录天数")
-            statCell(value: "\(entryStore.currentStreak)", labelKey: "连续天数")
-            statCell(value: "\(entryStore.thisWeekCount)", labelKey: "本周记录")
-        }
-    }
-
-    private func statCell(value: String, labelKey: String) -> some View {
-        VStack(spacing: 4) {
-            Text(value)
-                .font(.system(size: 22, weight: .bold, design: .rounded))
-                .foregroundColor(.formlogPrimary)
-            Text(L10n.string(labelKey))
-                .font(.system(size: 12))
-                .foregroundColor(.secondary)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 14)
-        .background(Color.systemBackground)
-        .cornerRadius(12)
-        .shadow(color: .black.opacity(0.04), radius: 6, x: 0, y: 1)
-    }
-
-    // MARK: - History
-
-    private var historySection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(L10n.string("历史记录"))
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(.primary)
-
-            if entryStore.entries.isEmpty {
-                Text(L10n.string("暂无记录"))
-                    .font(.system(size: 14))
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.vertical, 20)
-            } else {
-                ForEach(entryStore.groupedByDate.prefix(7), id: \.key) { group in
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(group.key)
-                            .font(.system(size: 12, weight: .semibold))
-                            .foregroundColor(.secondary)
-                            .padding(.bottom, 2)
-
-                        ForEach(group.value) { entry in
-                            NavigationLink(destination: EntryDetailView(entryID: entry.id)
-                                .environmentObject(appState)
-                                .environmentObject(entryStore)
-                                .environmentObject(goalStore)
-                                .environmentObject(purchaseManager)) {
-                                EntryRowView(entry: entry)
-                            }
-                            .buttonStyle(.plain)
-                        }
-                    }
-                }
+            ZStack {
+                Circle()
+                    .fill(Color.formlogPrimary)
+                    .frame(width: 56, height: 56)
+                Image(systemName: "plus")
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundColor(.white)
             }
         }
+        .padding(.trailing, 20)
+        .padding(.bottom, 100)
     }
 
-    // MARK: - Helpers
+    // MARK: - 1. Greeting Section
+
+    private var greetingSection: some View {
+        HStack(alignment: .center, spacing: 14) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(greeting)
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .foregroundColor(.formlogTextPrimary)
+                    .tracking(-0.5)
+
+                Text(L10n.string("用数据见证你的变化"))
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundColor(.formlogTextSecondary)
+            }
+
+            Spacer()
+
+            // Avatar circle with initial
+            avatarCircle
+        }
+    }
 
     private var greeting: String {
         let hour = Calendar.current.component(.hour, from: Date())
@@ -460,125 +180,706 @@ struct HomeView: View {
         }
     }
 
-    // MARK: - Shared DateFormatters (cached)
-    fileprivate static let relativeDateFormatter: DateFormatter = {
-        let f = DateFormatter()
-        f.setLocalizedDateFormatFromTemplate("Md")
-        return f
-    }()
-
-    fileprivate static let timeFormatter: DateFormatter = {
-        let f = DateFormatter()
-        f.setLocalizedDateFormatFromTemplate("HHmm")
-        return f
-    }()
-
-    private func relativeDate(_ date: Date) -> String {
-        let calendar = Calendar.current
-        if calendar.isDateInToday(date) { return L10n.string("今天") }
-        if calendar.isDateInYesterday(date) { return L10n.string("昨天") }
-        return Self.relativeDateFormatter.string(from: date)
+    private var avatarCircle: some View {
+        let initial = appState.userName.isEmpty ? "?"
+            : String(appState.userName.prefix(1))
+        return ZStack {
+            Circle()
+                .fill(Color.formlogPrimary.opacity(0.10))
+                .frame(width: 44, height: 44)
+            Text(initial)
+                .font(.system(size: 18, weight: .semibold, design: .rounded))
+                .foregroundColor(.formlogPrimary)
+        }
     }
 
-    private func displayValue(_ value: Double, for type: BodyMetricType) -> (value: String, unit: String) {
+    // MARK: - 2. Achievement Progress Banner
+
+    private var achievementBanner: some View {
+        let nextAchievement = getNextAchievement()
+        return Group {
+            if let achievement = nextAchievement {
+                Button(action: {
+                    BodyLogHaptics.light()
+                }) {
+                    HStack(spacing: 12) {
+                        ZStack {
+                            Circle()
+                                .fill(Color.formlogPrimary.opacity(0.10))
+                                .frame(width: 32, height: 32)
+                            Image(systemName: achievement.type.icon)
+                                .font(.system(size: 14))
+                                .foregroundColor(.formlogPrimary)
+                        }
+
+                        VStack(alignment: .leading, spacing: 5) {
+                            HStack {
+                                Text(L10n.string("即将解锁: ") + achievement.type.displayName)
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundColor(.formlogTextPrimary)
+                                Spacer()
+                                Text("\(achievement.current)/\(achievement.target)")
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundColor(.formlogTextSecondary)
+                                    .monospacedDigit()
+                            }
+
+                            GeometryReader { geo in
+                                ZStack(alignment: .leading) {
+                                    RoundedRectangle(cornerRadius: 2.5)
+                                        .fill(Color.formlogFillTertiary)
+                                        .frame(height: 4)
+                                    RoundedRectangle(cornerRadius: 2.5)
+                                        .fill(Color.formlogPrimary)
+                                        .frame(
+                                            width: geo.size.width * min(
+                                                Double(achievement.current) / Double(achievement.target),
+                                                1.0
+                                            ),
+                                            height: 4
+                                        )
+                                }
+                            }
+                            .frame(height: 4)
+                        }
+
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundColor(.formlogTextTertiary)
+                    }
+                    .padding(12)
+                    .background(Color.formlogCard)
+                    .cornerRadius(CGFloat.radiusMd)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: CGFloat.radiusMd)
+                            .stroke(Color.formlogSeparator, lineWidth: 1)
+                    )
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+
+    private func getNextAchievement() -> (type: AchievementType, current: Int, target: Int)? {
+        let unlockedIds = Set(appState.achievements.map { $0.id })
+        var closest: (type: AchievementType, current: Int, target: Int, progress: Double)?
+
+        for type in AchievementType.allCases {
+            if unlockedIds.contains(type.id) { continue }
+            if let progress = AchievementManager.shared.progress(
+                for: type,
+                entryStore: entryStore,
+                goalStore: goalStore
+            ) {
+                let p = Double(progress.current) / Double(progress.target)
+                if closest == nil || p > closest!.progress {
+                    closest = (type, progress.current, progress.target, p)
+                }
+            }
+        }
+
+        guard let c = closest else { return nil }
+        return (c.type, c.current, c.target)
+    }
+
+    // MARK: - 3. Hero Ring Section
+
+    private var heroRingSection: some View {
+        VStack(spacing: 16) {
+            ZStack {
+                // Background track ring
+                Circle()
+                    .stroke(Color.formlogFillTertiary, lineWidth: 14)
+                    .frame(width: 220, height: 220)
+
+                // Progress ring
+                if let progress = goalProgress {
+                    Circle()
+                        .trim(from: 0, to: min(progress, 1.0))
+                        .stroke(
+                            Color.formlogPrimary,
+                            style: StrokeStyle(lineWidth: 14, lineCap: .round)
+                        )
+                        .frame(width: 220, height: 220)
+                        .rotationEffect(.degrees(-90))
+                        .animation(.easeOut(duration: 1.0), value: progress)
+                }
+
+                // Center content
+                VStack(spacing: 6) {
+                    if let latestWeight = entryStore.latestValue(for: .weight) {
+                        let display = appState.displayWeight(latestWeight)
+                        Text(String(format: "%.1f", display.value))
+                            .font(.system(size: 44, weight: .bold, design: .rounded))
+                            .foregroundColor(.formlogTextPrimary)
+                            .tracking(-1)
+                            .monospacedDigit()
+                            .contentTransition(.numericText())
+                        Text(display.unit)
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(.formlogTextSecondary)
+                            .textCase(.uppercase)
+                    } else {
+                        Text("--")
+                            .font(.system(size: 44, weight: .bold, design: .rounded))
+                            .foregroundColor(.formlogTextTertiary)
+                        Text(appState.weightUnit.rawValue)
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(.formlogTextTertiary)
+                            .textCase(.uppercase)
+                    }
+                }
+            }
+
+            // Today's date label
+            Text(todayDateString)
+                .font(.system(size: 13, weight: .medium))
+                .foregroundColor(.formlogTextSecondary)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private var goalProgress: Double? {
+        guard let goal = goalStore.activeGoal(for: .weight),
+              let current = entryStore.latestValue(for: .weight),
+              let start = entryStore.startValue(for: .weight) else {
+            return nil
+        }
+        return goal.progress(currentValue: current, startValue: start)
+    }
+
+    private static let todayFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale.current
+        f.dateFormat = "MMMM d, EEEE"
+        return f
+    }()
+
+    private var todayDateString: String {
+        Self.todayFormatter.string(from: Date())
+    }
+
+    // MARK: - 4. Metric Pills Row
+
+    private var metricPillsRow: some View {
+        HStack(spacing: 12) {
+            ForEach(displayMetrics, id: \.self) { metric in
+                metricPill(metric)
+            }
+        }
+    }
+
+    private var displayMetrics: [BodyMetricType] {
+        let enabled = appState.enabledMetrics
+        if enabled.isEmpty { return [.weight, .bodyFat, .muscleMass] }
+        return Array(enabled.prefix(3))
+    }
+
+    private func metricPill(_ type: BodyMetricType) -> some View {
+        VStack(spacing: 6) {
+            HStack(spacing: 4) {
+                Image(systemName: type.icon)
+                    .font(.system(size: 11))
+                    .foregroundColor(metricColor(for: type))
+                Text(type.displayName)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundColor(.formlogTextSecondary)
+            }
+
+            if let val = entryStore.latestValue(for: type) {
+                let display = displayValue(val, for: type)
+                HStack(alignment: .lastTextBaseline, spacing: 2) {
+                    Text(display.value)
+                        .font(.system(size: 17, weight: .bold, design: .rounded))
+                        .foregroundColor(.formlogTextPrimary)
+                        .monospacedDigit()
+                    Text(display.unit)
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(.formlogTextSecondary)
+                }
+            } else {
+                Text("--")
+                    .font(.system(size: 17, weight: .bold, design: .rounded))
+                    .foregroundColor(.formlogTextTertiary)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 16)
+        .padding(.horizontal, 12)
+        .background(Color.formlogCard)
+        .cornerRadius(CGFloat.radiusXl)
+        .overlay(
+            RoundedRectangle(cornerRadius: CGFloat.radiusXl)
+                .stroke(Color.formlogSeparator, lineWidth: 1)
+        )
+    }
+
+    private func metricColor(for type: BodyMetricType) -> Color {
+        switch type {
+        case .weight, .muscleMass: return .formlogPrimary
+        case .bodyFat: return .formlogBlue
+        case .bmi: return .formlogOrange
+        default: return .formlogPurple
+        }
+    }
+
+    // MARK: - 5. Insight Cards
+
+    private var insightCardsSection: some View {
+        let insights = todaysInsights
+        return Group {
+            if !insights.isEmpty {
+                VStack(spacing: 12) {
+                    ForEach(Array(insights.enumerated()), id: \.offset) { index, insight in
+                        insightCard(
+                            insight,
+                            color: index == 0 ? .formlogPrimary : .formlogBlue
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private func insightCard(
+        _ insight: (title: String, subtitle: String),
+        color: Color
+    ) -> some View {
+        HStack(alignment: .top, spacing: 14) {
+            RoundedRectangle(cornerRadius: 4)
+                .fill(color)
+                .frame(width: 8, height: 8)
+                .padding(.top, 5)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(insight.title)
+                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .foregroundColor(.formlogTextPrimary)
+
+                Text(insight.subtitle)
+                    .font(.system(size: 13))
+                    .foregroundColor(.formlogTextSecondary)
+            }
+
+            Spacer()
+        }
+        .padding(16)
+        .background(Color.formlogCard)
+        .cornerRadius(CGFloat.radiusXl)
+        .overlay(
+            RoundedRectangle(cornerRadius: CGFloat.radiusXl)
+                .stroke(Color.formlogSeparator, lineWidth: 1)
+        )
+    }
+
+    private var todaysInsights: [(title: String, subtitle: String)] {
+        var result: [(title: String, subtitle: String)] = []
+
+        // Insight 1: Streak
+        let streak = entryStore.currentStreak
+        if streak > 0 {
+            if streak >= 7 {
+                result.append((
+                    title: String(format: L10n.string("🔥 已连续记录%d天"), streak),
+                    subtitle: L10n.string("继续保持，习惯正在养成")
+                ))
+            } else {
+                result.append((
+                    title: String(format: L10n.string("💪 已连续记录%d天"), streak),
+                    subtitle: L10n.string("继续保持，好的开始是成功的一半")
+                ))
+            }
+        } else if let lastEntry = entryStore.latestEntry {
+            let days = Calendar.current.dateComponents(
+                [.day],
+                from: lastEntry.recordedAt,
+                to: Date()
+            ).day ?? 0
+            if days == 1 {
+                result.append((
+                    title: L10n.string("昨天记录了"),
+                    subtitle: L10n.string("今天继续吗？")
+                ))
+            } else if days <= 7 {
+                result.append((
+                    title: String(format: L10n.string("已%d天没有记录"), days),
+                    subtitle: L10n.string("今天开始吧")
+                ))
+            } else {
+                result.append((
+                    title: L10n.string("好久不见！"),
+                    subtitle: L10n.string("记录一下今天的变化吧")
+                ))
+            }
+        } else {
+            result.append((
+                title: L10n.string("开始记录你的身体变化吧 💪"),
+                subtitle: L10n.string("点击右下角按钮开始记录")
+            ))
+        }
+
+        // Insight 2: Goal progress
+        if let goal = goalStore.activeGoals.first,
+           let current = entryStore.latestValue(for: goal.metricType) {
+            let remaining = abs(goal.targetValue - current)
+            let unit = (goal.metricType == .weight || goal.metricType == .muscleMass)
+                ? appState.weightUnit.rawValue : goal.metricType.unit
+
+            if goal.isAchieved {
+                result.append((
+                    title: String(
+                        format: L10n.string("🎉 恭喜！你已达成「%@」目标！"),
+                        goal.metricType.displayName
+                    ),
+                    subtitle: L10n.string("继续保持良好的状态")
+                ))
+            } else {
+                let targetDisplay = displayValue(goal.targetValue, for: goal.metricType)
+                result.append((
+                    title: String(
+                        format: L10n.string("距离目标还差%.1f%@"), remaining, unit
+                    ),
+                    subtitle: String(
+                        format: L10n.string("%@目标：%@%@"),
+                        goal.metricType.displayName,
+                        targetDisplay.value,
+                        targetDisplay.unit
+                    )
+                ))
+            }
+        }
+
+        return Array(result.prefix(2))
+    }
+
+    // MARK: - 6. Quick Stats Row
+
+    private var quickStatsRow: some View {
+        HStack(spacing: 0) {
+            statCell(
+                value: "\(entryStore.totalRecordDays)",
+                label: L10n.string("记录天数"),
+                highlight: false
+            )
+
+            Rectangle()
+                .fill(Color.formlogSeparator)
+                .frame(width: 0.5, height: 44)
+
+            statCell(
+                value: "\(entryStore.currentStreak)",
+                label: L10n.string("连续天数"),
+                highlight: true
+            )
+
+            Rectangle()
+                .fill(Color.formlogSeparator)
+                .frame(width: 0.5, height: 44)
+
+            statCell(
+                value: "\(entryStore.thisWeekCount)",
+                label: L10n.string("本周记录"),
+                highlight: false
+            )
+        }
+        .padding(.vertical, 16)
+        .background(Color.formlogCard)
+        .cornerRadius(CGFloat.radiusXl)
+        .overlay(
+            RoundedRectangle(cornerRadius: CGFloat.radiusXl)
+                .stroke(Color.formlogSeparator, lineWidth: 1)
+        )
+    }
+
+    private func statCell(value: String, label: String, highlight: Bool) -> some View {
+        VStack(spacing: 6) {
+            Text(value)
+                .font(.system(size: 32, weight: .bold, design: .rounded))
+                .foregroundColor(highlight ? .formlogPrimary : .formlogTextPrimary)
+                .monospacedDigit()
+                .contentTransition(.numericText())
+            Text(label)
+                .font(.system(size: 13, weight: .medium))
+                .foregroundColor(.formlogTextSecondary)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    // MARK: - 7. Reports Section
+
+    private var reportsSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            sectionHeader(L10n.string("报告"))
+
+            HStack(spacing: 12) {
+                reportCard(
+                    title: L10n.string("周报"),
+                    subtitle: L10n.string("本周数据总结"),
+                    icon: "calendar.badge.clock",
+                    color: .formlogPrimary
+                ) {
+                    BodyLogHaptics.light()
+                    showWeeklyReport = true
+                }
+
+                reportCard(
+                    title: L10n.string("月报"),
+                    subtitle: L10n.string("本月里程碑"),
+                    icon: "chart.bar.doc.horizontal",
+                    color: .formlogBlue
+                ) {
+                    BodyLogHaptics.light()
+                    showMonthlyReport = true
+                }
+            }
+        }
+    }
+
+    private func sectionHeader(_ title: String) -> some View {
+        Text(title)
+            .font(.system(size: 13, weight: .medium))
+            .foregroundColor(.formlogTextSecondary)
+            .textCase(.uppercase)
+            .tracking(0.5)
+            .padding(.leading, 4)
+    }
+
+    private func reportCard(
+        title: String,
+        subtitle: String,
+        icon: String,
+        color: Color,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(color.opacity(0.10))
+                            .frame(width: 40, height: 40)
+                        Image(systemName: icon)
+                            .font(.system(size: 18))
+                            .foregroundColor(color)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(.formlogTextTertiary)
+                }
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(title)
+                        .font(.system(size: 15, weight: .semibold, design: .rounded))
+                        .foregroundColor(.formlogTextPrimary)
+                    Text(subtitle)
+                        .font(.system(size: 13))
+                        .foregroundColor(.formlogTextSecondary)
+                }
+            }
+            .padding(16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.formlogCard)
+            .cornerRadius(CGFloat.radiusXl)
+            .overlay(
+                RoundedRectangle(cornerRadius: CGFloat.radiusXl)
+                    .stroke(Color.formlogSeparator, lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+
+    // MARK: - 8. History Section
+
+    private var historySection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            sectionHeader(L10n.string("历史记录"))
+
+            if entryStore.entries.isEmpty {
+                emptyHistoryView
+            } else {
+                historyList
+            }
+        }
+    }
+
+    private var emptyHistoryView: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "chart.line.uptrend.xyaxis")
+                .font(.system(size: 28))
+                .foregroundColor(.formlogTextTertiary)
+            Text(L10n.string("暂无记录"))
+                .font(.system(size: 15))
+                .foregroundColor(.formlogTextSecondary)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 48)
+        .background(Color.formlogCard)
+        .cornerRadius(CGFloat.radiusXl)
+        .overlay(
+            RoundedRectangle(cornerRadius: CGFloat.radiusXl)
+                .stroke(Color.formlogSeparator, lineWidth: 1)
+        )
+    }
+
+    private var historyList: some View {
+        let groups = Array(entryStore.groupedByDate.prefix(2))
+        return VStack(spacing: 0) {
+            ForEach(Array(groups.enumerated()), id: \.offset) { sectionIndex, group in
+                VStack(alignment: .leading, spacing: 0) {
+                    // Date section header
+                    Text(group.key)
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(.formlogTextSecondary)
+                        .padding(.top, sectionIndex == 0 ? 0 : 20)
+                        .padding(.bottom, 8)
+                        .padding(.leading, 4)
+
+                    // Entries card for this date
+                    VStack(spacing: 0) {
+                        ForEach(
+                            Array(group.value.prefix(3).enumerated()),
+                            id: \.element.id
+                        ) { entryIndex, entry in
+                            NavigationLink(
+                                destination: EntryDetailView(entryID: entry.id)
+                                    .environmentObject(appState)
+                                    .environmentObject(entryStore)
+                                    .environmentObject(goalStore)
+                                    .environmentObject(purchaseManager)
+                            ) {
+                                HistoryRowView(entry: entry)
+                            }
+                            .buttonStyle(.plain)
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                Button(role: .destructive) {
+                                    BodyLogHaptics.medium()
+                                    entryStore.deleteEntry(id: entry.id)
+                                } label: {
+                                    Label(L10n.string("删除"), systemImage: "trash")
+                                }
+                                .tint(.red)
+                            }
+
+                            if entryIndex < min(group.value.count, 3) - 1 {
+                                Rectangle()
+                                    .fill(Color.formlogSeparator)
+                                    .frame(height: 0.5)
+                                    .padding(.leading, 56)
+                            }
+                        }
+                    }
+                    .background(Color.formlogCard)
+                    .cornerRadius(CGFloat.radiusXl)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: CGFloat.radiusXl)
+                            .stroke(Color.formlogSeparator, lineWidth: 1)
+                    )
+                    .animation(.easeOut(duration: 0.3), value: entryStore.entries.count)
+                }
+            }
+        }
+    }
+
+    // MARK: - Helpers
+
+    private func displayValue(
+        _ value: Double,
+        for type: BodyMetricType
+    ) -> (value: String, unit: String) {
         if type == .weight || type == .muscleMass {
             let display = appState.displayWeight(value)
             return (String(format: "%.1f", display.value), display.unit)
         }
         return (String(format: "%.1f", value), type.unit)
     }
-
-    /// 变化对于该指标是否是"好的"
-    private func isGoodChange(_ change: Double, for type: BodyMetricType) -> Bool {
-        switch type {
-        case .weight, .bodyFat, .waist, .hip: return change < 0  // 减少是好事
-        case .muscleMass: return change > 0  // 增加是好事
-        default: return false
-        }
-    }
 }
 
-// MARK: - EntryRowView
+// MARK: - HistoryRowView
 
-struct EntryRowView: View {
+struct HistoryRowView: View {
     @EnvironmentObject var appState: AppState
     let entry: BodyEntry
 
     var body: some View {
-        HStack(spacing: 12) {
-            // 时间
+        HStack(spacing: 14) {
+            // Time
             Text(timeString)
-                .font(.system(size: 13, design: .rounded).monospacedDigit())
-                .foregroundColor(.secondary)
-                .frame(width: 44, alignment: .leading)
+                .font(.system(size: 13, weight: .medium))
+                .foregroundColor(.formlogTextSecondary)
+                .frame(width: 48, alignment: .leading)
 
-            // 主要指标
-            if let primary = entry.primaryMetric {
-                HStack(spacing: 4) {
-                    Image(systemName: primary.type.icon)
-                        .font(.system(size: 13))
-                        .foregroundColor(.formlogPrimary)
-                    Text(formattedValue(primary.value, type: primary.type))
-                        .font(.system(size: 15, weight: .semibold, design: .rounded).monospacedDigit())
-                    Text(primary.type.unit)
-                        .font(.system(size: 12))
-                        .foregroundColor(.secondary)
+            // Main content
+            VStack(alignment: .leading, spacing: 3) {
+                if let primary = entry.primaryMetric {
+                    let display = formattedValue(primary.value, type: primary.type)
+                    Text("\(display.value) \(display.unit)")
+                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .foregroundColor(.formlogTextPrimary)
                 }
-            }
 
-            // 次要指标（最多2个）
-            let secondaryMetrics = entry.metrics.keys
-                .compactMap { BodyMetricType(rawValue: $0) }
-                .filter { $0 != entry.primaryMetric?.type }
-                .prefix(2)
+                let secondaryMetrics = entry.metrics.keys
+                    .compactMap { BodyMetricType(rawValue: $0) }
+                    .filter { $0 != entry.primaryMetric?.type }
+                    .prefix(2)
 
-            ForEach(Array(secondaryMetrics), id: \.self) { type in
-                if let val = entry.value(for: type) {
-                    HStack(spacing: 2) {
-                        Text(formattedValue(val, type: type))
-                            .font(.system(size: 13, design: .rounded).monospacedDigit())
-                            .foregroundColor(.secondary)
-                        Text(type.unit)
-                            .font(.system(size: 11))
-                            .foregroundColor(.secondary)
+                if !secondaryMetrics.isEmpty {
+                    HStack(spacing: 10) {
+                        ForEach(Array(secondaryMetrics), id: \.self) { type in
+                            if let val = entry.value(for: type) {
+                                let display = formattedValue(val, type: type)
+                                Text("\(type.displayName) \(display.value)\(display.unit)")
+                                    .font(.system(size: 11, weight: .medium))
+                                    .foregroundColor(.formlogTextSecondary)
+                            }
+                        }
                     }
                 }
             }
 
             Spacer()
 
-            if entry.note != nil {
-                Image(systemName: "text.bubble")
-                    .font(.system(size: 12))
-                    .foregroundColor(.secondary)
-            }
+            // Indicators
+            HStack(spacing: 6) {
+                if entry.note != nil {
+                    Image(systemName: "text.bubble")
+                        .font(.system(size: 11))
+                        .foregroundColor(.formlogTextTertiary)
+                }
+                if entry.hasPhoto {
+                    Image(systemName: "photo")
+                        .font(.system(size: 11))
+                        .foregroundColor(.formlogTextTertiary)
+                }
 
-            if entry.hasPhoto {
-                Image(systemName: "photo")
-                    .font(.system(size: 12))
-                    .foregroundColor(.secondary)
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(.formlogTextQuaternary)
             }
-
-            Image(systemName: "chevron.right")
-                .font(.system(size: 11))
-                .foregroundColor(.systemGray3)
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .background(Color.systemBackground)
-        .cornerRadius(12)
+        .padding(.vertical, 14)
     }
+
+    private static let timeFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.setLocalizedDateFormatFromTemplate("HHmm")
+        return f
+    }()
 
     private var timeString: String {
-        HomeView.timeFormatter.string(from: entry.recordedAt)
+        Self.timeFormatter.string(from: entry.recordedAt)
     }
 
-    private func formattedValue(_ value: Double, type: BodyMetricType) -> String {
+    private func formattedValue(
+        _ value: Double,
+        type: BodyMetricType
+    ) -> (value: String, unit: String) {
         if type == .weight || type == .muscleMass {
             let d = appState.displayWeight(value)
-            return String(format: "%.1f", d.value)
+            return (String(format: "%.1f", d.value), d.unit)
         }
-        return String(format: "%.1f", value)
+        return (String(format: "%.1f", value), type.unit)
     }
 }
 

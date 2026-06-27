@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BodyLog — 欢迎</title>
+    <style id="theme-vars">
+/* ═══════════════════════════════════════════════════════════
+   BodyLog — Apple HIG-Inspired Design System
+   "Calm Precision" — where health data meets beauty
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Brand Colors ── */
+  --color-primary: #30D158;
+  --color-primary-deep: #28A745;
+  --color-primary-pale: rgba(48, 209, 88, 0.08);
+  --color-primary-soft: rgba(48, 209, 88, 0.15);
+
+  /* ── Semantic ── */
+  --state-success: #30D158;
+  --state-warning: #FFD60A;
+  --state-danger: #FF453A;
+  --state-info: #0A84FF;
+
+  /* ── Surface Model (Apple HIG Grouped) ── */
+  --surface-base: #F2F2F7;
+  --surface-primary: #FFFFFF;
+  --surface-elevated: #FFFFFF;
+  --surface-secondary: #FFFFFF;
+  --surface-tertiary: #F2F2F7;
+
+  /* ── Text Hierarchy ── */
+  --text-primary: #1C1C1E;
+  --text-secondary: rgba(28, 28, 30, 0.55);
+  --text-tertiary: rgba(28, 28, 30, 0.28);
+  --text-quaternary: rgba(28, 28, 30, 0.15);
+  --text-on-color: #FFFFFF;
+
+  /* ── Separators & Fills ── */
+  --separator: rgba(60, 60, 67, 0.08);
+  --separator-opaque: #C6C6C8;
+  --fill-tertiary: rgba(118, 118, 128, 0.12);
+  --fill-quaternary: rgba(118, 118, 128, 0.08);
+  --fill-secondary: rgba(120, 120, 128, 0.16);
+
+  /* ── Chart Palette ── */
+  --chart-primary: #30D158;
+  --chart-gradient-top: rgba(48, 209, 88, 0.25);
+  --chart-gradient-bottom: rgba(48, 209, 88, 0.01);
+  --chart-danger: #FF453A;
+  --chart-warning: #FF9F0A;
+  --chart-info: #0A84FF;
+  --chart-purple: #BF5AF2;
+
+  /* ── Metric Accent Colors ── */
+  --accent-weight: #30D158;
+  --accent-bodyfat: #0A84FF;
+  --accent-muscle: #FF9F0A;
+  --accent-bmi: #FF453A;
+  --accent-waist: #BF5AF2;
+  --accent-chest: #64D2FF;
+
+  /* ── Typography (SF Pro Scale) ── */
+  --font-system: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', 'PingFang SC', 'Noto Sans CJK SC', sans-serif;
+  --font-mono: 'SF Mono', SFMono-Regular, ui-monospace, 'Cascadia Code', Menlo, monospace;
+
+  /* Dynamic Type scale */
+  --t-caption2: 0.6875rem; /* 11px */
+  --t-caption1: 0.75rem;   /* 12px */
+  --t-footnote: 0.8125rem; /* 13px */
+  --t-subhead: 0.875rem;   /* 14px */
+  --t-body: 0.9375rem;     /* 15px */
+  --t-title3: 1rem;        /* 16px */
+  --t-title2: 1.125rem;    /* 18px */
+  --t-title1: 1.375rem;    /* 22px */
+  --t-large-title: 1.625rem; /* 26px */
+  --t-display1: 2rem;      /* 32px */
+  --t-display2: 2.5rem;    /* 40px */
+  --t-display3: 3.125rem;  /* 50px — hero numbers */
+
+  /* Weights */
+  --w-regular: 400;
+  --w-medium: 500;
+  --w-semibold: 600;
+  --w-bold: 700;
+
+  /* Tracking */
+  --tracking-tight: -0.025em;
+  --tracking-normal: -0.01em;
+  --tracking-wide: 0.02em;
+
+  /* ── Spacing ── */
+  --sp-1: 2px;
+  --sp-2: 4px;
+  --sp-3: 8px;
+  --sp-4: 12px;
+  --sp-5: 16px;
+  --sp-6: 20px;
+  --sp-7: 24px;
+  --sp-8: 28px;
+  --sp-9: 32px;
+  --sp-10: 40px;
+  --sp-11: 48px;
+  --sp-12: 64px;
+
+  /* ── Radius (Apple HIG Continuum) ── */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
+  --r-2xl: 20px;
+  --r-full: 9999px;
+
+  /* ── Shadows (ultra-subtle, Apple style) ── */
+  --shadow-1: 0 0.5px 0 rgba(0,0,0,0.04);
+  --shadow-2: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.08);
+  --shadow-modal: 0 24px 80px rgba(0,0,0,0.14);
+
+  /* ── Motion ── */
+  --ease-default: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 120ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+}
+
+/* ── Dark Mode ── */
+.dark {
+  --surface-base: #000000;
+  --surface-primary: #1C1C1E;
+  --surface-elevated: #2C2C2E;
+  --surface-secondary: #1C1C1E;
+  --surface-tertiary: #2C2C2E;
+
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(235, 235, 245, 0.55);
+  --text-tertiary: rgba(235, 235, 245, 0.28);
+  --text-quaternary: rgba(235, 235, 245, 0.15);
+  --text-on-color: #FFFFFF;
+
+  --separator: rgba(235, 235, 245, 0.08);
+  --separator-opaque: #38383A;
+  --fill-tertiary: rgba(118, 118, 128, 0.24);
+  --fill-quaternary: rgba(118, 118, 128, 0.16);
+  --fill-secondary: rgba(120, 120, 128, 0.24);
+
+  --color-primary-pale: rgba(48, 209, 88, 0.12);
+  --color-primary-soft: rgba(48, 209, 88, 0.22);
+
+  --shadow-1: 0 0.5px 0 rgba(0,0,0,0.2);
+  --shadow-2: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.4);
+  --shadow-modal: 0 24px 80px rgba(0,0,0,0.5);
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-primary: var(--color-primary);
+  }
+  @layer base {
+    body { background: var(--color-background); color: var(--color-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body style="background: var(--surface-base); margin: 0; padding: 0; min-height: 100vh; display: flex; justify-content: center; font-family: var(--font-system); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; color: var(--text-primary);">
+    <main style="width: 100%; max-width: 430px; min-height: 100vh; display: flex; flex-direction: column; position: relative; box-sizing: border-box;">
+
+      <!-- Skip Button -->
+      <div style="padding: var(--sp-6) var(--sp-6) 0; display: flex; justify-content: flex-end;">
+        <button style="background: none; border: none; font-family: var(--font-system); font-size: var(--t-body); font-weight: var(--w-regular); color: var(--text-secondary); cursor: pointer; padding: 0;">跳过</button>
+      </div>
+
+      <!-- Progress Dots -->
+      <div style="display: flex; justify-content: center; gap: 8px; padding: var(--sp-5) var(--sp-6);">
+        <span style="width: 8px; height: 8px; border-radius: var(--r-full); background: var(--color-primary);"></span>
+        <span style="width: 6px; height: 6px; border-radius: var(--r-full); background: transparent; border: 1.5px solid var(--fill-secondary); margin-top: 1px;"></span>
+        <span style="width: 6px; height: 6px; border-radius: var(--r-full); background: transparent; border: 1.5px solid var(--fill-secondary); margin-top: 1px;"></span>
+      </div>
+
+      <!-- Hero Icon -->
+      <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 var(--sp-6);">
+        <div class="hero-pulse" style="width: 120px; height: 120px; border-radius: var(--r-full); background: var(--color-primary-pale); display: flex; align-items: center; justify-content: center;">
+          <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="28" cy="16" r="6" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <path d="M16 50 L16 34 C16 28.477 21.477 24 28 24 C34.523 24 40 28.477 40 34 L40 50" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+
+        <!-- Headline -->
+        <h1 style="margin: var(--sp-9) 0 0; font-size: var(--t-large-title); font-weight: var(--w-bold); letter-spacing: var(--tracking-tight); color: var(--text-primary); text-align: center; line-height: 1.3; white-space: pre-line;">你的身体变化
+值得被记录</h1>
+
+        <!-- Subtitle -->
+        <p style="margin: var(--sp-4) 0 0; font-size: var(--t-body); font-weight: var(--w-regular); color: var(--text-secondary); text-align: center; max-width: 280px; line-height: 1.5;">用数据和照片，见证每一次进步</p>
+
+        <!-- Differentiators -->
+        <div style="margin-top: var(--sp-10); width: 100%; max-width: 310px; display: flex; flex-direction: column; gap: 18px;">
+
+          <!-- Row 1: Privacy -->
+          <div style="display: flex; align-items: center; gap: var(--sp-5);">
+            <div style="width: 36px; height: 36px; min-width: 36px; border-radius: var(--r-full); background: var(--color-primary-pale); display: flex; align-items: center; justify-content: center;">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 1.5C8 1.5 3 3 3 7V10C3 12 8 14.5 8 14.5C8 14.5 13 12 13 10V7C13 3 8 1.5 8 1.5Z" stroke="var(--color-primary)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <path d="M6 8L7.5 9.5L10.5 6.5" stroke="var(--color-primary)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              </svg>
+            </div>
+            <div>
+              <div style="font-size: var(--t-subhead); font-weight: var(--w-semibold); color: var(--text-primary); line-height: 1.3;">隐私优先</div>
+              <div style="font-size: var(--t-footnote); font-weight: var(--w-regular); color: var(--text-secondary); line-height: 1.3; margin-top: 1px;">数据只存在你的手机</div>
+            </div>
+          </div>
+
+          <!-- Row 2: One-time Purchase -->
+          <div style="display: flex; align-items: center; gap: var(--sp-5);">
+            <div style="width: 36px; height: 36px; min-width: 36px; border-radius: var(--r-full); background: var(--color-primary-pale); display: flex; align-items: center; justify-content: center;">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="1.5" y="4.5" width="13" height="9" rx="2" stroke="var(--color-primary)" stroke-width="1.2" fill="none"/>
+                <path d="M5 2.5V4.5" stroke="var(--color-primary)" stroke-width="1.2" stroke-linecap="round"/>
+                <path d="M11 2.5V4.5" stroke="var(--color-primary)" stroke-width="1.2" stroke-linecap="round"/>
+                <path d="M5 7.5H11" stroke="var(--color-primary)" stroke-width="1.2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <div style="font-size: var(--t-subhead); font-weight: var(--w-semibold); color: var(--text-primary); line-height: 1.3;">一次买断</div>
+              <div style="font-size: var(--t-footnote); font-weight: var(--w-regular); color: var(--text-secondary); line-height: 1.3; margin-top: 1px;">没有订阅，永久使用</div>
+            </div>
+          </div>
+
+          <!-- Row 3: Photo Compare -->
+          <div style="display: flex; align-items: center; gap: var(--sp-5);">
+            <div style="width: 36px; height: 36px; min-width: 36px; border-radius: var(--r-full); background: var(--color-primary-pale); display: flex; align-items: center; justify-content: center;">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="1.5" y="1.5" width="8" height="10" rx="1.5" stroke="var(--color-primary)" stroke-width="1.2" fill="none"/>
+                <rect x="6.5" y="4.5" width="8" height="10" rx="1.5" stroke="var(--color-primary)" stroke-width="1.2" fill="none"/>
+                <circle cx="4.5" cy="5" r="1" fill="var(--color-primary)"/>
+                <path d="M2.5 9.5L4 7.5L6 10" stroke="var(--color-primary)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              </svg>
+            </div>
+            <div>
+              <div style="font-size: var(--t-subhead); font-weight: var(--w-semibold); color: var(--text-primary); line-height: 1.3;">照片对比</div>
+              <div style="font-size: var(--t-footnote); font-weight: var(--w-regular); color: var(--text-secondary); line-height: 1.3; margin-top: 1px;">见证形体变化</div>
+            </div>
+          </div>
+
+          <!-- Row 4: Smart Insights -->
+          <div style="display: flex; align-items: center; gap: var(--sp-5);">
+            <div style="width: 36px; height: 36px; min-width: 36px; border-radius: var(--r-full); background: var(--color-primary-pale); display: flex; align-items: center; justify-content: center;">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 13L5 8L7.5 10.5L10 6L14 3" stroke="var(--color-primary)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <path d="M11 3H14V6" stroke="var(--color-primary)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <path d="M2 14H14" stroke="var(--color-primary)" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+                <path d="M2 14V2" stroke="var(--color-primary)" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+              </svg>
+            </div>
+            <div>
+              <div style="font-size: var(--t-subhead); font-weight: var(--w-semibold); color: var(--text-primary); line-height: 1.3;">智能洞察</div>
+              <div style="font-size: var(--t-footnote); font-weight: var(--w-regular); color: var(--text-secondary); line-height: 1.3; margin-top: 1px;">自动分析变化趋势</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- CTA Button -->
+      <div style="padding: var(--sp-6) var(--sp-7) var(--sp-11);">
+        <button data-dom-id="btn-next-1" style="width: 100%; height: 52px; border: none; border-radius: var(--r-lg); background: var(--color-primary); color: var(--text-on-color); font-family: var(--font-system); font-size: var(--t-body); font-weight: var(--w-semibold); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: var(--sp-3); transition: opacity var(--duration-fast) var(--ease-default);">
+          下一步
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+    </main>
+    <script>lucide.createIcons();</script>
+
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.04); }
+      }
+      .hero-pulse {
+        animation: pulse 3s var(--ease-default) infinite;
+      }
+    </style>
+</body>
+</html>

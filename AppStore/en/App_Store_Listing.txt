@@ -1,0 +1,160 @@
+FormLog - App Store Listing
+=============================
+
+App Name
+--------
+FormLog
+
+Subtitle
+--------
+Body Tracker · Track Your Transformation
+
+Keywords
+--------
+body tracker, weight log, body fat, fitness journal, measurement, body progress, health tracking
+
+Promotional Text
+----------------
+Track your body transformation with data. FormLog is your personal health journal.
+
+Description
+-----------
+FormLog is a privacy-first body data tracking app designed for anyone serious about managing their physique and monitoring their health journey. Whether you are building muscle, losing fat, toning up, or simply want to keep a long-term record of your body changes, FormLog helps you document every step of progress with precision data.
+
+Track 12 Body Metrics
+
+FormLog supports tracking 12 essential body measurements, covering every dimension you care about:
+- Weight (kg)
+- Body Fat Percentage (%)
+- Muscle Mass (kg)
+- BMI Index
+- Waist, Hip, Chest, and Neck Circumference (cm)
+- Left and Right Arm Circumference (cm)
+- Left and Right Thigh Circumference (cm)
+
+Each metric has its own dedicated trend chart, helping you clearly distinguish between short-term fluctuations and long-term trends. You can freely select and combine any metrics to focus on what matters most to you.
+
+Progress Photo Comparison
+
+Capture your body's real transformation through photos. FormLog lets you take front, side, and back physique photos with each entry, and offers professional comparison viewing modes:
+- Slider Compare: Slide between before and after photos to spot changes intuitively
+- Side-by-Side Compare: Place two photos from different dates next to each other for detailed comparison
+- All photos are stored locally on your device, ensuring your privacy
+
+Goal Setting and Tracking
+
+Set clear body targets to give every workout session a purpose:
+- Set goals for any tracked metric
+- Choose goal direction: decrease (for fat loss), increase (for muscle gain), or maintain (for staying on track)
+- Automatic progress tracking with instant notifications upon completion
+- History of completed goals to celebrate every breakthrough
+
+Achievement System
+
+Staying consistent requires motivation. FormLog includes 28 achievements across five categories:
+- Consistency: From logging 3 consecutive days to 100 days, watch your discipline grow
+- Data Volume: From 10 entries to 365 entries, feel the power of data
+- Photo Records: From your first photo to 30 photos, build a complete transformation archive
+- Goal Achievement: Complete your first goal to becoming a fat loss or muscle gain champion
+- Milestones: Perfect weekly attendance, first share, first data export
+
+Each achievement is a recognition of your commitment, making body tracking engaging and rewarding.
+
+Smart Data Insights
+
+FormLog automatically generates weekly and monthly reports summarizing your body data trends:
+- Key data overview for the week or month
+- Change magnitude and trend direction for each metric
+- Goal progress summary
+- One-tap beautiful progress share cards
+
+The share card feature lets you easily post your progress on social media, motivating yourself and your friends to keep pushing.
+
+Privacy First, All Data Stored Locally
+
+We understand that body data is among the most personal information you have. FormLog adheres to these privacy principles:
+- All data is stored locally on your device; nothing is uploaded to any server
+- No cloud sync feature; your data is never transmitted anywhere
+- Photos are saved in the app's Documents directory, fully under your control
+- No third-party analytics SDKs integrated
+- No personal data is collected, tracked, or shared
+- No account registration required; just download and start
+
+Your body data is visible only to you.
+
+One-Time Purchase Pro
+
+FormLog Pro uses a one-time purchase model with no subscriptions and no hidden fees:
+- Pay once, use forever
+- Includes all future updates
+- Supports Family Sharing
+- Restore purchases on any device
+
+The free version includes core tracking features. Pro unlocks additional advanced capabilities.
+
+Data Export
+
+Your data belongs to you. FormLog supports exporting all records as CSV files, so you can back them up or analyze them with other tools. Exported files can be shared via email, AirDrop, or any other sharing method.
+
+Data Security and Backup
+
+FormLog automatically creates local data backups to prevent accidental data loss. You can also manually back up and restore data through the system file manager.
+
+Natively Crafted Experience
+
+FormLog is built with pure native SwiftUI design, perfectly adapted for all iPhone models:
+- Follows Apple Human Interface Guidelines
+- Supports Dark Mode and Light Mode
+- Carefully selected color coding for instant metric recognition
+- Smooth animations and interactions for an enjoyable experience every time
+- Home screen widget support to check your latest data at a glance
+
+Who Is It For?
+
+- Fitness Enthusiasts: Precisely track body changes from your training
+- Fat Loss Seekers: Record the downward trend in weight and measurements
+- Muscle Builders: Track the growth in muscle mass and circumference
+- Health-Conscious Users: Monitor BMI, body fat, and other health indicators long-term
+- Recovery Trackers: Document body data changes during rehabilitation
+
+Download FormLog today and start your body transformation journey with data. Stay consistent, see the change.
+
+What's New
+----------
+Version 1.0
+
+Introducing FormLog!
+
+This is the first official release of FormLog, featuring the following complete functionality:
+
+- 12 body metric tracking (weight, body fat, muscle mass, BMI, waist, hip, chest, neck, left/right arm, left/right thigh)
+- Progress photo capture and comparison (slider compare / side-by-side compare)
+- Goal setting and progress tracking
+- 28 achievement rewards system
+- Smart weekly and monthly reports
+- Progress share cards
+- CSV data export
+- Local data storage, privacy-first architecture
+- Dark mode support
+- Home screen widget
+- Pure native SwiftUI interface design
+
+Category
+--------
+Health & Fitness
+
+Rating
+------
+4+
+
+Copyright
+---------
+(c) 2026 pangtong. All rights reserved.
+
+Support URL
+-----------
+https://formlog.app/support
+
+Privacy Policy URL
+------------------
+https://formlog.app/privacy

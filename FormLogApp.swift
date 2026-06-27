@@ -10,6 +10,20 @@ struct FormLogApp: App {
     @StateObject private var goalStore = GoalStore()
     @ObservedObject private var purchaseManager = PurchaseManager.shared
 
+    init() {
+        // Configure global UI appearance for Apple HIG compliance
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithTransparentBackground()
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+
+        // Table view appearance
+        UITableView.appearance().backgroundColor = UIColor.clear
+        let selectionBgView = UIView()
+        selectionBgView.backgroundColor = UIColor(Color.formlogPrimary).withAlphaComponent(0.1)
+        UITableViewCell.appearance().selectedBackgroundView = selectionBgView
+    }
+
     var body: some Scene {
         WindowGroup {
             RootView()
@@ -34,13 +48,21 @@ struct RootView: View {
     @EnvironmentObject var appState: AppState
 
     var body: some View {
-        ZStack {
+        Group {
             if appState.hasCompletedOnboarding {
                 ContentView()
+                    .transition(.asymmetric(
+                        insertion: .opacity.combined(with: .move(edge: .bottom)),
+                        removal: .opacity
+                    ))
             } else {
                 OnboardingView()
+                    .transition(.asymmetric(
+                        insertion: .opacity,
+                        removal: .opacity.combined(with: .move(edge: .bottom))
+                    ))
             }
         }
-        .animation(.easeInOut(duration: 0.3), value: appState.hasCompletedOnboarding)
+        .animation(.easeInOut(duration: 0.4), value: appState.hasCompletedOnboarding)
     }
 }

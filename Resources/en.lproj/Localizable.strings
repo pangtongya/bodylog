@@ -299,6 +299,24 @@
 "Import failed: File encoding not supported, please convert CSV file to UTF-8 encoding" = "Import failed: File encoding not supported, please convert CSV file to UTF-8 encoding";
 "照片存储" = "Photo Storage";
 
+// MARK: - Weekly Report Share
+"周报标题" = "📊 My FormLog Weekly Report";
+"周报记录天数" = "🎯 Days logged: %d";
+"周报记录次数" = "📝 Entries: %d";
+"周报平均体重" = "⚖️ Average: %@ %@";
+"周报体重变化" = "📈 Change: %@%@ %@";
+"周报连续天数" = "🔥 Streak: %d days";
+"分享结尾" = "\nTrack your body changes with #FormLog";
+
+// MARK: - Monthly Report Share
+"月报标题" = "📊 My FormLog Monthly Report";
+"月报记录天数" = "🎯 Days logged: %d/%d";
+"月报记录次数" = "📝 Entries: %d";
+"月报平均体重" = "⚖️ Average: %@ %@";
+"月报体重变化" = "📈 Change: %@%@ %@";
+"月报平均体脂" = "💧 Avg body fat: %@%";
+"月报连续天数" = "🔥 Streak: %d days";
+
 // MARK: - Share Text
 "🎉 我在FormLog达成了身体数据目标！\n\n%@: %@%@\n用数据记录身体变化，见证每一次进步 💪" = "🎉 I reached my body data goal in FormLog!\n\n%@: %@%@\nTrack your body changes with data, witness every progress 💪";
 
@@ -327,3 +345,89 @@
 "确认恢复数据" = "Confirm Data Restore";
 "恢复将覆盖当前所有数据，此操作不可撤销。" = "Restore will overwrite all current data. This action cannot be undone.";
 "确认恢复" = "Confirm Restore";
+
+// MARK: - Notification Actions
+"现在记录" = "Record Now";
+"稍后提醒" = "Remind Later";
+"该记录了" = "Time to Log";
+"记录今天的身体数据" = "Log today's body data";
+
+// MARK: - Widget
+"快速查看体重和记录入口" = "Quick view of weight and recording entry";
+"暂无数据" = "No Data";
+"上次记录:" = "Last recorded:";
+"天连续" = " consecutive days";
+"天前" = " days ago";
+
+// MARK: - Achievements (New)
+"双月坚持" = "Two-Month Titan";
+"百日英雄" = "100-Day Hero";
+"年度数据" = "Year of Data";
+"照片达人" = "Photo Master";
+"见证变化" = "Witness Change";
+"目标启程" = "Goal Pioneer";
+"目标猎手" = "Goal Hunter";
+"减重先锋" = "Weight Loss Pioneer";
+"降脂达人" = "Fat Loss Expert";
+"一周满勤" = "Perfect Week";
+"一月满勤" = "Perfect Month";
+"首次分享" = "First Share";
+"数据守护" = "Data Guardian";
+"提醒达人" = "Reminder Pro";
+"连续记录身体数据60天" = "Log body data for 60 consecutive days";
+"连续记录身体数据100天" = "Log body data for 100 consecutive days";
+"累计记录365条身体数据" = "Log 365 body data entries";
+"累计拍摄30张形体照片" = "Take 30 progress photos";
+"首次使用照片对比功能" = "Use photo comparison for the first time";
+"设置第一个健康目标" = "Set your first health goal";
+"累计完成5个目标" = "Complete 5 goals";
+"体重相比初始值减少5%" = "Reduce weight by 5% from starting value";
+"体脂率相比初始值减少5%" = "Reduce body fat by 5% from starting value";
+"一周内每天都记录" = "Log every day for a week";
+"一个月内每天都记录" = "Log every day for a month";
+"首次分享进度卡片" = "Share your progress card for the first time";
+"首次导出CSV数据" = "Export CSV data for the first time";
+"设置每日提醒" = "Set up daily reminders";
+"恭喜你达成了目标！" = "Congratulations! Goal achieved!";
+
+// MARK: - Other Missing
+"解锁Pro版本" = "Unlock Pro";
+"解锁全部高级功能" = "Unlock all premium features";
+"记录数量：%d" = "Entries: %d";
+"日期范围：%@ 至 %@" = "Date range: %@ to %@";
+"备份时间：%@" = "Backup time: %@";
+"恢复失败：应用状态数据无效" = "Restore failed: invalid app state data";
+"恢复失败：不支持从版本 %@ 迁移到当前版本" = "Restore failed: migration from version %@ not supported";
+"通知权限已关闭" = "Notifications disabled";
+"点击前往系统设置开启" = "Tap to open System Settings";
+"服务条款" = "Terms of Service";
+"隐私优先 · 数据本地 · 一次买断" = "Privacy First · Local Data · One-time Purchase";
+"一次性购买 · 永久使用" = "One-time purchase · Yours forever";
+"解锁全部功能" = "Unlock All Features";
+"重试加载" = "Retry";
+"保存对比图" = "Save Comparison";
+"已保存到相册" = "Saved to Photos";
+"并排" = "Side by Side";
+"滑动" = "Slider";
+"变化" = "Change";
+"其他目标" = "Other Goals";
+"选择指标" = "Select Metric";
+"使用当前值" = "Use Current Value";
+"创建目标" = "Create Goal";
+"Pro" = "Pro";
+"用心守护你的健康" = "Made with love for your health";
+
+// MARK: - Accessibility Additions
+"数值验证范围 %@ 在 %@ 到 %@ 之间" = "%@ value should be between %@ and %@";
+"保存修改" = "Save changes";
+"双击保存" = "Double tap to save";
+"返回上一页" = "Go back to previous page";
+"趋势图表" = "trend chart";
+"无数据" = "No data";
+"上升" = "increased by";
+"下降" = "decreased by";
+"双击拍照或从相册选取照片" = "Double tap to take photo or choose from library";
+
+// MARK: - General Additions
+"关闭" = "Close";
+"笔记示例" = "Note example";

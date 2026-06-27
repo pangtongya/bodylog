@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>记录数据 - BodyLog</title>
+    <style id="theme-vars">
+/* ═══════════════════════════════════════════════════════════
+   BodyLog — Apple HIG-Inspired Design System
+   "Calm Precision" — where health data meets beauty
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Brand Colors ── */
+  --color-primary: #30D158;
+  --color-primary-deep: #28A745;
+  --color-primary-pale: rgba(48, 209, 88, 0.08);
+  --color-primary-soft: rgba(48, 209, 88, 0.15);
+
+  /* ── Semantic ── */
+  --state-success: #30D158;
+  --state-warning: #FFD60A;
+  --state-danger: #FF453A;
+  --state-info: #0A84FF;
+
+  /* ── Surface Model (Apple HIG Grouped) ── */
+  --surface-base: #F2F2F7;
+  --surface-primary: #FFFFFF;
+  --surface-elevated: #FFFFFF;
+  --surface-secondary: #FFFFFF;
+  --surface-tertiary: #F2F2F7;
+
+  /* ── Text Hierarchy ── */
+  --text-primary: #1C1C1E;
+  --text-secondary: rgba(28, 28, 30, 0.55);
+  --text-tertiary: rgba(28, 28, 30, 0.28);
+  --text-quaternary: rgba(28, 28, 30, 0.15);
+  --text-on-color: #FFFFFF;
+
+  /* ── Separators & Fills ── */
+  --separator: rgba(60, 60, 67, 0.08);
+  --separator-opaque: #C6C6C8;
+  --fill-tertiary: rgba(118, 118, 128, 0.12);
+  --fill-quaternary: rgba(118, 118, 128, 0.08);
+  --fill-secondary: rgba(120, 120, 128, 0.16);
+
+  /* ── Chart Palette ── */
+  --chart-primary: #30D158;
+  --chart-gradient-top: rgba(48, 209, 88, 0.25);
+  --chart-gradient-bottom: rgba(48, 209, 88, 0.01);
+  --chart-danger: #FF453A;
+  --chart-warning: #FF9F0A;
+  --chart-info: #0A84FF;
+  --chart-purple: #BF5AF2;
+
+  /* ── Metric Accent Colors ── */
+  --accent-weight: #30D158;
+  --accent-bodyfat: #0A84FF;
+  --accent-muscle: #FF9F0A;
+  --accent-bmi: #FF453A;
+  --accent-waist: #BF5AF2;
+  --accent-chest: #64D2FF;
+
+  /* ── Typography (SF Pro Scale) ── */
+  --font-system: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', 'PingFang SC', 'Noto Sans CJK SC', sans-serif;
+  --font-mono: 'SF Mono', SFMono-Regular, ui-monospace, 'Cascadia Code', Menlo, monospace;
+
+  /* Dynamic Type scale */
+  --t-caption2: 0.6875rem; /* 11px */
+  --t-caption1: 0.75rem;   /* 12px */
+  --t-footnote: 0.8125rem; /* 13px */
+  --t-subhead: 0.875rem;   /* 14px */
+  --t-body: 0.9375rem;     /* 15px */
+  --t-title3: 1rem;        /* 16px */
+  --t-title2: 1.125rem;    /* 18px */
+  --t-title1: 1.375rem;    /* 22px */
+  --t-large-title: 1.625rem; /* 26px */
+  --t-display1: 2rem;      /* 32px */
+  --t-display2: 2.5rem;    /* 40px */
+  --t-display3: 3.125rem;  /* 50px — hero numbers */
+
+  /* Weights */
+  --w-regular: 400;
+  --w-medium: 500;
+  --w-semibold: 600;
+  --w-bold: 700;
+
+  /* Tracking */
+  --tracking-tight: -0.025em;
+  --tracking-normal: -0.01em;
+  --tracking-wide: 0.02em;
+
+  /* ── Spacing ── */
+  --sp-1: 2px;
+  --sp-2: 4px;
+  --sp-3: 8px;
+  --sp-4: 12px;
+  --sp-5: 16px;
+  --sp-6: 20px;
+  --sp-7: 24px;
+  --sp-8: 28px;
+  --sp-9: 32px;
+  --sp-10: 40px;
+  --sp-11: 48px;
+  --sp-12: 64px;
+
+  /* ── Radius (Apple HIG Continuum) ── */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
+  --r-2xl: 20px;
+  --r-full: 9999px;
+
+  /* ── Shadows (ultra-subtle, Apple style) ── */
+  --shadow-1: 0 0.5px 0 rgba(0,0,0,0.04);
+  --shadow-2: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.08);
+  --shadow-modal: 0 24px 80px rgba(0,0,0,0.14);
+
+  /* ── Motion ── */
+  --ease-default: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 120ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+}
+
+/* ── Dark Mode ── */
+.dark {
+  --surface-base: #000000;
+  --surface-primary: #1C1C1E;
+  --surface-elevated: #2C2C2E;
+  --surface-secondary: #1C1C1E;
+  --surface-tertiary: #2C2C2E;
+
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(235, 235, 245, 0.55);
+  --text-tertiary: rgba(235, 235, 245, 0.28);
+  --text-quaternary: rgba(235, 235, 245, 0.15);
+  --text-on-color: #FFFFFF;
+
+  --separator: rgba(235, 235, 245, 0.08);
+  --separator-opaque: #38383A;
+  --fill-tertiary: rgba(118, 118, 128, 0.24);
+  --fill-quaternary: rgba(118, 118, 128, 0.16);
+  --fill-secondary: rgba(120, 120, 128, 0.24);
+
+  --color-primary-pale: rgba(48, 209, 88, 0.12);
+  --color-primary-soft: rgba(48, 209, 88, 0.22);
+
+  --shadow-1: 0 0.5px 0 rgba(0,0,0,0.2);
+  --shadow-2: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.4);
+  --shadow-modal: 0 24px 80px rgba(0,0,0,0.5);
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-primary: var(--color-primary);
+  }
+  @layer base {
+    body { background: var(--color-background); color: var(--color-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body>
+    <main>
+      <div class="mobile-container">
+
+        <!-- ═══ 1. NAVIGATION BAR ═══ -->
+        <div class="nav-bar">
+          <button class="nav-cancel" data-dom-id="btn-cancel-log">取消</button>
+          <span class="nav-title">记录数据</span>
+          <button class="nav-save" data-dom-id="btn-save-log">记录</button>
+        </div>
+
+        <!-- ═══ 2. DATE ROW ═══ -->
+        <div style="margin-top: 8px; padding: 0 var(--sp-6);">
+          <div class="card">
+            <div class="date-row">
+              <div class="date-row-left">
+                <!-- calendar icon -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="4"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                <span>记录时间</span>
+              </div>
+              <div class="date-row-right">
+                <span>2026年6月27日 09:30</span>
+                <!-- chevron -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ 3. BODY METRICS SECTION ═══ -->
+        <div style="margin-top: 24px; padding: 0 var(--sp-6);">
+          <div class="section-label">身体指标</div>
+          <div class="card">
+
+            <!-- Row 1: Weight -->
+            <div class="metric-row">
+              <div class="metric-row-left">
+                <div class="metric-icon weight">
+                  <!-- scalemass icon -->
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3a4 4 0 0 0-4 4c0 1.5.8 2.8 2 3.5V21h4V10.5c1.2-.7 2-2 2-3.5a4 4 0 0 0-4-4z"/>
+                    <line x1="4" y1="21" x2="20" y2="21"/>
+                  </svg>
+                </div>
+                <span class="metric-name">体重</span>
+              </div>
+              <div class="metric-row-right">
+                <span class="metric-value">72.5</span>
+                <span class="metric-unit">kg</span>
+                <span class="metric-chevron">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+
+            <div class="separator-inset"></div>
+
+            <!-- Row 2: Body Fat -->
+            <div class="metric-row">
+              <div class="metric-row-left">
+                <div class="metric-icon bodyfat">
+                  <!-- drop icon -->
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+                  </svg>
+                </div>
+                <span class="metric-name">体脂率</span>
+              </div>
+              <div class="metric-row-right">
+                <span class="metric-value">18.2</span>
+                <span class="metric-unit">%</span>
+                <span class="metric-chevron">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+
+            <div class="separator-inset"></div>
+
+            <!-- Row 3: Muscle Mass -->
+            <div class="metric-row">
+              <div class="metric-row-left">
+                <div class="metric-icon muscle">
+                  <!-- figure.arms icon -->
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="5" r="2"/>
+                    <path d="M4 17l4-5h1l3 5"/>
+                    <path d="M20 17l-4-5h-1l-3 5"/>
+                    <path d="M12 7v6"/>
+                    <path d="M9 21h6"/>
+                  </svg>
+                </div>
+                <span class="metric-name">肌肉量</span>
+              </div>
+              <div class="metric-row-right">
+                <span class="metric-value">35.1</span>
+                <span class="metric-unit">kg</span>
+                <span class="metric-chevron">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ═══ 4. PHOTO SECTION ═══ -->
+        <div style="margin-top: 28px; padding: 0 var(--sp-6);">
+          <div class="section-label">
+            形体照片
+            <!-- lock.fill icon -->
+            <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" style="width:12px;height:12px;">
+              <rect x="5" y="11" width="14" height="10" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="photo-card">
+            <div class="photo-inner">
+              <div class="photo-dropzone">
+                <!-- camera.badge.plus icon -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                  <circle cx="12" cy="13" r="4"/>
+                  <line x1="19" y1="8" x2="19" y2="8.01" stroke-width="3"/>
+                  <line x1="12" y1="1" x2="12" y2="7"/>
+                  <line x1="9" y1="4" x2="15" y2="4"/>
+                </svg>
+                <span class="photo-dropzone-text">添加照片</span>
+              </div>
+              <!-- Pro Badge -->
+              <div style="margin-top: var(--sp-4);">
+                <span class="pro-badge">PRO</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ 5. NOTE SECTION ═══ -->
+        <div style="margin-top: 24px; padding: 0 var(--sp-6);">
+          <div class="section-label">备注</div>
+          <div class="note-card">
+            <textarea class="note-textarea" placeholder="今天感觉怎么样..." rows="3"></textarea>
+          </div>
+        </div>
+
+        <!-- ═══ 6. SAVE BUTTON ═══ -->
+        <div class="save-area" style="margin-top: 32px;">
+          <button class="save-btn" data-dom-id="btn-save-log">记录今天数据</button>
+        </div>
+
+      </div>
+    </main>
+
+    <style>
+      /* ── Base Reset ── */
+      *, *::before, *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      html {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      body {
+        font-family: var(--font-system);
+        font-size: var(--t-body);
+        font-weight: var(--w-regular);
+        line-height: 1.47;
+        letter-spacing: var(--tracking-normal);
+        color: var(--text-primary);
+        background-color: var(--surface-base);
+        min-height: 100vh;
+        min-height: 100dvh;
+        overflow-x: hidden;
+      }
+
+      /* ── Mobile Container ── */
+      .mobile-container {
+        max-width: 430px;
+        margin: 0 auto;
+        min-height: 100vh;
+        min-height: 100dvh;
+        position: relative;
+      }
+
+      /* ── Navigation Bar ── */
+      .nav-bar {
+        padding-top: 56px;
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-left: var(--sp-5);
+        padding-right: var(--sp-5);
+        background: var(--surface-base);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      .nav-bar .nav-cancel {
+        font-size: var(--t-body);
+        font-weight: var(--w-regular);
+        color: var(--text-secondary);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: var(--sp-2) 0;
+        letter-spacing: var(--tracking-normal);
+      }
+
+      .nav-bar .nav-title {
+        font-size: var(--t-title2);
+        font-weight: var(--w-semibold);
+        color: var(--text-primary);
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .nav-bar .nav-save {
+        font-size: var(--t-body);
+        font-weight: var(--w-semibold);
+        color: var(--color-primary);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: var(--sp-2) 0;
+        letter-spacing: var(--tracking-normal);
+      }
+
+      .nav-bar .nav-save:active {
+        opacity: 0.6;
+      }
+
+      /* ── Section Label ── */
+      .section-label {
+        font-size: var(--t-footnote);
+        font-weight: var(--w-medium);
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        padding-left: var(--sp-1);
+        margin-bottom: var(--sp-3);
+        display: flex;
+        align-items: center;
+        gap: var(--sp-2);
+      }
+
+      .section-label svg {
+        width: 12px;
+        height: 12px;
+      }
+
+      /* ── Card (Grouped Table Cell) ── */
+      .card {
+        background: var(--surface-primary);
+        border-radius: var(--r-xl);
+        border: 1px solid var(--separator);
+        overflow: hidden;
+      }
+
+      /* ── Date Row ── */
+      .date-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 52px;
+        padding: 0 var(--sp-5);
+        cursor: pointer;
+        position: relative;
+      }
+
+      .date-row:active {
+        background: var(--fill-tertiary);
+      }
+
+      .date-row-left {
+        display: flex;
+        align-items: center;
+        gap: var(--sp-3);
+      }
+
+      .date-row-left svg {
+        width: 16px;
+        height: 16px;
+        color: var(--text-secondary);
+      }
+
+      .date-row-left span {
+        font-size: var(--t-subhead);
+        color: var(--text-secondary);
+      }
+
+      .date-row-right {
+        font-size: var(--t-body);
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: var(--sp-1);
+      }
+
+      .date-row-right svg {
+        width: 14px;
+        height: 14px;
+        color: var(--text-tertiary);
+      }
+
+      /* ── Separator (inset) ── */
+      .separator-inset {
+        height: 0.5px;
+        background: var(--separator);
+        margin-left: 52px;
+      }
+
+      /* ── Metric Row ── */
+      .metric-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 52px;
+        padding: 14px var(--sp-5);
+        cursor: pointer;
+        position: relative;
+      }
+
+      .metric-row:active {
+        background: var(--fill-tertiary);
+      }
+
+      .metric-row-left {
+        display: flex;
+        align-items: center;
+        gap: var(--sp-4);
+      }
+
+      .metric-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: var(--r-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .metric-icon svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .metric-icon.weight {
+        background: var(--color-primary-pale);
+        color: var(--color-primary);
+      }
+
+      .metric-icon.bodyfat {
+        background: rgba(10, 132, 255, 0.08);
+        color: var(--chart-info);
+      }
+
+      .metric-icon.muscle {
+        background: rgba(255, 159, 10, 0.08);
+        color: var(--chart-warning);
+      }
+
+      .metric-name {
+        font-size: var(--t-body);
+        font-weight: var(--w-regular);
+        color: var(--text-primary);
+      }
+
+      .metric-row-right {
+        display: flex;
+        align-items: baseline;
+        gap: var(--sp-2);
+      }
+
+      .metric-value {
+        font-family: var(--font-mono);
+        font-size: var(--t-title1);
+        font-weight: var(--w-semibold);
+        color: var(--text-primary);
+        letter-spacing: var(--tracking-tight);
+        cursor: text;
+      }
+
+      .metric-unit {
+        font-size: var(--t-footnote);
+        font-weight: var(--w-regular);
+        color: var(--text-secondary);
+      }
+
+      .metric-chevron {
+        margin-left: var(--sp-1);
+      }
+
+      .metric-chevron svg {
+        width: 14px;
+        height: 14px;
+        color: var(--text-tertiary);
+      }
+
+      /* ── Photo Section ── */
+      .photo-card {
+        background: var(--surface-primary);
+        border-radius: var(--r-xl);
+        border: 1px solid var(--separator);
+        padding: 0;
+      }
+
+      .photo-inner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: var(--sp-9);
+        position: relative;
+      }
+
+      .photo-dropzone {
+        width: 100%;
+        border: 2px dashed var(--separator);
+        border-radius: var(--r-lg);
+        padding: var(--sp-7);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+
+      .photo-dropzone svg {
+        width: 32px;
+        height: 32px;
+        color: var(--color-primary);
+        margin-bottom: var(--sp-2);
+      }
+
+      .photo-dropzone-text {
+        font-size: var(--t-subhead);
+        color: var(--text-secondary);
+        margin-top: var(--sp-2);
+      }
+
+      .pro-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--sp-1);
+        background: var(--chart-warning);
+        color: var(--text-on-color);
+        font-size: var(--t-caption2);
+        font-weight: var(--w-bold);
+        padding: 2px 6px;
+        border-radius: var(--r-full);
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+      }
+
+      /* ── Note Section ── */
+      .note-card {
+        background: var(--surface-primary);
+        border-radius: var(--r-xl);
+        border: 1px solid var(--separator);
+      }
+
+      .note-textarea {
+        width: 100%;
+        min-height: 80px;
+        padding: 14px var(--sp-5);
+        border: none;
+        outline: none;
+        resize: none;
+        font-family: var(--font-system);
+        font-size: var(--t-body);
+        font-weight: var(--w-regular);
+        color: var(--text-primary);
+        line-height: 1.47;
+        background: transparent;
+      }
+
+      .note-textarea::placeholder {
+        color: var(--text-tertiary);
+      }
+
+      /* ── Save Button ── */
+      .save-area {
+        padding: 0 var(--sp-6);
+        padding-bottom: 60px;
+      }
+
+      .save-btn {
+        width: 100%;
+        height: 52px;
+        border-radius: var(--r-xl);
+        border: none;
+        background: var(--color-primary);
+        color: var(--text-on-color);
+        font-family: var(--font-system);
+        font-size: var(--t-body);
+        font-weight: var(--w-semibold);
+        letter-spacing: var(--tracking-normal);
+        cursor: pointer;
+        transition: background var(--duration-fast) var(--ease-default);
+        -webkit-appearance: none;
+      }
+
+      .save-btn:active {
+        background: var(--color-primary-deep);
+      }
+    </style>
+</body>
+</html>

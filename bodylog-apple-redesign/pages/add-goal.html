@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设置目标</title>
+    <style id="theme-vars">
+/* ═══════════════════════════════════════════════════════════
+   BodyLog — Apple HIG-Inspired Design System
+   "Calm Precision" — where health data meets beauty
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Brand Colors ── */
+  --color-primary: #30D158;
+  --color-primary-deep: #28A745;
+  --color-primary-pale: rgba(48, 209, 88, 0.08);
+  --color-primary-soft: rgba(48, 209, 88, 0.15);
+
+  /* ── Semantic ── */
+  --state-success: #30D158;
+  --state-warning: #FFD60A;
+  --state-danger: #FF453A;
+  --state-info: #0A84FF;
+
+  /* ── Surface Model (Apple HIG Grouped) ── */
+  --surface-base: #F2F2F7;
+  --surface-primary: #FFFFFF;
+  --surface-elevated: #FFFFFF;
+  --surface-secondary: #FFFFFF;
+  --surface-tertiary: #F2F2F7;
+
+  /* ── Text Hierarchy ── */
+  --text-primary: #1C1C1E;
+  --text-secondary: rgba(28, 28, 30, 0.55);
+  --text-tertiary: rgba(28, 28, 30, 0.28);
+  --text-quaternary: rgba(28, 28, 30, 0.15);
+  --text-on-color: #FFFFFF;
+
+  /* ── Separators & Fills ── */
+  --separator: rgba(60, 60, 67, 0.08);
+  --separator-opaque: #C6C6C8;
+  --fill-tertiary: rgba(118, 118, 128, 0.12);
+  --fill-quaternary: rgba(118, 118, 128, 0.08);
+  --fill-secondary: rgba(120, 120, 128, 0.16);
+
+  /* ── Chart Palette ── */
+  --chart-primary: #30D158;
+  --chart-gradient-top: rgba(48, 209, 88, 0.25);
+  --chart-gradient-bottom: rgba(48, 209, 88, 0.01);
+  --chart-danger: #FF453A;
+  --chart-warning: #FF9F0A;
+  --chart-info: #0A84FF;
+  --chart-purple: #BF5AF2;
+
+  /* ── Metric Accent Colors ── */
+  --accent-weight: #30D158;
+  --accent-bodyfat: #0A84FF;
+  --accent-muscle: #FF9F0A;
+  --accent-bmi: #FF453A;
+  --accent-waist: #BF5AF2;
+  --accent-chest: #64D2FF;
+
+  /* ── Typography (SF Pro Scale) ── */
+  --font-system: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', 'PingFang SC', 'Noto Sans CJK SC', sans-serif;
+  --font-mono: 'SF Mono', SFMono-Regular, ui-monospace, 'Cascadia Code', Menlo, monospace;
+
+  /* Dynamic Type scale */
+  --t-caption2: 0.6875rem; /* 11px */
+  --t-caption1: 0.75rem;   /* 12px */
+  --t-footnote: 0.8125rem; /* 13px */
+  --t-subhead: 0.875rem;   /* 14px */
+  --t-body: 0.9375rem;     /* 15px */
+  --t-title3: 1rem;        /* 16px */
+  --t-title2: 1.125rem;    /* 18px */
+  --t-title1: 1.375rem;    /* 22px */
+  --t-large-title: 1.625rem; /* 26px */
+  --t-display1: 2rem;      /* 32px */
+  --t-display2: 2.5rem;    /* 40px */
+  --t-display3: 3.125rem;  /* 50px — hero numbers */
+
+  /* Weights */
+  --w-regular: 400;
+  --w-medium: 500;
+  --w-semibold: 600;
+  --w-bold: 700;
+
+  /* Tracking */
+  --tracking-tight: -0.025em;
+  --tracking-normal: -0.01em;
+  --tracking-wide: 0.02em;
+
+  /* ── Spacing ── */
+  --sp-1: 2px;
+  --sp-2: 4px;
+  --sp-3: 8px;
+  --sp-4: 12px;
+  --sp-5: 16px;
+  --sp-6: 20px;
+  --sp-7: 24px;
+  --sp-8: 28px;
+  --sp-9: 32px;
+  --sp-10: 40px;
+  --sp-11: 48px;
+  --sp-12: 64px;
+
+  /* ── Radius (Apple HIG Continuum) ── */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
+  --r-2xl: 20px;
+  --r-full: 9999px;
+
+  /* ── Shadows (ultra-subtle, Apple style) ── */
+  --shadow-1: 0 0.5px 0 rgba(0,0,0,0.04);
+  --shadow-2: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.08);
+  --shadow-modal: 0 24px 80px rgba(0,0,0,0.14);
+
+  /* ── Motion ── */
+  --ease-default: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 120ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+}
+
+/* ── Dark Mode ── */
+.dark {
+  --surface-base: #000000;
+  --surface-primary: #1C1C1E;
+  --surface-elevated: #2C2C2E;
+  --surface-secondary: #1C1C1E;
+  --surface-tertiary: #2C2C2E;
+
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(235, 235, 245, 0.55);
+  --text-tertiary: rgba(235, 235, 245, 0.28);
+  --text-quaternary: rgba(235, 235, 245, 0.15);
+  --text-on-color: #FFFFFF;
+
+  --separator: rgba(235, 235, 245, 0.08);
+  --separator-opaque: #38383A;
+  --fill-tertiary: rgba(118, 118, 128, 0.24);
+  --fill-quaternary: rgba(118, 118, 128, 0.16);
+  --fill-secondary: rgba(120, 120, 128, 0.24);
+
+  --color-primary-pale: rgba(48, 209, 88, 0.12);
+  --color-primary-soft: rgba(48, 209, 88, 0.22);
+
+  --shadow-1: 0 0.5px 0 rgba(0,0,0,0.2);
+  --shadow-2: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.4);
+  --shadow-modal: 0 24px 80px rgba(0,0,0,0.5);
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-primary: var(--color-primary);
+  }
+  @layer base {
+    body { background: var(--color-background); color: var(--color-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+    <main style="
+      max-width: 430px;
+      margin: 0 auto;
+      background: var(--surface-base);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      font-family: var(--font-system);
+      padding-bottom: 60px;
+    ">
+
+      <!-- ════════════════════════════════════════
+           1. NAV BAR
+           ════════════════════════════════════════ -->
+      <div style="
+        padding-top: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-left: 20px;
+        padding-right: 20px;
+        position: relative;
+      ">
+        <button data-dom-id="btn-cancel-goal" style="
+          background: none;
+          border: none;
+          color: var(--color-primary);
+          font-size: var(--t-body);
+          font-weight: var(--w-regular);
+          font-family: var(--font-system);
+          cursor: pointer;
+          padding: 0;
+          letter-spacing: var(--tracking-normal);
+        ">取消</button>
+        <span style="
+          font-size: var(--t-title2);
+          font-weight: var(--w-semibold);
+          color: var(--text-primary);
+          letter-spacing: var(--tracking-tight);
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+        ">设置目标</span>
+        <span style="width: 30px;"></span>
+      </div>
+
+      <!-- ════════════════════════════════════════
+           2. METRIC PICKER
+           ════════════════════════════════════════ -->
+      <div style="
+        margin-top: 20px;
+        padding-left: 20px;
+        padding-right: 20px;
+      ">
+        <span style="
+          display: block;
+          font-size: var(--t-footnote);
+          font-weight: var(--w-medium);
+          color: var(--text-secondary);
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          padding-left: 4px;
+          margin-bottom: 10px;
+        ">选择指标</span>
+        <div style="
+          background: var(--surface-primary);
+          border-radius: var(--r-xl);
+          border: 1px solid var(--separator);
+          box-shadow: var(--shadow-1);
+          overflow: hidden;
+        ">
+          <!-- Row 1: 体重 (selected) -->
+          <div style="
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+          ">
+            <div style="
+              width: 32px;
+              height: 32px;
+              border-radius: var(--r-full);
+              background: rgba(48, 209, 88, 0.12);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              flex-shrink: 0;
+            ">
+              <i data-lucide="scale" style="width: 16px; height: 16px; color: var(--color-primary);"></i>
+            </div>
+            <span style="
+              flex: 1;
+              font-size: var(--t-body);
+              font-weight: var(--w-medium);
+              color: var(--text-primary);
+            ">体重</span>
+            <i data-lucide="check" style="width: 18px; height: 18px; color: var(--color-primary);"></i>
+          </div>
+          <!-- Separator -->
+          <div style="height: 1px; background: var(--separator); margin-left: 16px;"></div>
+          <!-- Row 2: 体脂率 -->
+          <div style="
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+          ">
+            <div style="
+              width: 32px;
+              height: 32px;
+              border-radius: var(--r-full);
+              background: rgba(10, 132, 255, 0.1);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              flex-shrink: 0;
+            ">
+              <i data-lucide="droplets" style="width: 16px; height: 16px; color: var(--chart-info);"></i>
+            </div>
+            <span style="
+              flex: 1;
+              font-size: var(--t-body);
+              font-weight: var(--w-medium);
+              color: var(--text-primary);
+            ">体脂率</span>
+          </div>
+          <!-- Separator -->
+          <div style="height: 1px; background: var(--separator); margin-left: 16px;"></div>
+          <!-- Row 3: 肌肉量 -->
+          <div style="
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+          ">
+            <div style="
+              width: 32px;
+              height: 32px;
+              border-radius: var(--r-full);
+              background: rgba(255, 159, 10, 0.1);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              flex-shrink: 0;
+            ">
+              <i data-lucide="dumbbell" style="width: 16px; height: 16px; color: var(--chart-warning);"></i>
+            </div>
+            <span style="
+              flex: 1;
+              font-size: var(--t-body);
+              font-weight: var(--w-medium);
+              color: var(--text-primary);
+            ">肌肉量</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════
+           3. DIRECTION BUTTONS
+           ════════════════════════════════════════ -->
+      <div style="
+        margin-top: 24px;
+        padding-left: 20px;
+        padding-right: 20px;
+      ">
+        <span style="
+          display: block;
+          font-size: var(--t-footnote);
+          font-weight: var(--w-medium);
+          color: var(--text-secondary);
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          padding-left: 4px;
+          margin-bottom: 10px;
+        ">目标方向</span>
+        <div style="
+          display: flex;
+          gap: 10px;
+        ">
+          <!-- 降低 (active) -->
+          <button style="
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 14px 8px;
+            background: var(--color-primary);
+            border: none;
+            border-radius: var(--r-lg);
+            color: var(--text-on-color);
+            font-size: var(--t-subhead);
+            font-weight: var(--w-semibold);
+            font-family: var(--font-system);
+            cursor: pointer;
+            box-shadow: var(--shadow-2);
+          ">
+            <i data-lucide="arrow-down" style="width: 16px; height: 16px;"></i>
+            <span>降低</span>
+          </button>
+          <!-- 维持 -->
+          <button style="
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 14px 8px;
+            background: var(--surface-primary);
+            border: 1px solid var(--separator);
+            border-radius: var(--r-lg);
+            color: var(--text-secondary);
+            font-size: var(--t-subhead);
+            font-weight: var(--w-medium);
+            font-family: var(--font-system);
+            cursor: pointer;
+          ">
+            <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
+            <span>维持</span>
+          </button>
+          <!-- 增加 -->
+          <button style="
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 14px 8px;
+            background: var(--surface-primary);
+            border: 1px solid var(--separator);
+            border-radius: var(--r-lg);
+            color: var(--text-secondary);
+            font-size: var(--t-subhead);
+            font-weight: var(--w-medium);
+            font-family: var(--font-system);
+            cursor: pointer;
+          ">
+            <i data-lucide="arrow-up" style="width: 16px; height: 16px;"></i>
+            <span>增加</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════
+           4. TARGET VALUE
+           ════════════════════════════════════════ -->
+      <div style="
+        margin-top: 24px;
+        padding-left: 20px;
+        padding-right: 20px;
+      ">
+        <span style="
+          display: block;
+          font-size: var(--t-footnote);
+          font-weight: var(--w-medium);
+          color: var(--text-secondary);
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          padding-left: 4px;
+          margin-bottom: 10px;
+        ">目标值</span>
+        <div style="
+          background: var(--surface-primary);
+          border-radius: var(--r-xl);
+          border: 1px solid var(--separator);
+          box-shadow: var(--shadow-1);
+          padding: 24px 20px 20px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        ">
+          <!-- Value input display -->
+          <div style="
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+          ">
+            <span style="
+              font-size: var(--t-display1);
+              font-weight: var(--w-semibold);
+              color: var(--text-primary);
+              font-family: var(--font-mono);
+              letter-spacing: var(--tracking-tight);
+              line-height: 1;
+            ">70.0</span>
+            <span style="
+              font-size: var(--t-title3);
+              font-weight: var(--w-medium);
+              color: var(--text-secondary);
+            ">kg</span>
+          </div>
+          <!-- Current value row -->
+          <div style="
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+          ">
+            <span style="
+              font-size: var(--t-subhead);
+              color: var(--text-secondary);
+            ">当前：72.5 kg</span>
+          </div>
+          <!-- Use current value link -->
+          <button style="
+            margin-top: 8px;
+            background: none;
+            border: none;
+            color: var(--color-primary);
+            font-size: var(--t-subhead);
+            font-weight: var(--w-medium);
+            font-family: var(--font-system);
+            cursor: pointer;
+            padding: 0;
+          ">使用当前值</button>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════
+           5. SAVE BUTTON
+           ════════════════════════════════════════ -->
+      <div style="
+        margin-top: 32px;
+        padding-left: 20px;
+        padding-right: 20px;
+        padding-bottom: 60px;
+      ">
+        <button data-dom-id="btn-create-goal" style="
+          width: 100%;
+          height: 52px;
+          background: var(--color-primary);
+          border: none;
+          border-radius: var(--r-lg);
+          color: var(--text-on-color);
+          font-size: var(--t-body);
+          font-weight: var(--w-semibold);
+          font-family: var(--font-system);
+          cursor: pointer;
+          box-shadow: var(--shadow-2);
+          letter-spacing: var(--tracking-normal);
+        ">创建目标</button>
+      </div>
+
+    </main>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

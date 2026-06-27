@@ -1,5 +1,5 @@
 // ShareCardView.swift
-// 数据分享卡片 - 生成可分享的图片
+// Premium Apple-style share card — clean, white, print-ready aesthetic
 
 import SwiftUI
 import Photos
@@ -16,187 +16,277 @@ struct ShareCardView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 24) {
-                    // Preview card
+                VStack(spacing: .spacing3Xl) {
+                    // Card preview (the shareable card)
                     shareCardPreview
-                        .padding(.horizontal, 20)
+                        .padding(.horizontal, .spacingLg)
 
                     // Action buttons
                     actionButtons
-                        .padding(.horizontal, 20)
+                        .padding(.horizontal, .spacingLg)
                 }
-                .padding(.vertical, 20)
+                .padding(.vertical, .spacingXl)
             }
-            .background(Color.systemGroupedBackground)
-            .navigationTitle(L10n.string("分享进度"))
+            .background(Color.formlogBgGrouped)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(L10n.string("取消")) { dismiss() }
-                        .foregroundColor(.secondary)
+                        .font(.blBody)
+                        .foregroundColor(.formlogTextSecondary)
+                }
+                ToolbarItem(placement: .principal) {
+                    Text(L10n.string("分享进度"))
+                        .font(.blTitle3Semibold)
+                        .foregroundColor(.formlogTextPrimary)
                 }
             }
+            .blNavigationBar()
             .sheet(isPresented: $showShareSheet) {
                 ShareSheet(items: shareItems)
                     .onDisappear { showShareSheet = false; shareItems = [] }
             }
         }
     }
-    
+
     // MARK: - App Name (from InfoPlist)
-    
+
     private var appDisplayName: String {
         Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String
             ?? Bundle.main.infoDictionary?["CFBundleName"] as? String
-            ?? "FormLog"
+            ?? "BodyLog"
     }
 
     // MARK: - Card Preview
 
     private var shareCardPreview: some View {
-        VStack(spacing: 0) {
-            // Card content (will be captured as image)
-            cardContent
-                // 强制浅色模式：分享卡片始终白底黑字，确保深色模式下文字可见
-                .environment(\.colorScheme, .light)
-                .background(Color.white)
-                .cornerRadius(16)
-                .shadow(color: .black.opacity(0.1), radius: 12, x: 0, y: 4)
-        }
+        cardContent
+            // Force light mode: card always white background with dark text
+            .environment(\.colorScheme, .light)
+            .background(Color.white)
+            .clipShape(RoundedRectangle(cornerRadius: .radiusXl))
+            .shadow(color: .black.opacity(0.08), radius: 20, y: 8)
     }
 
+    // MARK: - Card Content (rendered as shareable image)
+
     private var cardContent: some View {
-        VStack(spacing: 20) {
-            // Header
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(appDisplayName)
-                        .font(.system(size: 18, weight: .bold))
-                    Text(formatDate(Date()))
-                        .font(.system(size: 13))
-                        .foregroundColor(.secondary)
-                }
-                Spacer()
-                Image(systemName: "figure.stand")
-                    .font(.system(size: 28))
-                    .foregroundColor(.formlogPrimary)
-            }
+        VStack(spacing: 0) {
+            // Header — brand + date + icon
+            headerSection
+                .padding(.bottom, .spacingLg)
 
-            Divider()
+            cardDivider
 
-            // Stats grid
-            HStack(spacing: 16) {
-                statItem(
-                    value: "\(entryStore.totalRecordDays)",
-                    label: L10n.string("记录天数"),
-                    icon: "calendar"
-                )
-                statItem(
-                    value: "\(entryStore.currentStreak)",
-                    label: L10n.string("连续天数"),
-                    icon: "flame.fill"
-                )
-                statItem(
-                    value: "\(entryStore.entries.count)",
-                    label: L10n.string("总记录"),
-                    icon: "chart.bar.fill"
-                )
-            }
+            // 3-column stats
+            statsSection
+                .padding(.vertical, .spacingXl)
 
-            // Latest metrics (if available)
+            cardDivider
+
+            // Latest metrics
             if let latest = entryStore.latestEntry, latest.hasAnyMetric {
-                Divider()
+                metricsSection(for: latest)
+                    .padding(.vertical, .spacingLg)
 
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(L10n.string("最近记录"))
-                        .font(.system(size: 14, weight: .semibold))
-
-                    let displayMetrics = Array(latest.metrics.prefix(4))
-                    ForEach(displayMetrics, id: \.key) { key, value in
-                        if let type = BodyMetricType(rawValue: key) {
-                            HStack {
-                                Image(systemName: type.icon)
-                                    .font(.system(size: 12))
-                                    .foregroundColor(.formlogPrimary)
-                                    .frame(width: 20)
-                                Text(type.displayName)
-                                    .font(.system(size: 14))
-                                Spacer()
-                                if type == .weight || type == .muscleMass {
-                                    let d = appState.displayWeight(value)
-                                    Text("\(String(format: "%.1f", d.value)) \(d.unit)")
-                                        .font(.system(size: 14, weight: .medium, design: .rounded).monospacedDigit())
-                                } else {
-                                    Text("\(String(format: "%.1f", value)) \(type.unit)")
-                                        .font(.system(size: 14, weight: .medium, design: .rounded).monospacedDigit())
-                                }
-                            }
-                        }
-                    }
-                }
+                cardDivider
             }
 
             // Footer
-            Divider()
+            footerSection
+                .padding(.top, .spacingLg)
+        }
+        .padding(.spacing2Xl)
+    }
 
-            HStack {
-                Text(L10n.string("🔒 隐私优先 · 数据本地存储"))
-                    .font(.system(size: 11))
-                    .foregroundColor(.secondary)
-                Spacer()
+    // MARK: - Header
+
+    private var headerSection: some View {
+        HStack(alignment: .center) {
+            VStack(alignment: .leading, spacing: .spacingXs) {
                 Text(appDisplayName)
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .foregroundColor(cardForeground)
+                Text(formatDate(Date()))
+                    .font(.blCaption1)
+                    .foregroundColor(cardSecondary)
+            }
+
+            Spacer()
+
+            ZStack {
+                Circle()
+                    .fill(Color.formlogPrimary.opacity(0.10))
+                    .frame(width: 44, height: 44)
+                Image(systemName: "figure.stand")
+                    .font(.system(size: 22, weight: .medium))
                     .foregroundColor(.formlogPrimary)
             }
         }
-        .padding(24)
     }
 
-    private func statItem(value: String, label: String, icon: String) -> some View {
-        VStack(spacing: 6) {
+    // MARK: - Stats Section
+
+    private var statsSection: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 0) {
+            statColumn(
+                value: "\(entryStore.totalRecordDays)",
+                label: L10n.string("记录天数"),
+                icon: "calendar"
+            )
+
+            statDivider
+
+            statColumn(
+                value: "\(entryStore.currentStreak)",
+                label: L10n.string("连续天数"),
+                icon: "flame.fill"
+            )
+
+            statDivider
+
+            statColumn(
+                value: "\(entryStore.entries.count)",
+                label: L10n.string("总记录"),
+                icon: "chart.bar.fill"
+            )
+        }
+    }
+
+    private func statColumn(value: String, label: String, icon: String) -> some View {
+        VStack(spacing: .spacingSm) {
             Image(systemName: icon)
-                .font(.system(size: 20))
+                .font(.system(size: 16, weight: .medium))
                 .foregroundColor(.formlogPrimary)
             Text(value)
-                .font(.system(size: 24, weight: .bold, design: .rounded).monospacedDigit())
-                .foregroundColor(.primary)
+                .font(.system(size: 28, weight: .bold, design: .rounded).monospacedDigit())
+                .foregroundColor(cardForeground)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
             Text(label)
-                .font(.system(size: 12))
-                .foregroundColor(.secondary)
+                .font(.blCaption1)
+                .foregroundColor(cardSecondary)
+                .lineLimit(1)
         }
         .frame(maxWidth: .infinity)
+    }
+
+    private var statDivider: some View {
+        Rectangle()
+            .fill(cardSecondary.opacity(0.2))
+            .frame(width: 0.5)
+            .padding(.vertical, .spacingSm)
+    }
+
+    // MARK: - Metrics Section
+
+    private func metricsSection(for entry: BodyEntry) -> some View {
+        VStack(alignment: .leading, spacing: .spacingMd) {
+            Text(L10n.string("最近记录"))
+                .font(.blSubheadSemibold)
+                .foregroundColor(cardForeground)
+
+            let displayMetrics = Array(entry.metrics.prefix(3))
+            ForEach(displayMetrics, id: \.key) { key, value in
+                if let type = BodyMetricType(rawValue: key) {
+                    metricRow(type: type, value: value)
+                }
+            }
+        }
+    }
+
+    private func metricRow(type: BodyMetricType, value: Double) -> some View {
+        HStack(spacing: .spacingMd) {
+            ZStack {
+                RoundedRectangle(cornerRadius: .radiusSm)
+                    .fill(type.color.opacity(0.12))
+                    .frame(width: 32, height: 32)
+                Image(systemName: type.icon)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(type.color)
+            }
+
+            Text(type.displayName)
+                .font(.blSubhead)
+                .foregroundColor(cardForeground)
+
+            Spacer()
+
+            Group {
+                if type == .weight || type == .muscleMass {
+                    let d = appState.displayWeight(value)
+                    Text("\(String(format: "%.1f", d.value)) \(d.unit)")
+                } else {
+                    Text("\(String(format: "%.1f", value)) \(type.unit)")
+                }
+            }
+            .font(.system(size: 15, weight: .semibold, design: .rounded).monospacedDigit())
+            .foregroundColor(cardForeground)
+        }
+    }
+
+    // MARK: - Footer
+
+    private var footerSection: some View {
+        HStack {
+            Text(L10n.string("隐私优先 · 数据本地存储"))
+                .font(.blCaption2)
+                .foregroundColor(cardSecondary)
+            Spacer()
+            Text(appDisplayName)
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundColor(.formlogPrimary)
+        }
+    }
+
+    // MARK: - Card Divider
+
+    private var cardDivider: some View {
+        Rectangle()
+            .fill(cardSecondary.opacity(0.15))
+            .frame(height: 0.5)
+    }
+
+    // MARK: - Card Colors (forced light)
+
+    private var cardForeground: Color {
+        Color(red: 0.110, green: 0.110, blue: 0.118)
+    }
+
+    private var cardSecondary: Color {
+        Color(red: 0.560, green: 0.560, blue: 0.576)
     }
 
     // MARK: - Action Buttons
 
     private var actionButtons: some View {
-        VStack(spacing: 12) {
-            // Share button
+        VStack(spacing: .spacingMd) {
+            // Primary: Share
             Button(action: generateAndShare) {
-                HStack {
+                HStack(spacing: .spacingSm) {
                     Image(systemName: "square.and.arrow.up")
                     Text(L10n.string("分享这张卡片"))
-                        .font(.system(size: 15, weight: .semibold, design: .rounded))
+                        .font(.blBodySemibold)
                 }
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
+                .padding(.vertical, .spacingLg)
                 .background(Color.formlogPrimary)
-                .cornerRadius(12)
+                .clipShape(RoundedRectangle(cornerRadius: .radiusMd))
             }
 
-            // Save to photos button
+            // Secondary: Save to Photos
             Button(action: saveToPhotos) {
-                HStack {
+                HStack(spacing: .spacingSm) {
                     Image(systemName: "photo.on.rectangle")
                     Text(L10n.string("保存到相册"))
-                        .font(.system(size: 15, weight: .regular, design: .rounded))
+                        .font(.blBody)
                 }
                 .foregroundColor(.formlogPrimary)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
-                .background(Color.formlogPrimary.opacity(0.1))
-                .cornerRadius(12)
+                .padding(.vertical, .spacingLg)
+                .background(Color.formlogPrimary.opacity(0.10))
+                .clipShape(RoundedRectangle(cornerRadius: .radiusMd))
             }
         }
     }
@@ -216,7 +306,7 @@ struct ShareCardView: View {
             Task { @MainActor in
                 if status == .authorized || status == .limited {
                     UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
-                    // Show success feedback
+                    BodyLogHaptics.success()
                     print("[ShareCardView] Photo saved successfully")
                 } else {
                     print("[ShareCardView] Photo library access denied")
@@ -234,6 +324,8 @@ struct ShareCardView: View {
         renderer.scale = UIScreen.main.scale
         return renderer.uiImage
     }
+
+    // MARK: - Date Formatting
 
     private static let dateFormatter: DateFormatter = {
         let f = DateFormatter()

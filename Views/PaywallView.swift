@@ -1,5 +1,5 @@
 // PaywallView.swift
-// 付费墙 — 一次性买断
+// 付费墙 — 一次性买断 Pro 版本
 
 import SwiftUI
 
@@ -9,56 +9,69 @@ struct PaywallView: View {
     @Binding var isPresented: Bool
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 28) {
-                    // Header
-                    VStack(spacing: 12) {
-                        Image(systemName: "photo.stack.fill")
-                            .font(.system(size: 56))
-                            .foregroundStyle(LinearGradient.formlogGradient)
-                        Text(L10n.string("解锁 FormLog Pro"))
+        ZStack(alignment: .topTrailing) {
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 0) {
+                    // ── Spacer for close button ──
+                    Color.clear.frame(height: 8)
+
+                    // ── Crown hero ──
+                    VStack(spacing: 16) {
+                        ZStack {
+                            Circle()
+                                .fill(Color.formlogPrimaryPale)
+                                .frame(width: 80, height: 80)
+                            Image(systemName: "crown.fill")
+                                .font(.system(size: 36))
+                                .foregroundColor(Color.formlogPrimary)
+                        }
+
+                        Text(L10n.string("解锁 Pro 版本"))
                             .font(.system(size: 26, weight: .bold, design: .rounded))
+                            .foregroundColor(.formlogTextPrimary)
+
                         Text(L10n.string("用数据和照片，见证你的身体变化"))
                             .font(.system(size: 15))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.formlogTextSecondary)
                             .multilineTextAlignment(.center)
                     }
                     .padding(.top, 20)
 
-                    // Features
+                    // ── Features card ──
                     VStack(spacing: 0) {
-                        proFeatureRow(icon: "photo.stack", title: L10n.string("形体照片对比"), desc: L10n.string("拍照记录，对比身形变化"))
-                        Divider().padding(.leading, 52)
-                        proFeatureRow(icon: "arrow.down.doc.fill", title: L10n.string("CSV 数据导出/导入"), desc: L10n.string("随时导出导入数据"))
-                        Divider().padding(.leading, 52)
+                        proFeatureRow(icon: "photo.compare", title: L10n.string("形体照片对比"), desc: L10n.string("拍照记录，对比身形变化"))
+                        featureSeparator
+                        proFeatureRow(icon: "arrow.down.doc", title: L10n.string("CSV 数据导出导入"), desc: L10n.string("随时导出导入数据"))
+                        featureSeparator
                         proFeatureRow(icon: "bell.fill", title: L10n.string("每日提醒"), desc: L10n.string("自定义时间提醒记录"))
-                        Divider().padding(.leading, 52)
+                        featureSeparator
                         proFeatureRow(icon: "target", title: L10n.string("无限目标"), desc: L10n.string("设置任意数量的健康目标"))
                     }
-                    .background(Color.systemBackground)
-                    .cornerRadius(14)
-                    .padding(.horizontal, 20)
+                    .background(Color.formlogCard)
+                    .clipShape(RoundedRectangle(cornerRadius: .radiusXl))
+                    .padding(.horizontal, 16)
+                    .padding(.top, 28)
 
-                    // Error
+                    // ── Error: purchase ──
                     if let err = purchaseManager.purchaseError {
                         Text(err)
                             .font(.system(size: 13))
                             .foregroundColor(.formlogDanger)
                             .multilineTextAlignment(.center)
-                            .padding(.horizontal, 20)
+                            .padding(.horizontal, 32)
+                            .padding(.top, 16)
                     }
-                    
-                    // Load Products Error
+
+                    // ── Error: load products ──
                     if let loadErr = purchaseManager.loadProductsError {
                         VStack(spacing: 12) {
                             Label(loadErr, systemImage: "exclamationmark.triangle.fill")
                                 .font(.system(size: 14))
                                 .foregroundColor(.formlogDanger)
                                 .multilineTextAlignment(.center)
-                            
+
                             Button(action: {
-                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                                BodyLogHaptics.medium()
                                 Task { await purchaseManager.retryLoadProducts() }
                             }) {
                                 Label(L10n.string("重试加载"), systemImage: "arrow.clockwise")
@@ -67,48 +80,54 @@ struct PaywallView: View {
                                     .padding(.horizontal, 24)
                                     .padding(.vertical, 10)
                                     .background(Color.formlogPrimary)
-                                    .cornerRadius(8)
+                                    .cornerRadius(.radiusSm)
                             }
                         }
-                        .padding(.horizontal, 20)
+                        .padding(.horizontal, 32)
+                        .padding(.top, 16)
                     }
 
-                    // Trust badge (真实卖点，不使用虚假评分)
-                    HStack(spacing: 8) {
-                        Image(systemName: "lock.shield.fill")
+                    // ── Trust badge ──
+                    HStack(spacing: 6) {
+                        Image(systemName: "lock.shield")
                             .font(.system(size: 13))
-                            .foregroundColor(.formlogPrimary)
-                        Text(L10n.string("100% 隐私优先 · 数据本地存储 · 无订阅"))
+                            .foregroundColor(.formlogTextSecondary)
+                        Text(L10n.string("隐私优先 · 数据本地 · 一次买断"))
                             .font(.system(size: 13, weight: .medium))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.formlogTextSecondary)
                     }
-                    .padding(.vertical, 8)
+                    .padding(.top, 28)
 
-                    // Buy button
-                    VStack(spacing: 12) {
+                    // ── Price + CTA ──
+                    VStack(spacing: 16) {
+                        VStack(spacing: 6) {
+                            Text(purchaseManager.formattedPrice)
+                                .font(.system(size: 36, weight: .bold, design: .rounded).monospacedDigit())
+                                .foregroundColor(.formlogTextPrimary)
+                            Text(L10n.string("一次性购买 · 永久使用"))
+                                .font(.system(size: 14))
+                                .foregroundColor(.formlogTextSecondary)
+                        }
+
                         Button(action: {
-                            UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+                            BodyLogHaptics.heavy()
                             Task { await purchaseManager.purchasePro() }
                         }) {
-                            HStack {
-                                if purchaseManager.isPurchasing {
-                                    ProgressView()
-                                        .progressViewStyle(.circular)
-                                        .tint(.white)
-                                } else if purchaseManager.isLoadingProducts {
+                            HStack(spacing: 8) {
+                                if purchaseManager.isPurchasing || purchaseManager.isLoadingProducts {
                                     ProgressView()
                                         .progressViewStyle(.circular)
                                         .tint(.white)
                                 } else {
-                                    Text(String(format: L10n.string("购买 %@"), purchaseManager.formattedPrice))
+                                    Text(L10n.string("解锁全部功能"))
                                         .font(.system(size: 17, weight: .bold, design: .rounded))
                                 }
                             }
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
-                            .background(purchaseManager.isPurchasing || purchaseManager.isLoadingProducts ? Color.secondary : Color.formlogPrimary)
-                            .cornerRadius(14)
+                            .background(purchaseManager.isPurchasing || purchaseManager.isLoadingProducts ? Color.formlogFillTertiary : Color.formlogPrimary)
+                            .clipShape(RoundedRectangle(cornerRadius: .radiusLg))
                         }
                         .disabled(!purchaseManager.canPurchase)
 
@@ -117,60 +136,70 @@ struct PaywallView: View {
                         }) {
                             Text(L10n.string("恢复购买"))
                                 .font(.system(size: 14))
-                                .foregroundColor(.secondary)
+                                .foregroundColor(.formlogTextSecondary)
                         }
                     }
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 28)
 
-                    // Legal links
-                    VStack(spacing: 4) {
-                        if let termsURL = URL(string: "https://pangtongya.github.io/formlog-privacy/terms.html"),
-                           let privacyURL = URL(string: "https://pangtongya.github.io/formlog-privacy/privacy-policy.html") {
-                            Link(L10n.string("服务条款"), destination: termsURL)
-                                .font(.system(size: 12))
-                                .foregroundColor(.secondary)
-                            Link(L10n.string("隐私政策"), destination: privacyURL)
-                                .font(.system(size: 12))
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                    .padding(.horizontal, 40)
-                    .padding(.bottom, 20)
-                }
-            }
-            .background(Color.systemGroupedBackground)
-            .navigationTitle("")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: { isPresented = false }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.secondary)
+                    // ── Legal links ──
+                    if let privacyURL = URL(string: "https://pangtongya.github.io/bodylog/privacy.html") {
+                        Link(L10n.string("隐私政策"), destination: privacyURL)
+                            .font(.system(size: 12))
+                            .foregroundColor(.formlogTextSecondary)
+                            .padding(.top, 24)
+                            .padding(.bottom, 20)
                     }
                 }
             }
+            .background(Color.formlogBgGrouped)
+            .ignoresSafeArea()
+
+            // ── Close button (overlay) ──
+            Button(action: { isPresented = false }) {
+                Image(systemName: "xmark.circle")
+                    .font(.system(size: 28, weight: .medium))
+                    .symbolRenderingMode(.hierarchical)
+                    .foregroundColor(.formlogFillSecondary)
+            }
+            .accessibilityLabel(L10n.string("关闭"))
+            .padding(.top, 4)
+            .padding(.trailing, 4)
         }
         .onChange(of: appState.isPro) { isPro in
             if isPro { isPresented = false }
         }
     }
 
+    // MARK: - Subviews
+
+    private var featureSeparator: some View {
+        Divider()
+            .foregroundStyle(Color.formlogSeparator)
+            .padding(.leading, 52)
+    }
+
     private func proFeatureRow(icon: String, title: String, desc: String) -> some View {
-        HStack(spacing: 16) {
-            Image(systemName: icon)
-                .font(.system(size: 20))
-                .foregroundColor(.formlogPrimary)
-                .frame(width: 32)
+        HStack(spacing: 14) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.formlogPrimaryPale)
+                    .frame(width: 40, height: 40)
+                Image(systemName: icon)
+                    .font(.system(size: 18))
+                    .foregroundColor(Color.formlogPrimary)
+            }
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.system(size: 15, weight: .semibold))
+                    .foregroundColor(.formlogTextPrimary)
                 Text(desc)
                     .font(.system(size: 13))
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.formlogTextSecondary)
             }
             Spacer()
-            Image(systemName: "checkmark")
-                .font(.system(size: 13, weight: .bold))
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 18))
                 .foregroundColor(.formlogPrimary)
         }
         .padding(.horizontal, 16)

@@ -36,11 +36,11 @@ struct CameraPicker: UIViewControllerRepresentable {
                 picker.sourceType = .camera
                 picker.cameraDevice = .rear
             case .notDetermined:
-                // 请求授权，完成后通过 context 切换到相机
+                // Request authorization — if granted, dismiss so user can retry with camera
                 AVCaptureDevice.requestAccess(for: .video) { granted in
                     if granted {
                         DispatchQueue.main.async {
-                            context.coordinator.setCameraMode(true)
+                            context.coordinator.parent.dismiss()
                         }
                     }
                 }

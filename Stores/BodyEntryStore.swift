@@ -3,10 +3,21 @@
 
 import Foundation
 import SwiftUI
+import os.log
 
 @MainActor
 class BodyEntryStore: ObservableObject {
     @Published var entries: [BodyEntry] = []
+
+    // MARK: - Structured Logger
+    private static let logger = Logger(subsystem: "com.pangtong.formlog", category: "BodyEntryStore")
+
+    // MARK: - Backup Size Limit (10 MB)
+    private static let maxBackupSizeBytes: Int = 10 * 1024 * 1024
+
+    // MARK: - Debounce Save
+    private var saveDebounceTask: Task<Void, Never>?
+    private static let saveDebounceInterval: UInt64 = 100_000_000 // 100ms in nanoseconds
 
     // Error callbacks for UI feedback
     private var saveErrorHandler: ((String) -> Void)?
@@ -71,12 +82,21 @@ class BodyEntryStore: ObservableObject {
         loadErrorHandler = handler
     }
 
+    // MARK: - Streak Cache Invalidation
+
+    /// Invalidate the streak cache so it is recalculated on next access.
+    private func invalidateStreakCache() {
+        _cachedStreak = nil
+        _cachedStreakDatesHash = 0
+    }
+
     // MARK: - CRUD
 
     @discardableResult
     func addEntry(_ entry: BodyEntry) -> BodyEntry {
         entries.insert(entry, at: 0)
         sortEntries()
+        invalidateStreakCache()
         save()
         return entry
     }
@@ -85,6 +105,7 @@ class BodyEntryStore: ObservableObject {
     func addEntries(_ newEntries: [BodyEntry]) {
         entries.insert(contentsOf: newEntries, at: 0)
         sortEntries()
+        invalidateStreakCache()
         save()
     }
 
@@ -92,6 +113,7 @@ class BodyEntryStore: ObservableObject {
         guard let idx = entries.firstIndex(where: { $0.id == entry.id }) else { return }
         entries[idx] = entry
         sortEntries()
+        invalidateStreakCache()
         save()
     }
 
@@ -103,6 +125,7 @@ class BodyEntryStore: ObservableObject {
             }
         }
         entries.removeAll { $0.id == id }
+        invalidateStreakCache()
         save()
     }
 
@@ -115,6 +138,7 @@ class BodyEntryStore: ObservableObject {
             }
         }
         entries.remove(atOffsets: offsets)
+        invalidateStreakCache()
         save()
     }
 
@@ -122,6 +146,11 @@ class BodyEntryStore: ObservableObject {
 
     /// 照片数量
     var photoCount: Int { entries.filter { $0.hasPhoto }.count }
+
+    /// 是否使用过照片对比功能
+    var hasUsedPhotoCompare: Bool {
+        UserDefaults.standard.bool(forKey: "hasUsedPhotoCompare")
+    }
 
     /// 最新一条记录
     var latestEntry: BodyEntry? { entries.first }
@@ -303,10 +332,33 @@ class BodyEntryStore: ObservableObject {
             $0.contains("备注") || $0.contains("Note") || $0.contains("note")
         })
 
+        // Validation: date column must be present in header
+        guard dateColIndex < header.count else {
+            Self.logger.error("CSV import failed: date column index \(dateColIndex) is out of bounds for header with \(header.count) columns")
+            return (0, L10n.string("CSV 文件缺少日期列"))
+        }
+
+        // Validation: missing required fields check — date column must exist
+        if header.isEmpty || dateColIndex >= header.count {
+            Self.logger.error("CSV import failed: header is empty or date column missing")
+            return (0, L10n.string("CSV 文件缺少日期列"))
+        }
+
         var importedCount = 0
         var errors: [String] = []
         var parsedEntries: [BodyEntry] = []
         var duplicateDates: Set<Date> = []
+
+        // Build a set of (date + metric) keys already present in the store to detect duplicates
+        var existingKeys: Set<String> = []
+        for entry in entries {
+            let day = Calendar.current.startOfDay(for: entry.recordedAt)
+            for type in BodyMetricType.allCases {
+                if entry.value(for: type) != nil {
+                    existingKeys.insert("\(day.timeIntervalSince1970)_\(type.rawValue)")
+                }
+            }
+        }
 
         for (index, line) in lines.dropFirst().enumerated() {
             let lineNumber = index + 2 // +1 for header, +1 for 1-based indexing
@@ -315,18 +367,30 @@ class BodyEntryStore: ObservableObject {
             // 进度回调
             progressCallback?(index + 1, lines.count - 1)
 
-            guard cols.count > max(dateColIndex, 1) else { continue }
+            guard cols.count > max(dateColIndex, 1) else {
+                Self.logger.warning("CSV import: skipping line \(lineNumber), not enough columns")
+                continue
+            }
 
-            // Parse date (支持多种格式)
+            // Validate required field: date
             let dateString = cols[dateColIndex].trimmingCharacters(in: .whitespaces)
+            guard dateString.isEmpty == false else {
+                let msg = String(format: L10n.string("第 %d 行：缺少日期字段"), lineNumber)
+                errors.append(msg)
+                Self.logger.warning("CSV import: \(msg)")
+                continue
+            }
+
             guard let date = Self.parseCSVDate(dateString) else {
                 errors.append(String(format: L10n.string("第 %d 行：无法解析日期: %@"), lineNumber, dateString))
+                Self.logger.warning("CSV import: line \(lineNumber), unparseable date '\(dateString)'")
                 continue
             }
 
             // Check for duplicate dates in the same import
             if duplicateDates.contains(date) {
                 errors.append(String(format: L10n.string("第 %d 行：重复日期: %@"), lineNumber, dateString))
+                Self.logger.warning("CSV import: line \(lineNumber), duplicate date '\(dateString)' in same import")
                 continue
             }
             duplicateDates.insert(date)
@@ -339,8 +403,10 @@ class BodyEntryStore: ObservableObject {
                 let valStr = cols[colIdx].trimmingCharacters(in: .whitespaces)
                 guard !valStr.isEmpty else { continue }
 
+                // Validate: must be a valid numeric value
                 guard let val = Double(valStr) else {
                     metricErrors.append(String(format: L10n.string("%@ 格式错误: %@"), type.displayName, valStr))
+                    Self.logger.warning("CSV import: line \(lineNumber), invalid numeric value '\(valStr)' for metric \(type.displayName)")
                     continue
                 }
 
@@ -349,6 +415,17 @@ class BodyEntryStore: ObservableObject {
                 if !validRange.contains(val) {
                     metricErrors.append(String(format: L10n.string("%@ 值超出合理范围 (%.1f-%.1f): %.1f"),
                                                type.displayName, validRange.lowerBound, validRange.upperBound, val))
+                    Self.logger.warning("CSV import: line \(lineNumber), value \(val) out of range for \(type.displayName)")
+                    continue
+                }
+
+                // Validate: duplicate entry (same date + metric already exists)
+                let day = Calendar.current.startOfDay(for: date)
+                let key = "\(day.timeIntervalSince1970)_\(type.rawValue)"
+                if existingKeys.contains(key) {
+                    let dupMsg = String(format: L10n.string("%@ 已存在相同日期的记录，已跳过"), type.displayName)
+                    metricErrors.append(dupMsg)
+                    Self.logger.warning("CSV import: line \(lineNumber), duplicate date+metric for \(type.displayName) on \(dateString)")
                     continue
                 }
 
@@ -376,6 +453,12 @@ class BodyEntryStore: ObservableObject {
             )
             importedCount += 1
             parsedEntries.append(entry)
+
+            // Track imported keys to prevent duplicates within the same import
+            let day = Calendar.current.startOfDay(for: date)
+            for (rawKey, _) in metrics {
+                existingKeys.insert("\(day.timeIntervalSince1970)_\(rawKey)")
+            }
         }
 
         // 批量添加（只保存一次）
@@ -384,9 +467,19 @@ class BodyEntryStore: ObservableObject {
         }
 
         if importedCount > 0 {
-            let errorMsg = errors.isEmpty ? nil : String(format: L10n.string("%d 行数据跳过"), errors.count)
-            return (importedCount, errorMsg)
+            Self.logger.info("CSV import completed: \(importedCount) entries imported, \(errors.count) errors")
+            if errors.isEmpty {
+                return (importedCount, nil)
+            } else {
+                let displayErrors = errors.prefix(3)
+                var errorMsg = displayErrors.joined(separator: "\n")
+                if errors.count > 3 {
+                    errorMsg += String(format: L10n.string("\n...还有 %d 个错误"), errors.count - 3)
+                }
+                return (importedCount, errorMsg)
+            }
         } else {
+            Self.logger.error("CSV import failed: 0 entries imported, \(errors.count) errors")
             if !errors.isEmpty {
                 // 返回所有错误信息（最多显示5条）
                 let displayErrors = errors.prefix(5)
@@ -510,7 +603,7 @@ class BodyEntryStore: ObservableObject {
             default: continue
             }
         }
-        exampleRow += ",笔记示例\n"
+        exampleRow += ",\(L10n.string("笔记示例"))\n"
         csv += exampleRow
 
         return csv
@@ -560,28 +653,49 @@ class BodyEntryStore: ObservableObject {
     // MARK: - Persistence
 
     func save() {
-        // 立即保存，不使用延迟防抖，避免 App 被杀死时数据丢失
+        // Debounce: cancel any pending save and schedule a new one after 100ms.
+        // This avoids redundant writes when multiple mutations happen in quick succession.
+        saveDebounceTask?.cancel()
+        saveDebounceTask = Task { [weak self] in
+            try? await Task.sleep(nanoseconds: Self.saveDebounceInterval)
+            guard !Task.isCancelled else { return }
+            self?.performSave()
+        }
+    }
+
+    /// Force an immediate save, bypassing the debounce mechanism.
+    /// Use this when the app is about to enter background or terminate.
+    func saveImmediately() {
+        saveDebounceTask?.cancel()
+        saveDebounceTask = nil
         performSave()
+    }
+
+    /// Replace all entries (used during backup restore). Sorts and saves immediately.
+    func replaceEntries(_ newEntries: [BodyEntry]) {
+        entries = newEntries
+        sortEntries()
+        invalidateStreakCache()
+        saveImmediately()
     }
 
     private func performSave() {
         do {
             let data = try JSONEncoder().encode(entries)
             try data.write(to: Self.storeURL, options: [.atomic, .completeFileProtection])
+            Self.logger.debug("Saved \(self.entries.count) entries (\(data.count) bytes)")
         } catch {
             let errorMsg = String(format: L10n.string("保存数据失败：%@\n\n提示：您的数据已被写入备份文件，但无法保存到主存储。"), error.localizedDescription)
-            print("[BodyEntryStore] Save error: \(error)")
+            Self.logger.error("Save error: \(error.localizedDescription)")
 
             // 创建备份
             if let backupURL = createBackup() {
-                print("[BodyEntryStore] Backup created at: \(backupURL.path)")
+                Self.logger.info("Emergency backup created at: \(backupURL.path)")
             }
 
             // 触发错误回调
             if let errorHandler = saveErrorHandler {
-                DispatchQueue.main.async {
-                    errorHandler(errorMsg)
-                }
+                errorHandler(errorMsg)
             }
         }
     }
@@ -595,25 +709,37 @@ class BodyEntryStore: ObservableObject {
 
         do {
             let data = try JSONEncoder().encode(entries)
+
+            // Safety check: validate backup size is not unreasonably large (> 10MB)
+            if data.count > Self.maxBackupSizeBytes {
+                let sizeMB = Double(data.count) / (1024.0 * 1024.0)
+                Self.logger.warning("Backup data is excessively large (\(String(format: "%.1f", sizeMB)) MB). Aborting backup creation to avoid disk pressure.")
+                return nil
+            }
+
             try data.write(to: backupURL, options: [.atomic, .completeFileProtection])
+            Self.logger.info("Backup created: \(backupURL.lastPathComponent) (\(data.count) bytes)")
             return backupURL
         } catch {
-            print("[BodyEntryStore] Backup creation error: \(error)")
+            Self.logger.error("Backup creation error: \(error.localizedDescription)")
             return nil
         }
+    }
+
+    /// Reload entries from disk (public, for pull-to-refresh)
+    func reloadFromDisk() {
+        load()
     }
 
     private func load() {
         // 检查是否有备份文件
         if let backupURL = findLatestBackup() {
-            print("[BodyEntryStore] Found backup file: \(backupURL.path)")
+            Self.logger.info("Found backup file: \(backupURL.path)")
             // 尝试从备份恢复
             if restoreFromBackup(backupURL) {
                 let msg = String(format: L10n.string("已从备份恢复数据：\n%@", backupURL.lastPathComponent))
                 if let errorHandler = loadErrorHandler {
-                    DispatchQueue.main.async {
-                        errorHandler(msg)
-                    }
+                    errorHandler(msg)
                 }
                 return
             }
@@ -623,23 +749,29 @@ class BodyEntryStore: ObservableObject {
             let data = try Data(contentsOf: Self.storeURL)
             entries = try JSONDecoder().decode([BodyEntry].self, from: data)
             sortEntries()
-            print("[BodyEntryStore] Successfully loaded \(entries.count) entries")
+            Self.logger.info("Successfully loaded \(self.entries.count) entries")
         } catch {
+            Self.logger.error("Load error: \(error.localizedDescription). Starting fresh with empty data.")
+
             let errorMsg = String(format: L10n.string("加载数据失败：%@\n\n提示：将使用空数据开始。"), error.localizedDescription)
-            print("[BodyEntryStore] Load error: \(error)")
 
+            // Error recovery on corrupted data: clear the corrupted file
             entries = []
-
-            // 创建备份
-            if let backupURL = createBackup() {
-                print("[BodyEntryStore] Original data backed up at: \(backupURL.path)")
+            do {
+                // Move the corrupted file to a recovery name so it is not re-read
+                let corruptedURL = Self.storeURL.deletingPathExtension()
+                    .appendingPathExtension("corrupted_\(ISO8601DateFormatter().string(from: Date())).json")
+                try FileManager.default.moveItem(at: Self.storeURL, to: corruptedURL)
+                Self.logger.info("Corrupted data moved to: \(corruptedURL.path)")
+            } catch {
+                // If rename fails, try deleting
+                try? FileManager.default.removeItem(at: Self.storeURL)
+                Self.logger.warning("Could not rename corrupted file; attempted removal.")
             }
 
-            // 触发错误回调
+            // Notify user of the error recovery
             if let errorHandler = loadErrorHandler {
-                DispatchQueue.main.async {
-                    errorHandler(errorMsg)
-                }
+                errorHandler(errorMsg)
             }
         }
     }
@@ -666,6 +798,14 @@ class BodyEntryStore: ObservableObject {
     private func restoreFromBackup(_ backupURL: URL) -> Bool {
         do {
             let data = try Data(contentsOf: backupURL)
+
+            // Safety check: refuse to restore if backup is unreasonably large
+            if data.count > Self.maxBackupSizeBytes {
+                let sizeMB = Double(data.count) / (1024.0 * 1024.0)
+                Self.logger.warning("Backup file is excessively large (\(String(format: "%.1f", sizeMB)) MB). Refusing restore.")
+                return false
+            }
+
             entries = try JSONDecoder().decode([BodyEntry].self, from: data)
             sortEntries()
             // 删除旧的备份文件，保留最新的一个
@@ -675,10 +815,10 @@ class BodyEntryStore: ObservableObject {
                 .filter { $0.pathExtension == "json" && $0.lastPathComponent.contains("backup_") && $0 != backupURL }
                 .sorted(by: { $0.lastPathComponent < $1.lastPathComponent })
             oldBackups?.forEach { try? FileManager.default.removeItem(at: $0) }
-            print("[BodyEntryStore] Successfully restored from backup: \(backupURL.lastPathComponent)")
+            Self.logger.info("Successfully restored from backup: \(backupURL.lastPathComponent)")
             return true
         } catch {
-            print("[BodyEntryStore] Restore from backup error: \(error)")
+            Self.logger.error("Restore from backup error: \(error.localizedDescription)")
             return false
         }
     }

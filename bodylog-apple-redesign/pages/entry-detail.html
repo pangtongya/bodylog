@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>记录详情 - BodyLog</title>
+    <style id="theme-vars">
+/* ═══════════════════════════════════════════════════════════
+   BodyLog — Apple HIG-Inspired Design System
+   "Calm Precision" — where health data meets beauty
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Brand Colors ── */
+  --color-primary: #30D158;
+  --color-primary-deep: #28A745;
+  --color-primary-pale: rgba(48, 209, 88, 0.08);
+  --color-primary-soft: rgba(48, 209, 88, 0.15);
+
+  /* ── Semantic ── */
+  --state-success: #30D158;
+  --state-warning: #FFD60A;
+  --state-danger: #FF453A;
+  --state-info: #0A84FF;
+
+  /* ── Surface Model (Apple HIG Grouped) ── */
+  --surface-base: #F2F2F7;
+  --surface-primary: #FFFFFF;
+  --surface-elevated: #FFFFFF;
+  --surface-secondary: #FFFFFF;
+  --surface-tertiary: #F2F2F7;
+
+  /* ── Text Hierarchy ── */
+  --text-primary: #1C1C1E;
+  --text-secondary: rgba(28, 28, 30, 0.55);
+  --text-tertiary: rgba(28, 28, 30, 0.28);
+  --text-quaternary: rgba(28, 28, 30, 0.15);
+  --text-on-color: #FFFFFF;
+
+  /* ── Separators & Fills ── */
+  --separator: rgba(60, 60, 67, 0.08);
+  --separator-opaque: #C6C6C8;
+  --fill-tertiary: rgba(118, 118, 128, 0.12);
+  --fill-quaternary: rgba(118, 118, 128, 0.08);
+  --fill-secondary: rgba(120, 120, 128, 0.16);
+
+  /* ── Chart Palette ── */
+  --chart-primary: #30D158;
+  --chart-gradient-top: rgba(48, 209, 88, 0.25);
+  --chart-gradient-bottom: rgba(48, 209, 88, 0.01);
+  --chart-danger: #FF453A;
+  --chart-warning: #FF9F0A;
+  --chart-info: #0A84FF;
+  --chart-purple: #BF5AF2;
+
+  /* ── Metric Accent Colors ── */
+  --accent-weight: #30D158;
+  --accent-bodyfat: #0A84FF;
+  --accent-muscle: #FF9F0A;
+  --accent-bmi: #FF453A;
+  --accent-waist: #BF5AF2;
+  --accent-chest: #64D2FF;
+
+  /* ── Typography (SF Pro Scale) ── */
+  --font-system: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', 'PingFang SC', 'Noto Sans CJK SC', sans-serif;
+  --font-mono: 'SF Mono', SFMono-Regular, ui-monospace, 'Cascadia Code', Menlo, monospace;
+
+  /* Dynamic Type scale */
+  --t-caption2: 0.6875rem; /* 11px */
+  --t-caption1: 0.75rem;   /* 12px */
+  --t-footnote: 0.8125rem; /* 13px */
+  --t-subhead: 0.875rem;   /* 14px */
+  --t-body: 0.9375rem;     /* 15px */
+  --t-title3: 1rem;        /* 16px */
+  --t-title2: 1.125rem;    /* 18px */
+  --t-title1: 1.375rem;    /* 22px */
+  --t-large-title: 1.625rem; /* 26px */
+  --t-display1: 2rem;      /* 32px */
+  --t-display2: 2.5rem;    /* 40px */
+  --t-display3: 3.125rem;  /* 50px — hero numbers */
+
+  /* Weights */
+  --w-regular: 400;
+  --w-medium: 500;
+  --w-semibold: 600;
+  --w-bold: 700;
+
+  /* Tracking */
+  --tracking-tight: -0.025em;
+  --tracking-normal: -0.01em;
+  --tracking-wide: 0.02em;
+
+  /* ── Spacing ── */
+  --sp-1: 2px;
+  --sp-2: 4px;
+  --sp-3: 8px;
+  --sp-4: 12px;
+  --sp-5: 16px;
+  --sp-6: 20px;
+  --sp-7: 24px;
+  --sp-8: 28px;
+  --sp-9: 32px;
+  --sp-10: 40px;
+  --sp-11: 48px;
+  --sp-12: 64px;
+
+  /* ── Radius (Apple HIG Continuum) ── */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
+  --r-2xl: 20px;
+  --r-full: 9999px;
+
+  /* ── Shadows (ultra-subtle, Apple style) ── */
+  --shadow-1: 0 0.5px 0 rgba(0,0,0,0.04);
+  --shadow-2: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.08);
+  --shadow-modal: 0 24px 80px rgba(0,0,0,0.14);
+
+  /* ── Motion ── */
+  --ease-default: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 120ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+}
+
+/* ── Dark Mode ── */
+.dark {
+  --surface-base: #000000;
+  --surface-primary: #1C1C1E;
+  --surface-elevated: #2C2C2E;
+  --surface-secondary: #1C1C1E;
+  --surface-tertiary: #2C2C2E;
+
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(235, 235, 245, 0.55);
+  --text-tertiary: rgba(235, 235, 245, 0.28);
+  --text-quaternary: rgba(235, 235, 245, 0.15);
+  --text-on-color: #FFFFFF;
+
+  --separator: rgba(235, 235, 245, 0.08);
+  --separator-opaque: #38383A;
+  --fill-tertiary: rgba(118, 118, 128, 0.24);
+  --fill-quaternary: rgba(118, 118, 128, 0.16);
+  --fill-secondary: rgba(120, 120, 128, 0.24);
+
+  --color-primary-pale: rgba(48, 209, 88, 0.12);
+  --color-primary-soft: rgba(48, 209, 88, 0.22);
+
+  --shadow-1: 0 0.5px 0 rgba(0,0,0,0.2);
+  --shadow-2: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.4);
+  --shadow-modal: 0 24px 80px rgba(0,0,0,0.5);
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-primary: var(--color-primary);
+  }
+  @layer base {
+    body { background: var(--color-background); color: var(--color-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+    <main style="max-width: 430px; margin: 0 auto; background: var(--surface-base); min-height: 100vh; padding-bottom: var(--sp-10);">
+
+      <!-- 1. NAV BAR -->
+      <div style="padding-top: 56px; display: flex; align-items: center; justify-content: space-between; padding-left: 16px; padding-right: 16px; padding-bottom: 8px;">
+        <button data-dom-id="btn-back-detail" style="display: flex; align-items: center; gap: 4px; background: none; border: none; color: var(--color-primary); cursor: pointer; font-family: var(--font-system); font-size: var(--t-subhead); font-weight: var(--w-medium);">
+          <i data-lucide="chevron-left" style="width: 20px; height: 20px;"></i>
+          <span>返回</span>
+        </button>
+        <span style="font-size: var(--t-title3); font-weight: var(--w-medium); color: var(--text-primary);">6月27日 09:30</span>
+        <button style="background: none; border: none; color: var(--color-primary); cursor: pointer; padding: 4px;">
+          <i data-lucide="ellipsis" style="width: 20px; height: 20px; transform: rotate(90deg);"></i>
+        </button>
+      </div>
+
+      <!-- 2. METRICS GRID -->
+      <div style="margin-top: 12px; padding-left: 16px; padding-right: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+
+        <!-- Card 1: 体重 -->
+        <div style="background: var(--surface-primary); border-radius: var(--r-lg); padding: 14px; border: 1px solid var(--separator); box-shadow: var(--shadow-1);">
+          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
+            <div style="width: 28px; height: 28px; border-radius: var(--r-sm); background: rgba(48, 209, 88, 0.12); display: flex; align-items: center; justify-content: center;">
+              <i data-lucide="scale" style="width: 14px; height: 14px; color: var(--accent-weight);"></i>
+            </div>
+            <span style="font-size: var(--t-caption1); color: var(--text-secondary); font-weight: var(--w-medium);">体重</span>
+          </div>
+          <div style="font-size: 24px; font-weight: var(--w-bold); color: var(--text-primary); font-family: var(--font-mono); letter-spacing: var(--tracking-tight);">72.5 <span style="font-size: var(--t-subhead); font-weight: var(--w-regular); color: var(--text-secondary);">kg</span></div>
+        </div>
+
+        <!-- Card 2: 体脂率 -->
+        <div style="background: var(--surface-primary); border-radius: var(--r-lg); padding: 14px; border: 1px solid var(--separator); box-shadow: var(--shadow-1);">
+          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
+            <div style="width: 28px; height: 28px; border-radius: var(--r-sm); background: rgba(10, 132, 255, 0.12); display: flex; align-items: center; justify-content: center;">
+              <i data-lucide="droplets" style="width: 14px; height: 14px; color: var(--chart-info);"></i>
+            </div>
+            <span style="font-size: var(--t-caption1); color: var(--text-secondary); font-weight: var(--w-medium);">体脂率</span>
+          </div>
+          <div style="font-size: 24px; font-weight: var(--w-bold); color: var(--text-primary); font-family: var(--font-mono); letter-spacing: var(--tracking-tight);">18.2 <span style="font-size: var(--t-subhead); font-weight: var(--w-regular); color: var(--text-secondary);">%</span></div>
+        </div>
+
+        <!-- Card 3: 肌肉量 -->
+        <div style="background: var(--surface-primary); border-radius: var(--r-lg); padding: 14px; border: 1px solid var(--separator); box-shadow: var(--shadow-1);">
+          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
+            <div style="width: 28px; height: 28px; border-radius: var(--r-sm); background: rgba(255, 159, 10, 0.12); display: flex; align-items: center; justify-content: center;">
+              <i data-lucide="dumbbell" style="width: 14px; height: 14px; color: var(--chart-warning);"></i>
+            </div>
+            <span style="font-size: var(--t-caption1); color: var(--text-secondary); font-weight: var(--w-medium);">肌肉量</span>
+          </div>
+          <div style="font-size: 24px; font-weight: var(--w-bold); color: var(--text-primary); font-family: var(--font-mono); letter-spacing: var(--tracking-tight);">35.1 <span style="font-size: var(--t-subhead); font-weight: var(--w-regular); color: var(--text-secondary);">kg</span></div>
+        </div>
+
+        <!-- Card 4: BMI -->
+        <div style="background: var(--surface-primary); border-radius: var(--r-lg); padding: 14px; border: 1px solid var(--separator); box-shadow: var(--shadow-1);">
+          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
+            <div style="width: 28px; height: 28px; border-radius: var(--r-sm); background: rgba(191, 90, 242, 0.12); display: flex; align-items: center; justify-content: center;">
+              <i data-lucide="ruler" style="width: 14px; height: 14px; color: var(--chart-purple);"></i>
+            </div>
+            <span style="font-size: var(--t-caption1); color: var(--text-secondary); font-weight: var(--w-medium);">BMI</span>
+          </div>
+          <div style="font-size: 24px; font-weight: var(--w-bold); color: var(--text-primary); font-family: var(--font-mono); letter-spacing: var(--tracking-tight);">23.7</div>
+        </div>
+
+      </div>
+
+      <!-- 3. PHOTO SECTION -->
+      <div style="margin-top: 16px; padding-left: 16px; padding-right: 16px; position: relative;">
+        <div style="background: var(--surface-tertiary); border-radius: var(--r-xl); height: 280px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; position: relative; overflow: hidden;">
+          <i data-lucide="image" style="width: 36px; height: 36px; color: var(--text-tertiary);"></i>
+          <span style="font-size: var(--t-subhead); color: var(--text-tertiary);">未拍摄照片</span>
+
+          <!-- Bottom-right overlay button -->
+          <div style="position: absolute; bottom: 12px; right: 12px; display: flex; align-items: center; gap: 6px;">
+            <button style="background: var(--color-primary); color: var(--text-on-color); border: none; border-radius: var(--r-md); padding: 6px 14px; font-family: var(--font-system); font-size: var(--t-caption1); font-weight: var(--w-semibold); cursor: pointer; display: flex; align-items: center; gap: 4px;">
+              对比照片
+            </button>
+            <!-- PRO badge -->
+            <span style="background: var(--fill-secondary); color: var(--text-secondary); border-radius: var(--r-full); padding: 4px 8px; font-size: 10px; font-weight: var(--w-bold); display: flex; align-items: center; gap: 3px; letter-spacing: 0.03em;">
+              <i data-lucide="lock" style="width: 10px; height: 10px;"></i>
+              PRO
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. NOTE CARD -->
+      <div style="margin-top: 16px; padding-left: 16px; padding-right: 16px;">
+        <div style="background: var(--surface-primary); border-radius: var(--r-lg); padding: 16px; border: 1px solid var(--separator); box-shadow: var(--shadow-1); display: flex; gap: 12px; align-items: flex-start;">
+          <div style="width: 32px; height: 32px; border-radius: var(--r-sm); background: var(--color-primary-pale); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <i data-lucide="message-circle" style="width: 16px; height: 16px; color: var(--color-primary);"></i>
+          </div>
+          <p style="font-size: var(--t-body); color: var(--text-primary); line-height: 1.5; margin: 0;">今天训练了上肢，感觉状态不错</p>
+        </div>
+      </div>
+
+      <!-- 5. METRIC CHANGES CARD -->
+      <div style="margin-top: 16px; padding-left: 16px; padding-right: 16px;">
+        <span style="font-size: var(--t-footnote); font-weight: var(--w-medium); color: var(--text-secondary); text-transform: uppercase; letter-spacing: var(--tracking-wide); display: block; margin-bottom: 8px;">与上次对比</span>
+
+        <div style="background: var(--surface-primary); border-radius: var(--r-lg); border: 1px solid var(--separator); box-shadow: var(--shadow-1); overflow: hidden;">
+
+          <!-- Row 1: 体重 -->
+          <div style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-size: var(--t-subhead); color: var(--text-primary); font-weight: var(--w-regular);">体重</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: var(--t-caption1); color: var(--text-secondary);">73.1 → 72.5 kg</span>
+              <span style="font-size: var(--t-subhead); font-weight: var(--w-semibold); color: var(--state-success); display: flex; align-items: center; gap: 2px;">
+                ▼ 0.6 kg
+              </span>
+            </div>
+          </div>
+          <div style="height: 1px; background: var(--separator); margin-left: 16px;"></div>
+
+          <!-- Row 2: 体脂率 -->
+          <div style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-size: var(--t-subhead); color: var(--text-primary); font-weight: var(--w-regular);">体脂率</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: var(--t-caption1); color: var(--text-secondary);">18.8 → 18.2 %</span>
+              <span style="font-size: var(--t-subhead); font-weight: var(--w-semibold); color: var(--state-success); display: flex; align-items: center; gap: 2px;">
+                ▼ 0.6 %
+              </span>
+            </div>
+          </div>
+          <div style="height: 1px; background: var(--separator); margin-left: 16px;"></div>
+
+          <!-- Row 3: 肌肉量 -->
+          <div style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-size: var(--t-subhead); color: var(--text-primary); font-weight: var(--w-regular);">肌肉量</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: var(--t-caption1); color: var(--text-secondary);">34.9 → 35.1 kg</span>
+              <span style="font-size: var(--t-subhead); font-weight: var(--w-semibold); color: var(--chart-warning); display: flex; align-items: center; gap: 2px;">
+                ▲ 0.2 kg
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

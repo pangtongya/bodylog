@@ -1,0 +1,77 @@
+FormLog Privacy Policy Notes
+============================
+
+These notes outline the key privacy-related aspects of FormLog for App Store submission purposes. They should be used to draft the official Privacy Policy page hosted at the declared Privacy Policy URL.
+
+Data Storage
+------------
+- All user data is stored exclusively on the local device.
+- Body entries, goals, achievements, and app settings are persisted using SwiftData/UserDefaults on the device.
+- No cloud database, no remote server, no backend of any kind.
+- There is no cloud sync functionality. Data never leaves the device under normal operation.
+
+Photo Storage
+-------------
+- Progress photos are stored in the app's local Documents directory within the app sandbox.
+- Photos are not uploaded to any external server or cloud storage service.
+- Photos remain fully under the user's control. When the app is deleted, the app sandbox (including photos) is removed by iOS per standard behavior.
+- Users can export their data (including photo references) via the CSV export feature.
+
+No Third-Party Analytics
+------------------------
+- FormLog does not integrate any third-party analytics SDK (no Firebase Analytics, no Google Analytics, no Mixpanel, no Flurry, etc.).
+- No usage tracking, no event logging sent externally, no crash reporting service.
+- The app only uses Apple's os.log framework for local debugging, which does not transmit data externally.
+
+In-App Purchase (RevenueCat)
+------------------------------
+- RevenueCat SDK is integrated for In-App Purchase (IAP) receipt validation.
+- Product ID: com.pangtong.formlog.pro (one-time non-consumable purchase).
+- RevenueCat handles receipt validation server-side on their infrastructure. This is standard practice for StoreKit IAP and does not involve transmitting personal user data beyond what Apple's StoreKit framework requires (anonymous transaction receipts managed by Apple).
+- RevenueCat does not receive or process any body data, photos, or personal health information.
+- No personal identifiers (name, email, phone number) are sent to RevenueCat or any other service.
+
+No Account Registration
+------------------------
+- FormLog does not require user registration, login, or any form of account creation.
+- Users download the app and begin tracking immediately.
+- No email address, phone number, or social media account is collected.
+
+No Data Collection or Sharing
+-----------------------------
+- FormLog does NOT collect any personal data as defined by applicable privacy regulations.
+- FormLog does NOT share any data with third parties.
+- FormLog does NOT use data for advertising purposes.
+- FormLog does NOT build user profiles or track behavior across apps.
+- FormLog does NOT access contacts, location, camera (beyond user-initiated photo capture), microphone, or other sensitive hardware features beyond their intended purpose.
+
+App Store Privacy Nutrition Label
+----------------------------------
+- Data Linked to the User: None collected.
+- Data Not Linked to the User: None collected.
+- Data Used to Track You: No.
+- The PrivacyInfo.xcprivacy manifest declares:
+  - NSPrivacyTracking = false
+  - NSPrivacyCollectedDataTypes = empty array
+  - NSPrivacyAccessedAPITypes: File Timestamp API (C617.1 reason) for reading/writing data file timestamps.
+
+Data Deletion
+-------------
+- Since all data is stored locally, deleting the app removes all user data from the device.
+- There is no server-side data to request deletion for.
+- Users can export their data via CSV before deleting the app.
+
+Children's Privacy
+------------------
+- FormLog is rated 4+ and does not knowingly collect data from children.
+- Since no data is collected or transmitted, there are no COPPA or GDPR-K compliance concerns related to children's data.
+
+Recommendations for Privacy Policy Page
+-----------------------------------------
+The official privacy policy page (hosted at the Privacy Policy URL declared in App Store Connect) should clearly state:
+1. What data the app stores (body metrics, photos, goals, settings -- all local only).
+2. That no data is transmitted to any server.
+3. That no third-party analytics are used.
+4. That RevenueCat is used solely for IAP receipt validation and does not receive personal health data.
+5. How users can delete their data (delete the app; export before deletion).
+6. Contact information for privacy-related inquiries.

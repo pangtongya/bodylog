@@ -2,6 +2,7 @@
 // 身体指标类型定义
 
 import Foundation
+import SwiftUI
 
 /// 支持记录的身体指标类型
 enum BodyMetricType: String, CaseIterable, Codable, Identifiable {
@@ -68,6 +69,22 @@ enum BodyMetricType: String, CaseIterable, Codable, Identifiable {
         switch self {
         case .weight, .bodyFat, .muscleMass, .bmi: return .primary
         default: return .measurement
+        }
+    }
+    
+    /// 指标对应的颜色
+    var color: Color {
+        switch self {
+        case .weight: return .formlogPrimary      // Green #30D158
+        case .bodyFat: return .formlogBodyFat      // Blue #0A84FF
+        case .muscleMass: return .formlogMuscle    // Orange #FF9F0A
+        case .bmi: return .formlogBMI              // Red #FF453A
+        case .waist: return .formlogWaist          // Purple #BF5AF2
+        case .hip: return .formlogWaist            // Purple (same as waist)
+        case .chest: return .formlogChest         // Cyan #64D2FF
+        case .leftArm, .rightArm: return .formlogMuscle  // Orange
+        case .leftThigh, .rightThigh: return .formlogBodyFat  // Blue
+        case .neck: return .formlogBMI             // Red
         }
     }
 

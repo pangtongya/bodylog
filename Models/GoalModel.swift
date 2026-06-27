@@ -69,9 +69,9 @@ struct GoalModel: Identifiable, Codable, Equatable {
             let done = currentValue - startValue
             return max(0, min(1, done / total))
         case .maintain:
-            // Continuous progress for maintain goals
             let diff = abs(currentValue - targetValue)
-            let maxDeviation = startValue * 0.05 // 5% of start value as max deviation
+            let maxDeviation = max(startValue * 0.05, 0.5) // at least 0.5 to prevent divide-by-zero
+            guard maxDeviation > 0 else { return 1.0 }
             return max(0, 1 - diff / maxDeviation)
         }
     }

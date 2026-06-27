@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>目标</title>
+    <style id="theme-vars">
+/* ═══════════════════════════════════════════════════════════
+   BodyLog — Apple HIG-Inspired Design System
+   "Calm Precision" — where health data meets beauty
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Brand Colors ── */
+  --color-primary: #30D158;
+  --color-primary-deep: #28A745;
+  --color-primary-pale: rgba(48, 209, 88, 0.08);
+  --color-primary-soft: rgba(48, 209, 88, 0.15);
+
+  /* ── Semantic ── */
+  --state-success: #30D158;
+  --state-warning: #FFD60A;
+  --state-danger: #FF453A;
+  --state-info: #0A84FF;
+
+  /* ── Surface Model (Apple HIG Grouped) ── */
+  --surface-base: #F2F2F7;
+  --surface-primary: #FFFFFF;
+  --surface-elevated: #FFFFFF;
+  --surface-secondary: #FFFFFF;
+  --surface-tertiary: #F2F2F7;
+
+  /* ── Text Hierarchy ── */
+  --text-primary: #1C1C1E;
+  --text-secondary: rgba(28, 28, 30, 0.55);
+  --text-tertiary: rgba(28, 28, 30, 0.28);
+  --text-quaternary: rgba(28, 28, 30, 0.15);
+  --text-on-color: #FFFFFF;
+
+  /* ── Separators & Fills ── */
+  --separator: rgba(60, 60, 67, 0.08);
+  --separator-opaque: #C6C6C8;
+  --fill-tertiary: rgba(118, 118, 128, 0.12);
+  --fill-quaternary: rgba(118, 118, 128, 0.08);
+  --fill-secondary: rgba(120, 120, 128, 0.16);
+
+  /* ── Chart Palette ── */
+  --chart-primary: #30D158;
+  --chart-gradient-top: rgba(48, 209, 88, 0.25);
+  --chart-gradient-bottom: rgba(48, 209, 88, 0.01);
+  --chart-danger: #FF453A;
+  --chart-warning: #FF9F0A;
+  --chart-info: #0A84FF;
+  --chart-purple: #BF5AF2;
+
+  /* ── Metric Accent Colors ── */
+  --accent-weight: #30D158;
+  --accent-bodyfat: #0A84FF;
+  --accent-muscle: #FF9F0A;
+  --accent-bmi: #FF453A;
+  --accent-waist: #BF5AF2;
+  --accent-chest: #64D2FF;
+
+  /* ── Typography (SF Pro Scale) ── */
+  --font-system: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', 'PingFang SC', 'Noto Sans CJK SC', sans-serif;
+  --font-mono: 'SF Mono', SFMono-Regular, ui-monospace, 'Cascadia Code', Menlo, monospace;
+
+  /* Dynamic Type scale */
+  --t-caption2: 0.6875rem; /* 11px */
+  --t-caption1: 0.75rem;   /* 12px */
+  --t-footnote: 0.8125rem; /* 13px */
+  --t-subhead: 0.875rem;   /* 14px */
+  --t-body: 0.9375rem;     /* 15px */
+  --t-title3: 1rem;        /* 16px */
+  --t-title2: 1.125rem;    /* 18px */
+  --t-title1: 1.375rem;    /* 22px */
+  --t-large-title: 1.625rem; /* 26px */
+  --t-display1: 2rem;      /* 32px */
+  --t-display2: 2.5rem;    /* 40px */
+  --t-display3: 3.125rem;  /* 50px — hero numbers */
+
+  /* Weights */
+  --w-regular: 400;
+  --w-medium: 500;
+  --w-semibold: 600;
+  --w-bold: 700;
+
+  /* Tracking */
+  --tracking-tight: -0.025em;
+  --tracking-normal: -0.01em;
+  --tracking-wide: 0.02em;
+
+  /* ── Spacing ── */
+  --sp-1: 2px;
+  --sp-2: 4px;
+  --sp-3: 8px;
+  --sp-4: 12px;
+  --sp-5: 16px;
+  --sp-6: 20px;
+  --sp-7: 24px;
+  --sp-8: 28px;
+  --sp-9: 32px;
+  --sp-10: 40px;
+  --sp-11: 48px;
+  --sp-12: 64px;
+
+  /* ── Radius (Apple HIG Continuum) ── */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
+  --r-2xl: 20px;
+  --r-full: 9999px;
+
+  /* ── Shadows (ultra-subtle, Apple style) ── */
+  --shadow-1: 0 0.5px 0 rgba(0,0,0,0.04);
+  --shadow-2: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.08);
+  --shadow-modal: 0 24px 80px rgba(0,0,0,0.14);
+
+  /* ── Motion ── */
+  --ease-default: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 120ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+}
+
+/* ── Dark Mode ── */
+.dark {
+  --surface-base: #000000;
+  --surface-primary: #1C1C1E;
+  --surface-elevated: #2C2C2E;
+  --surface-secondary: #1C1C1E;
+  --surface-tertiary: #2C2C2E;
+
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(235, 235, 245, 0.55);
+  --text-tertiary: rgba(235, 235, 245, 0.28);
+  --text-quaternary: rgba(235, 235, 245, 0.15);
+  --text-on-color: #FFFFFF;
+
+  --separator: rgba(235, 235, 245, 0.08);
+  --separator-opaque: #38383A;
+  --fill-tertiary: rgba(118, 118, 128, 0.24);
+  --fill-quaternary: rgba(118, 118, 128, 0.16);
+  --fill-secondary: rgba(120, 120, 128, 0.24);
+
+  --color-primary-pale: rgba(48, 209, 88, 0.12);
+  --color-primary-soft: rgba(48, 209, 88, 0.22);
+
+  --shadow-1: 0 0.5px 0 rgba(0,0,0,0.2);
+  --shadow-2: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.4);
+  --shadow-modal: 0 24px 80px rgba(0,0,0,0.5);
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-primary: var(--color-primary);
+  }
+  @layer base {
+    body { background: var(--color-background); color: var(--color-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+    <main style="
+      max-width: 430px;
+      margin: 0 auto;
+      padding-bottom: 60px;
+      background: var(--surface-base);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      font-family: var(--font-system);
+    ">
+
+      <!-- ════════════════════════════════════════
+           1. HEADER
+           ════════════════════════════════════════ -->
+      <div style="
+        padding: 56px 20px 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      ">
+        <div>
+          <h1 style="
+            font-size: var(--t-display1);
+            font-weight: var(--w-bold);
+            letter-spacing: var(--tracking-tight);
+            color: var(--text-primary);
+            margin: 0;
+            line-height: 1.1;
+          ">目标</h1>
+          <p style="
+            font-size: var(--t-body);
+            color: var(--text-secondary);
+            margin: 4px 0 0;
+          ">1 个进行中</p>
+        </div>
+        <button data-dom-id="btn-add-goal" style="
+          width: 32px;
+          height: 32px;
+          border-radius: var(--r-full);
+          background: var(--color-primary-pale);
+          border: none;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        ">
+          <i data-lucide="plus" style="width: 16px; height: 16px; color: var(--color-primary);"></i>
+        </button>
+      </div>
+
+      <!-- ════════════════════════════════════════
+           2. HERO GOAL RING — THE SOUL ELEMENT
+           ════════════════════════════════════════ -->
+      <div style="
+        margin-top: 24px;
+        padding: 0 20px;
+      ">
+        <div style="
+          background: var(--surface-primary);
+          border-radius: var(--r-2xl);
+          padding: 28px 24px;
+          border: 1px solid var(--separator);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          box-shadow: var(--shadow-1);
+        ">
+          <!-- SVG Ring 200px -->
+          <div style="position: relative; width: 200px; height: 200px;">
+            <svg width="200" height="200" viewBox="0 0 200 200" style="transform: rotate(-90deg);">
+              <!-- Track -->
+              <circle cx="100" cy="100" r="86" fill="none"
+                stroke="var(--fill-quaternary)" stroke-width="14" />
+              <!-- Progress 65% -->
+              <circle cx="100" cy="100" r="86" fill="none"
+                stroke="var(--color-primary)" stroke-width="14"
+                stroke-linecap="round"
+                stroke-dasharray="540.35"
+                stroke-dashoffset="189.12"
+                style="transition: stroke-dashoffset var(--duration-slow) var(--ease-default);" />
+            </svg>
+            <!-- Center text -->
+            <div style="
+              position: absolute;
+              inset: 0;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              transform: rotate(0deg);
+            ">
+              <span style="
+                font-size: var(--t-display2);
+                font-weight: var(--w-bold);
+                letter-spacing: var(--tracking-tight);
+                font-family: var(--font-mono);
+                color: var(--text-primary);
+                line-height: 1;
+              ">65%</span>
+              <span style="
+                font-size: var(--t-footnote);
+                color: var(--text-secondary);
+                margin-top: 2px;
+              ">体重</span>
+            </div>
+          </div>
+
+          <!-- Below ring: 3-column start / arrow / target -->
+          <div style="
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+          ">
+            <div style="text-align: left;">
+              <span style="
+                display: block;
+                font-family: var(--font-mono);
+                font-size: var(--t-title3);
+                font-weight: var(--w-semibold);
+                color: var(--text-primary);
+                line-height: 1.2;
+              ">74.3 kg</span>
+              <span style="
+                font-size: var(--t-caption1);
+                color: var(--text-tertiary);
+              ">起始</span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: center;">
+              <i data-lucide="arrow-down" style="width: 18px; height: 18px; color: var(--color-primary);"></i>
+            </div>
+            <div style="text-align: right;">
+              <span style="
+                display: block;
+                font-family: var(--font-mono);
+                font-size: var(--t-title3);
+                font-weight: var(--w-semibold);
+                color: var(--text-primary);
+                line-height: 1.2;
+              ">70.0 kg</span>
+              <span style="
+                font-size: var(--t-caption1);
+                color: var(--text-tertiary);
+              ">目标</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════
+           3. OTHER GOALS SECTION
+           ════════════════════════════════════════ -->
+      <div style="margin-top: 28px; padding: 0 20px;">
+        <span style="
+          display: block;
+          font-size: var(--t-footnote);
+          font-weight: var(--w-medium);
+          color: var(--text-secondary);
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          padding-left: 4px;
+          margin-bottom: 10px;
+        ">其他目标</span>
+
+        <!-- Body Fat Goal Card -->
+        <div style="
+          background: var(--surface-primary);
+          border-radius: var(--r-xl);
+          padding: 16px;
+          border: 1px solid var(--separator);
+          box-shadow: var(--shadow-1);
+        ">
+          <!-- Top row -->
+          <div style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          ">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="
+                width: 32px;
+                height: 32px;
+                border-radius: var(--r-full);
+                background: rgba(10, 132, 255, 0.1);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              ">
+                <i data-lucide="scale" style="width: 16px; height: 16px; color: var(--chart-info);"></i>
+              </div>
+              <span style="
+                font-size: var(--t-subhead);
+                font-weight: var(--w-medium);
+                color: var(--text-primary);
+              ">体脂率</span>
+              <span style="
+                font-size: var(--t-caption1);
+                font-weight: var(--w-medium);
+                color: var(--chart-info);
+                background: rgba(10, 132, 255, 0.1);
+                padding: 2px 8px;
+                border-radius: var(--r-full);
+              ">降低</span>
+            </div>
+            <span style="
+              font-size: var(--t-title2);
+              font-weight: var(--w-bold);
+              color: var(--text-primary);
+              font-family: var(--font-mono);
+            ">15.0%</span>
+          </div>
+
+          <!-- Current value -->
+          <p style="
+            font-size: var(--t-footnote);
+            color: var(--text-secondary);
+            margin: 8px 0 0;
+          ">当前 18.2%</p>
+
+          <!-- Progress bar -->
+          <div style="
+            margin-top: 12px;
+            height: 4px;
+            background: var(--fill-quaternary);
+            border-radius: var(--r-full);
+            overflow: hidden;
+          ">
+            <div style="
+              width: 42%;
+              height: 100%;
+              background: var(--chart-info);
+              border-radius: var(--r-full);
+              transition: width var(--duration-slow) var(--ease-default);
+            "></div>
+          </div>
+
+          <!-- Bottom row -->
+          <div style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 8px;
+          ">
+            <span style="
+              font-size: var(--t-caption1);
+              color: var(--text-secondary);
+              font-family: var(--font-mono);
+            ">42%</span>
+            <span style="
+              font-size: var(--t-caption1);
+              color: var(--text-secondary);
+            ">继续加油</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════
+           4. ACHIEVED SECTION
+           ════════════════════════════════════════ -->
+      <div style="margin-top: 28px; padding: 0 20px;">
+        <span style="
+          display: block;
+          font-size: var(--t-footnote);
+          font-weight: var(--w-medium);
+          color: var(--text-secondary);
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          padding-left: 4px;
+          margin-bottom: 10px;
+        ">已达成</span>
+
+        <!-- Achieved Card -->
+        <div style="
+          background: var(--surface-primary);
+          border-radius: var(--r-xl);
+          padding: 16px;
+          border-left: 3px solid var(--state-success);
+          border: 1px solid var(--separator);
+          border-left: 3px solid var(--state-success);
+          box-shadow: var(--shadow-1);
+        ">
+          <!-- Achievement banner -->
+          <div style="
+            background: var(--color-primary);
+            border-radius: var(--r-md);
+            padding: 6px 12px;
+            margin-bottom: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+          ">
+            <i data-lucide="check-circle-2" style="width: 14px; height: 14px; color: var(--text-on-color);"></i>
+            <span style="
+              font-size: var(--t-caption1);
+              font-weight: var(--w-semibold);
+              color: var(--text-on-color);
+            ">目标已达成！</span>
+          </div>
+
+          <!-- Icon row -->
+          <div style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          ">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="
+                width: 32px;
+                height: 32px;
+                border-radius: var(--r-full);
+                background: rgba(255, 159, 10, 0.1);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              ">
+                <i data-lucide="trophy" style="width: 20px; height: 20px; color: var(--chart-warning);"></i>
+              </div>
+              <div>
+                <span style="
+                  display: block;
+                  font-size: var(--t-subhead);
+                  font-weight: var(--w-medium);
+                  color: var(--text-primary);
+                ">肌肉量</span>
+                <span style="
+                  font-size: var(--t-caption1);
+                  color: var(--text-secondary);
+                ">达到 35.0 kg</span>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <!-- Checkmark seal -->
+              <div style="
+                width: 24px;
+                height: 24px;
+                border-radius: var(--r-full);
+                background: rgba(48, 209, 88, 0.1);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              ">
+                <i data-lucide="check" style="width: 14px; height: 14px; color: var(--state-success);"></i>
+              </div>
+              <!-- Share -->
+              <div style="
+                width: 28px;
+                height: 28px;
+                border-radius: var(--r-full);
+                background: var(--fill-quaternary);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+              ">
+                <i data-lucide="square-arrow-out-up-right" style="width: 14px; height: 14px; color: var(--text-secondary);"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════
+           5. BOTTOM TAB BAR
+           ════════════════════════════════════════ -->
+      <nav style="
+        position: fixed;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 430px;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-top: 1px solid var(--separator);
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        padding: 8px 0 28px;
+        z-index: 100;
+      ">
+        <a data-dom-id="tab-home" href="#" style="
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 2px;
+          text-decoration: none;
+          color: var(--text-tertiary);
+          font-size: var(--t-caption2);
+          font-weight: var(--w-medium);
+          transition: color var(--duration-fast) var(--ease-default);
+        ">
+          <i data-lucide="home" style="width: 22px; height: 22px;"></i>
+          <span>首页</span>
+        </a>
+        <a data-dom-id="tab-trend" href="#" style="
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 2px;
+          text-decoration: none;
+          color: var(--text-tertiary);
+          font-size: var(--t-caption2);
+          font-weight: var(--w-medium);
+          transition: color var(--duration-fast) var(--ease-default);
+        ">
+          <i data-lucide="trending-up" style="width: 22px; height: 22px;"></i>
+          <span>趋势</span>
+        </a>
+        <a data-dom-id="tab-goals" href="#" style="
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 2px;
+          text-decoration: none;
+          color: var(--color-primary);
+          font-size: var(--t-caption2);
+          font-weight: var(--w-semibold);
+          transition: color var(--duration-fast) var(--ease-default);
+        ">
+          <i data-lucide="target" style="width: 22px; height: 22px;"></i>
+          <span>目标</span>
+        </a>
+        <a data-dom-id="tab-settings" href="#" style="
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 2px;
+          text-decoration: none;
+          color: var(--text-tertiary);
+          font-size: var(--t-caption2);
+          font-weight: var(--w-medium);
+          transition: color var(--duration-fast) var(--ease-default);
+        ">
+          <i data-lucide="settings" style="width: 22px; height: 22px;"></i>
+          <span>设置</span>
+        </a>
+      </nav>
+
+    </main>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

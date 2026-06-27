@@ -4,7 +4,7 @@
 import XCTest
 @testable import FormLog
 
-@MainActor
+@preconcurrency
 final class FormLogTests: XCTestCase {
 
     var entryStore: BodyEntryStore!
@@ -12,28 +12,32 @@ final class FormLogTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        entryStore = BodyEntryStore()
-        entryStore.entries = []
-        goalStore = GoalStore()
-        goalStore.goals = []
+        MainActor.assumeIsolated {
+            entryStore = BodyEntryStore()
+            entryStore.entries = []
+            goalStore = GoalStore()
+            goalStore.goals = []
+        }
     }
 
     override func tearDown() {
-        entryStore = nil
-        goalStore = nil
+        MainActor.assumeIsolated {
+            entryStore = nil
+            goalStore = nil
+        }
         super.tearDown()
     }
 
     // MARK: - BodyEntry Model Tests
 
-    func testBodyEntryCreation() {
+    @MainActor func testBodyEntryCreation() {
         let entry = BodyEntry(metrics: ["weight": 70.0])
         XCTAssertNotNil(entry.id)
         XCTAssertEqual(entry.value(for: .weight), 70.0)
         XCTAssertTrue(entry.hasAnyMetric)
     }
 
-    func testBodyEntrySetValue() {
+    @MainActor func testBodyEntrySetValue() {
         var entry = BodyEntry()
         entry.setValue(25.5, for: .bodyFat)
         XCTAssertEqual(entry.value(for: .bodyFat), 25.5)
@@ -41,12 +45,12 @@ final class FormLogTests: XCTestCase {
         XCTAssertNil(entry.value(for: .bodyFat))
     }
 
-    func testBodyEntryPrimaryMetric() {
+    @MainActor func testBodyEntryPrimaryMetric() {
         let entry = BodyEntry(metrics: ["weight": 75.0, "bodyFat": 20.0])
         XCTAssertEqual(entry.primaryMetric?.type, .weight)
     }
 
-    func testBodyEntryEquatable() {
+    @MainActor func testBodyEntryEquatable() {
         let e1 = BodyEntry(id: UUID(), metrics: ["weight": 70.0])
         let e2 = BodyEntry(id: e1.id, recordedAt: e1.recordedAt, metrics: ["weight": 70.0])
         XCTAssertEqual(e1, e2)
@@ -54,14 +58,14 @@ final class FormLogTests: XCTestCase {
 
     // MARK: - BodyEntryStore CRUD Tests
 
-    func testAddEntry() {
+    @MainActor func testAddEntry() {
         let entry = BodyEntry(metrics: ["weight": 68.0])
         entryStore.addEntry(entry)
         XCTAssertEqual(entryStore.entries.count, 1)
         XCTAssertEqual(entryStore.entries.first?.value(for: .weight), 68.0)
     }
 
-    func testUpdateEntry() {
+    @MainActor func testUpdateEntry() {
         var entry = BodyEntry(metrics: ["weight": 68.0])
         entryStore.addEntry(entry)
         entry.setValue(67.5, for: .weight)
@@ -69,14 +73,14 @@ final class FormLogTests: XCTestCase {
         XCTAssertEqual(entryStore.entries.first?.value(for: .weight), 67.5)
     }
 
-    func testDeleteEntry() {
+    @MainActor func testDeleteEntry() {
         let entry = BodyEntry(metrics: ["weight": 68.0])
         entryStore.addEntry(entry)
         entryStore.deleteEntry(id: entry.id)
         XCTAssertTrue(entryStore.entries.isEmpty)
     }
 
-    func testEntriesSortedByDate() {
+    @MainActor func testEntriesSortedByDate() {
         let older = BodyEntry(recordedAt: Date().addingTimeInterval(-86400), metrics: ["weight": 70.0])
         let newer = BodyEntry(recordedAt: Date(), metrics: ["weight": 69.0])
         entryStore.addEntry(older)
@@ -86,7 +90,7 @@ final class FormLogTests: XCTestCase {
 
     // MARK: - BodyEntryStore Query Tests
 
-    func testLatestValue() {
+    @MainActor func testLatestValue() {
         let e1 = BodyEntry(recordedAt: Date().addingTimeInterval(-100), metrics: ["weight": 72.0])
         let e2 = BodyEntry(recordedAt: Date(), metrics: ["weight": 70.0])
         entryStore.addEntry(e1)
@@ -94,7 +98,7 @@ final class FormLogTests: XCTestCase {
         XCTAssertEqual(entryStore.latestValue(for: .weight), 70.0)
     }
 
-    func testTotalChange() {
+    @MainActor func testTotalChange() {
         // Start: 75, Latest: 70, change = -5
         let start = BodyEntry(recordedAt: Date().addingTimeInterval(-86400 * 30), metrics: ["weight": 75.0])
         let latest = BodyEntry(recordedAt: Date(), metrics: ["weight": 70.0])
@@ -104,14 +108,14 @@ final class FormLogTests: XCTestCase {
         XCTAssertEqual(change ?? 0, -5.0, accuracy: 0.01)
     }
 
-    func testEmptyStoreQueries() {
+    @MainActor func testEmptyStoreQueries() {
         XCTAssertNil(entryStore.latestValue(for: .weight))
         XCTAssertNil(entryStore.totalChange(for: .weight))
         XCTAssertEqual(entryStore.currentStreak, 0)
         XCTAssertEqual(entryStore.totalRecordDays, 0)
     }
 
-    func testCurrentStreak() {
+    @MainActor func testCurrentStreak() {
         // 3 consecutive days
         for i in 0..<3 {
             let entry = BodyEntry(
@@ -123,7 +127,7 @@ final class FormLogTests: XCTestCase {
         XCTAssertEqual(entryStore.currentStreak, 3)
     }
 
-    func testRecentValues() {
+    @MainActor func testRecentValues() {
         for i in 0..<10 {
             let entry = BodyEntry(
                 recordedAt: Date().addingTimeInterval(Double(-i * 86400)),
@@ -137,21 +141,21 @@ final class FormLogTests: XCTestCase {
 
     // MARK: - GoalModel Tests
 
-    func testGoalProgress_decrease() {
+    @MainActor func testGoalProgress_decrease() {
         let goal = GoalModel(metricType: .weight, targetValue: 65.0, direction: .decrease)
         // Start 75, current 70 → 50%
         let progress = goal.progress(currentValue: 70.0, startValue: 75.0)
         XCTAssertEqual(progress, 0.5, accuracy: 0.01)
     }
 
-    func testGoalProgress_increase() {
+    @MainActor func testGoalProgress_increase() {
         let goal = GoalModel(metricType: .muscleMass, targetValue: 50.0, direction: .increase)
         // Start 40, current 45 → 50%
         let progress = goal.progress(currentValue: 45.0, startValue: 40.0)
         XCTAssertEqual(progress, 0.5, accuracy: 0.01)
     }
 
-    func testGoalIsReached() {
+    @MainActor func testGoalIsReached() {
         let goal = GoalModel(metricType: .weight, targetValue: 65.0, direction: .decrease)
         XCTAssertTrue(goal.isReached(currentValue: 64.9))
         XCTAssertFalse(goal.isReached(currentValue: 65.1))
@@ -159,7 +163,7 @@ final class FormLogTests: XCTestCase {
 
     // MARK: - GoalStore Tests
 
-    func testGoalStoreCRUD() {
+    @MainActor func testGoalStoreCRUD() {
         let goal = GoalModel(metricType: .weight, targetValue: 65.0, direction: .decrease)
         goalStore.addGoal(goal)
         XCTAssertEqual(goalStore.activeGoals.count, 1)
@@ -172,7 +176,7 @@ final class FormLogTests: XCTestCase {
 
     // MARK: - CSV Export Test
 
-    func testCSVExport() {
+    @MainActor func testCSVExport() {
         let entry = BodyEntry(metrics: ["weight": 70.0, "bodyFat": 20.0], note: "test")
         entryStore.addEntry(entry)
         let csv = entryStore.exportCSV()
@@ -183,14 +187,14 @@ final class FormLogTests: XCTestCase {
 
     // MARK: - BodyMetricType Tests
 
-    func testMetricTypeUnits() {
+    @MainActor func testMetricTypeUnits() {
         XCTAssertEqual(BodyMetricType.weight.unit, "kg")
         XCTAssertEqual(BodyMetricType.bodyFat.unit, "%")
         XCTAssertEqual(BodyMetricType.waist.unit, "cm")
         XCTAssertEqual(BodyMetricType.bmi.unit, "")
     }
 
-    func testMetricTypeValidRanges() {
+    @MainActor func testMetricTypeValidRanges() {
         XCTAssertTrue(BodyMetricType.weight.validRange.contains(70))
         XCTAssertFalse(BodyMetricType.weight.validRange.contains(10))
         XCTAssertTrue(BodyMetricType.bodyFat.validRange.contains(20))
@@ -198,7 +202,7 @@ final class FormLogTests: XCTestCase {
 
     // MARK: - Performance Test
 
-    func testPerformance100Entries() {
+    @MainActor func testPerformance100Entries() {
         for i in 0..<100 {
             let entry = BodyEntry(
                 recordedAt: Date().addingTimeInterval(Double(-i * 3600)),

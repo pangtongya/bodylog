@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>照片对比 - BodyLog</title>
+    <style id="theme-vars">
+/* ═══════════════════════════════════════════════════════════
+   BodyLog — Apple HIG-Inspired Design System
+   "Calm Precision" — where health data meets beauty
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Brand Colors ── */
+  --color-primary: #30D158;
+  --color-primary-deep: #28A745;
+  --color-primary-pale: rgba(48, 209, 88, 0.08);
+  --color-primary-soft: rgba(48, 209, 88, 0.15);
+
+  /* ── Semantic ── */
+  --state-success: #30D158;
+  --state-warning: #FFD60A;
+  --state-danger: #FF453A;
+  --state-info: #0A84FF;
+
+  /* ── Surface Model (Apple HIG Grouped) ── */
+  --surface-base: #F2F2F7;
+  --surface-primary: #FFFFFF;
+  --surface-elevated: #FFFFFF;
+  --surface-secondary: #FFFFFF;
+  --surface-tertiary: #F2F2F7;
+
+  /* ── Text Hierarchy ── */
+  --text-primary: #1C1C1E;
+  --text-secondary: rgba(28, 28, 30, 0.55);
+  --text-tertiary: rgba(28, 28, 30, 0.28);
+  --text-quaternary: rgba(28, 28, 30, 0.15);
+  --text-on-color: #FFFFFF;
+
+  /* ── Separators & Fills ── */
+  --separator: rgba(60, 60, 67, 0.08);
+  --separator-opaque: #C6C6C8;
+  --fill-tertiary: rgba(118, 118, 128, 0.12);
+  --fill-quaternary: rgba(118, 118, 128, 0.08);
+  --fill-secondary: rgba(120, 120, 128, 0.16);
+
+  /* ── Chart Palette ── */
+  --chart-primary: #30D158;
+  --chart-gradient-top: rgba(48, 209, 88, 0.25);
+  --chart-gradient-bottom: rgba(48, 209, 88, 0.01);
+  --chart-danger: #FF453A;
+  --chart-warning: #FF9F0A;
+  --chart-info: #0A84FF;
+  --chart-purple: #BF5AF2;
+
+  /* ── Metric Accent Colors ── */
+  --accent-weight: #30D158;
+  --accent-bodyfat: #0A84FF;
+  --accent-muscle: #FF9F0A;
+  --accent-bmi: #FF453A;
+  --accent-waist: #BF5AF2;
+  --accent-chest: #64D2FF;
+
+  /* ── Typography (SF Pro Scale) ── */
+  --font-system: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', 'PingFang SC', 'Noto Sans CJK SC', sans-serif;
+  --font-mono: 'SF Mono', SFMono-Regular, ui-monospace, 'Cascadia Code', Menlo, monospace;
+
+  /* Dynamic Type scale */
+  --t-caption2: 0.6875rem; /* 11px */
+  --t-caption1: 0.75rem;   /* 12px */
+  --t-footnote: 0.8125rem; /* 13px */
+  --t-subhead: 0.875rem;   /* 14px */
+  --t-body: 0.9375rem;     /* 15px */
+  --t-title3: 1rem;        /* 16px */
+  --t-title2: 1.125rem;    /* 18px */
+  --t-title1: 1.375rem;    /* 22px */
+  --t-large-title: 1.625rem; /* 26px */
+  --t-display1: 2rem;      /* 32px */
+  --t-display2: 2.5rem;    /* 40px */
+  --t-display3: 3.125rem;  /* 50px — hero numbers */
+
+  /* Weights */
+  --w-regular: 400;
+  --w-medium: 500;
+  --w-semibold: 600;
+  --w-bold: 700;
+
+  /* Tracking */
+  --tracking-tight: -0.025em;
+  --tracking-normal: -0.01em;
+  --tracking-wide: 0.02em;
+
+  /* ── Spacing ── */
+  --sp-1: 2px;
+  --sp-2: 4px;
+  --sp-3: 8px;
+  --sp-4: 12px;
+  --sp-5: 16px;
+  --sp-6: 20px;
+  --sp-7: 24px;
+  --sp-8: 28px;
+  --sp-9: 32px;
+  --sp-10: 40px;
+  --sp-11: 48px;
+  --sp-12: 64px;
+
+  /* ── Radius (Apple HIG Continuum) ── */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
+  --r-2xl: 20px;
+  --r-full: 9999px;
+
+  /* ── Shadows (ultra-subtle, Apple style) ── */
+  --shadow-1: 0 0.5px 0 rgba(0,0,0,0.04);
+  --shadow-2: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.08);
+  --shadow-modal: 0 24px 80px rgba(0,0,0,0.14);
+
+  /* ── Motion ── */
+  --ease-default: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 120ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+}
+
+/* ── Dark Mode ── */
+.dark {
+  --surface-base: #000000;
+  --surface-primary: #1C1C1E;
+  --surface-elevated: #2C2C2E;
+  --surface-secondary: #1C1C1E;
+  --surface-tertiary: #2C2C2E;
+
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(235, 235, 245, 0.55);
+  --text-tertiary: rgba(235, 235, 245, 0.28);
+  --text-quaternary: rgba(235, 235, 245, 0.15);
+  --text-on-color: #FFFFFF;
+
+  --separator: rgba(235, 235, 245, 0.08);
+  --separator-opaque: #38383A;
+  --fill-tertiary: rgba(118, 118, 128, 0.24);
+  --fill-quaternary: rgba(118, 118, 128, 0.16);
+  --fill-secondary: rgba(120, 120, 128, 0.24);
+
+  --color-primary-pale: rgba(48, 209, 88, 0.12);
+  --color-primary-soft: rgba(48, 209, 88, 0.22);
+
+  --shadow-1: 0 0.5px 0 rgba(0,0,0,0.2);
+  --shadow-2: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.4);
+  --shadow-modal: 0 24px 80px rgba(0,0,0,0.5);
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-primary: var(--color-primary);
+  }
+  @layer base {
+    body { background: var(--color-background); color: var(--color-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+    <main style="max-width: 430px; margin: 0 auto; background: var(--surface-base); min-height: 100vh; padding-bottom: 0;">
+
+      <!-- 1. NAV BAR -->
+      <nav style="padding-top: 56px; padding-left: 20px; padding-right: 20px; display: flex; align-items: center; justify-content: space-between; height: 44px;">
+        <button data-dom-id="btn-back-photo" style="background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; color: var(--color-primary); font-family: var(--font-system); font-size: var(--t-subhead); font-weight: var(--w-medium);">
+          <i data-lucide="chevron-left" style="width: 20px; height: 20px; color: var(--color-primary);"></i>
+          <span>返回</span>
+        </button>
+        <span style="font-family: var(--font-system); font-size: var(--t-title3); font-weight: var(--w-medium); color: var(--text-primary);">照片对比</span>
+        <span style="width: 56px;"></span>
+      </nav>
+
+      <!-- 2. MODE TOGGLE -->
+      <div style="margin-top: 12px; padding: 0 20px;">
+        <div style="display: flex; background: var(--fill-tertiary); border-radius: var(--r-lg); padding: 2px;">
+          <button style="flex: 1; padding: 8px 0; font-family: var(--font-system); font-size: var(--t-subhead); font-weight: var(--w-semibold); color: var(--text-primary); background: var(--surface-primary); border: none; border-radius: var(--r-lg); box-shadow: var(--shadow-1); cursor: pointer;">并排</button>
+          <button style="flex: 1; padding: 8px 0; font-family: var(--font-system); font-size: var(--t-subhead); font-weight: var(--w-regular); color: var(--text-secondary); background: transparent; border: none; border-radius: var(--r-lg); cursor: pointer;">滑动</button>
+        </div>
+      </div>
+
+      <!-- 3. COMPARISON AREA -->
+      <div style="margin-top: 16px; padding: 0 20px; display: flex; gap: 10px;">
+        <!-- Left photo card (Before) -->
+        <div style="flex: 1; position: relative; border-radius: var(--r-lg); overflow: hidden;">
+          <div style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 2; background: var(--color-primary); color: var(--text-on-color); font-family: var(--font-system); font-size: var(--t-caption1); font-weight: var(--w-bold); padding: 3px 10px; border-radius: var(--r-md);">之前</div>
+          <div style="width: 100%; aspect-ratio: 3/4; height: 300px; background: var(--surface-tertiary); border-radius: var(--r-lg); display: flex; align-items: center; justify-content: center;">
+            <i data-lucide="image" style="width: 32px; height: 32px; color: var(--text-quaternary);"></i>
+          </div>
+          <div style="position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.6); color: var(--text-on-color); font-family: var(--font-system); font-size: var(--t-footnote); font-weight: var(--w-regular); padding: 3px 8px; border-radius: var(--r-sm);">3月15日</div>
+        </div>
+        <!-- Right photo card (After) -->
+        <div style="flex: 1; position: relative; border-radius: var(--r-lg); overflow: hidden;">
+          <div style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 2; background: var(--chart-info); color: var(--text-on-color); font-family: var(--font-system); font-size: var(--t-caption1); font-weight: var(--w-bold); padding: 3px 10px; border-radius: var(--r-md);">之后</div>
+          <div style="width: 100%; aspect-ratio: 3/4; height: 300px; background: var(--fill-quaternary); border-radius: var(--r-lg); display: flex; align-items: center; justify-content: center;">
+            <i data-lucide="image" style="width: 32px; height: 32px; color: var(--text-quaternary);"></i>
+          </div>
+          <div style="position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.6); color: var(--text-on-color); font-family: var(--font-system); font-size: var(--t-footnote); font-weight: var(--w-regular); padding: 3px 8px; border-radius: var(--r-sm);">6月27日</div>
+        </div>
+      </div>
+
+      <!-- 4. TIME DIFFERENCE -->
+      <div style="margin-top: 16px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+        <i data-lucide="calendar" style="width: 16px; height: 16px; color: var(--text-secondary);"></i>
+        <span style="font-family: var(--font-system); font-size: var(--t-title3); font-weight: var(--w-semibold); color: var(--text-secondary);">相差 104 天</span>
+      </div>
+
+      <!-- 5. METRIC CHANGES -->
+      <div style="margin-top: 20px; padding: 0 20px;">
+        <div style="font-family: var(--font-system); font-size: var(--t-title3); font-weight: var(--w-bold); color: var(--text-primary); margin-bottom: 12px;">指标变化</div>
+        <div style="background: var(--surface-primary); border-radius: var(--r-xl); border: 1px solid var(--separator); overflow: hidden;">
+          <!-- Row 1: 体重 -->
+          <div style="display: flex; align-items: center; padding: 14px 16px; gap: 12px;">
+            <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--accent-weight); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <i data-lucide="scale" style="width: 14px; height: 14px; color: var(--text-on-color);"></i>
+            </div>
+            <span style="font-family: var(--font-system); font-size: var(--t-body); font-weight: var(--w-medium); color: var(--text-primary); flex: 1;">体重</span>
+            <span style="font-family: var(--font-system); font-size: var(--t-body); font-weight: var(--w-regular); color: var(--text-secondary); text-decoration: line-through;">74.3</span>
+            <span style="font-family: var(--font-system); font-size: var(--t-body); font-weight: var(--w-semibold); color: var(--color-primary); margin-left: 8px;">72.5</span>
+            <span style="font-family: var(--font-system); font-size: var(--t-subhead); font-weight: var(--w-bold); color: var(--state-success); margin-left: 4px;">&#9660; 1.8</span>
+          </div>
+          <div style="height: 1px; background: var(--separator); margin-left: 44px;"></div>
+          <!-- Row 2: 体脂率 -->
+          <div style="display: flex; align-items: center; padding: 14px 16px; gap: 12px;">
+            <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--chart-info); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <i data-lucide="droplets" style="width: 14px; height: 14px; color: var(--text-on-color);"></i>
+            </div>
+            <span style="font-family: var(--font-system); font-size: var(--t-body); font-weight: var(--w-medium); color: var(--text-primary); flex: 1;">体脂率</span>
+            <span style="font-family: var(--font-system); font-size: var(--t-body); font-weight: var(--w-regular); color: var(--text-secondary); text-decoration: line-through;">19.5</span>
+            <span style="font-family: var(--font-system); font-size: var(--t-body); font-weight: var(--w-semibold); color: var(--color-primary); margin-left: 8px;">18.2</span>
+            <span style="font-family: var(--font-system); font-size: var(--t-subhead); font-weight: var(--w-bold); color: var(--state-success); margin-left: 4px;">&#9660; 1.3</span>
+          </div>
+          <div style="height: 1px; background: var(--separator); margin-left: 44px;"></div>
+          <!-- Row 3: 肌肉量 -->
+          <div style="display: flex; align-items: center; padding: 14px 16px; gap: 12px;">
+            <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--chart-warning); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <i data-lucide="dumbbell" style="width: 14px; height: 14px; color: var(--text-on-color);"></i>
+            </div>
+            <span style="font-family: var(--font-system); font-size: var(--t-body); font-weight: var(--w-medium); color: var(--text-primary); flex: 1;">肌肉量</span>
+            <span style="font-family: var(--font-system); font-size: var(--t-body); font-weight: var(--w-regular); color: var(--text-secondary); text-decoration: line-through;">33.8</span>
+            <span style="font-family: var(--font-system); font-size: var(--t-body); font-weight: var(--w-semibold); color: var(--color-primary); margin-left: 8px;">35.1</span>
+            <span style="font-family: var(--font-system); font-size: var(--t-subhead); font-weight: var(--w-bold); color: var(--chart-warning); margin-left: 4px;">&#9650; 1.3</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. ACTION BUTTONS -->
+      <div style="margin-top: 24px; padding: 0 20px 40px;">
+        <button style="width: 100%; height: 50px; background: var(--color-primary); color: var(--text-on-color); font-family: var(--font-system); font-size: var(--t-body); font-weight: var(--w-semibold); border: none; border-radius: var(--r-lg); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+          <i data-lucide="share-2" style="width: 18px; height: 18px;"></i>
+          分享对比
+        </button>
+        <button style="width: 100%; height: 50px; margin-top: 10px; background: var(--color-primary-pale); color: var(--color-primary); font-family: var(--font-system); font-size: var(--t-body); font-weight: var(--w-medium); border: none; border-radius: var(--r-lg); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+          <i data-lucide="download" style="width: 18px; height: 18px;"></i>
+          保存对比图
+        </button>
+      </div>
+
+    </main>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

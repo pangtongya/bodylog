@@ -2,6 +2,7 @@
 // 照片文件管理器 - 管理照片的本地文件存储
 
 import UIKit
+import os.log
 
 /// 照片文件管理器
 /// 职责：
@@ -9,6 +10,8 @@ import UIKit
 /// 2. 根据 filename 加载照片 Data
 /// 3. 删除指定照片文件
 final class PhotoManager: @unchecked Sendable {
+
+    private static let logger = Logger(subsystem: "com.pangtong.formlog", category: "PhotoManager")
 
     static let shared = PhotoManager()
     private let fileManager = FileManager.default
@@ -57,7 +60,7 @@ final class PhotoManager: @unchecked Sendable {
 
     @objc private func handleMemoryWarning() {
         memoryCache.removeAllObjects()
-        print("[PhotoManager] Memory warning - cache cleared")
+        Self.logger.info("Memory warning, cache cleared")
     }
     
     // MARK: - Public API
@@ -71,7 +74,7 @@ final class PhotoManager: @unchecked Sendable {
             try data.write(to: url, options: .atomic)
             return filename
         } catch {
-            print("[PhotoManager] Save error: \(error)")
+            Self.logger.error("Photo save error: \(error)")
             return nil
         }
     }
@@ -80,13 +83,13 @@ final class PhotoManager: @unchecked Sendable {
     func loadPhoto(filename: String) -> Data? {
         // Validate filename to prevent path traversal attacks
         guard !filename.contains("/") && !filename.contains("..") else {
-            print("[PhotoManager] Invalid filename rejected: \(filename)")
+            Self.logger.error("Invalid filename rejected: \(filename)")
             return nil
         }
         let url = photosDirectory.appendingPathComponent(filename)
         // Ensure the resolved path is within photosDirectory
         guard url.path.hasPrefix(photosDirectory.path) else {
-            print("[PhotoManager] Path traversal attempt detected: \(filename)")
+            Self.logger.error("Path traversal attempt detected: \(filename)")
             return nil
         }
 
@@ -106,7 +109,7 @@ final class PhotoManager: @unchecked Sendable {
 
             return data
         } catch {
-            print("[PhotoManager] Load error for \(filename): \(error)")
+            Self.logger.error("Photo load error for \(filename): \(error)")
             return nil
         }
     }
@@ -120,7 +123,7 @@ final class PhotoManager: @unchecked Sendable {
     /// 清空所有缓存
     func clearCache() {
         memoryCache.removeAllObjects()
-        print("[PhotoManager] Memory cache cleared")
+        Self.logger.info("Memory cache cleared")
     }
 
     /// 获取缓存统计信息
@@ -140,7 +143,7 @@ final class PhotoManager: @unchecked Sendable {
                 try fileManager.removeItem(at: url)
             }
         } catch {
-            print("[PhotoManager] Delete error for \(filename): \(error)")
+            Self.logger.error("Photo delete error for \(filename): \(error)")
         }
     }
 
@@ -158,7 +161,7 @@ final class PhotoManager: @unchecked Sendable {
                 }
             }
         } catch {
-            print("[PhotoManager] Calculate storage error: \(error)")
+            Self.logger.error("Calculate storage error: \(error)")
         }
         return totalSize
     }
@@ -170,7 +173,7 @@ final class PhotoManager: @unchecked Sendable {
                                               withIntermediateDirectories: true,
                                               attributes: nil)
             } catch {
-                print("[PhotoManager] Failed to create directory: \(error)")
+                Self.logger.error("Failed to create directory: \(error)")
             }
         }
     }

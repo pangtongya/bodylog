@@ -25,6 +25,9 @@ targets:
           - README.md
           - .git
           - .workbuddy
+          - .claude
+          - .gitnexus
+          - bodylog-apple-redesign
           - Info.plist
           - privacy-policy.html
           - Tests
@@ -32,6 +35,7 @@ targets:
           - "*.py"
           - FormLog.xcodeproj
           - FormLog
+          - FormLogWidget
     settings:
       INFOPLIST_FILE: Info.plist
       PRODUCT_BUNDLE_IDENTIFIER: com.pangtong.formlog
@@ -45,6 +49,7 @@ targets:
       ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
       GENERATE_INFOPLIST_FILE: NO
       LOCALIZATION_PREFERS_STRING_CATALOGS: NO
+    dependencies: []
 
   FormLogTests:
     type: bundle.unit-test
@@ -58,3 +63,23 @@ targets:
       GENERATE_INFOPLIST_FILE: "YES"
     dependencies:
       - target: FormLog
+
+  FormLogWidget:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources:
+      - path: FormLogWidget
+    settings:
+      INFOPLIST_FILE: FormLogWidget/Info.plist
+      PRODUCT_BUNDLE_IDENTIFIER: com.pangtong.formlog.widget
+      CURRENT_PROJECT_VERSION: 1
+      MARKETING_VERSION: 1.0.0
+      SWIFT_VERSION: "5.0"
+      CODE_SIGN_STYLE: Automatic
+      DEVELOPMENT_TEAM: ""
+      SKIP_INSTALL: YES
+      LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"
+    dependencies:
+      - target: FormLog
+        embed: false

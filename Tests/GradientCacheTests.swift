@@ -2,46 +2,48 @@
 // GradientCache 性能优化单元测试
 
 import XCTest
+import SwiftUI
 @testable import FormLog
 
-@MainActor
+@preconcurrency
 final class GradientCacheTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
         // 清除缓存以获得可预测的测试结果
-        GradientCache.clearCache()
-        StringFormatCache.clearCache()
+        MainActor.assumeIsolated {
+            GradientCache.clearCache()
+            StringFormatCache.clearCache()
+        }
     }
     
     override func tearDown() {
-        super.tearDown()
         // 清除缓存
-        GradientCache.clearCache()
-        StringFormatCache.clearCache()
+        MainActor.assumeIsolated {
+            GradientCache.clearCache()
+            StringFormatCache.clearCache()
+        }
+        super.tearDown()
     }
     
     // MARK: - GradientCache 测试
     
-    func testGradientCache_Hit() {
-        // 获取渐变应该被缓存
-        let gradient1 = GradientCache.gradient(for: .weight)
-        let gradient2 = GradientCache.gradient(for: .weight)
-        
-        // 相同的指标应该返回相同的渐变对象（引用相同）
-        XCTAssertTrue(gradient1 === gradient2)
+    @MainActor func testGradientCache_Hit() {
+        _ = GradientCache.gradient(for: .weight)
+        XCTAssertEqual(getGradientCacheCount(), 1)
+        // Second call should not increase cache
+        _ = GradientCache.gradient(for: .weight)
+        XCTAssertEqual(getGradientCacheCount(), 1)
     }
     
-    func testGradientCache_Miss() {
-        // 不同的指标应该创建不同的渐变
-        let weightGradient = GradientCache.gradient(for: .weight)
-        let bodyFatGradient = GradientCache.gradient(for: .bodyFat)
-        
-        // 不同的指标不应该引用相同的渐变
-        XCTAssertFalse(weightGradient === bodyFatGradient)
+    @MainActor func testGradientCache_Miss() {
+        _ = GradientCache.gradient(for: .weight)
+        XCTAssertEqual(getGradientCacheCount(), 1)
+        _ = GradientCache.gradient(for: .bodyFat)
+        XCTAssertEqual(getGradientCacheCount(), 2)
     }
     
-    func testGradientCache_CacheCount() {
+    @MainActor func testGradientCache_CacheCount() {
         // 添加几个不同的渐变到缓存
         _ = GradientCache.gradient(for: .weight)
         _ = GradientCache.gradient(for: .bodyFat)
@@ -52,7 +54,7 @@ final class GradientCacheTests: XCTestCase {
         XCTAssertEqual(cacheCount, 3)
     }
     
-    func testGradientCache_Clear() {
+    @MainActor func testGradientCache_Clear() {
         // 先添加渐变到缓存
         _ = GradientCache.gradient(for: .weight)
         XCTAssertEqual(getGradientCacheCount(), 1)
@@ -64,7 +66,7 @@ final class GradientCacheTests: XCTestCase {
     
     // MARK: - StringFormatCache 测试
     
-    func testStringFormatCache_Hit() {
+    @MainActor func testStringFormatCache_Hit() {
         // 相同的格式和值应该被缓存
         let formatted1 = StringFormatCache.format(3.14159, format: "%.2f")
         let formatted2 = StringFormatCache.format(3.14159, format: "%.2f")
@@ -73,7 +75,7 @@ final class GradientCacheTests: XCTestCase {
         XCTAssertEqual(formatted2, "3.14")
     }
     
-    func testStringFormatCache_DifferentFormats() {
+    @MainActor func testStringFormatCache_DifferentFormats() {
         // 相同的值，不同的格式
         let formatted1 = StringFormatCache.format(3.14159, format: "%.1f")
         let formatted2 = StringFormatCache.format(3.14159, format: "%.2f")
@@ -82,7 +84,7 @@ final class GradientCacheTests: XCTestCase {
         XCTAssertEqual(formatted2, "3.14")
     }
     
-    func testStringFormatCache_DifferentValues() {
+    @MainActor func testStringFormatCache_DifferentValues() {
         // 不同的值，相同的格式
         let formatted1 = StringFormatCache.format(1.23, format: "%.1f")
         let formatted2 = StringFormatCache.format(4.56, format: "%.1f")
@@ -91,7 +93,7 @@ final class GradientCacheTests: XCTestCase {
         XCTAssertEqual(formatted2, "4.6")
     }
     
-    func testStringFormatCache_CacheCount() {
+    @MainActor func testStringFormatCache_CacheCount() {
         // 添加不同的格式化结果到缓存
         _ = StringFormatCache.format(1.0, format: "%.0f")
         _ = StringFormatCache.format(1.0, format: "%.1f")
@@ -101,7 +103,7 @@ final class GradientCacheTests: XCTestCase {
         XCTAssertEqual(cacheCount, 3)
     }
     
-    func testStringFormatCache_Clear() {
+    @MainActor func testStringFormatCache_Clear() {
         // 先添加格式化结果到缓存
         _ = StringFormatCache.format(1.0, format: "%.1f")
         XCTAssertEqual(getStringFormatCacheCount(), 1)
@@ -113,7 +115,7 @@ final class GradientCacheTests: XCTestCase {
     
     // MARK: - 性能测试
     
-    func testGradientCachePerformance() {
+    @MainActor func testGradientCachePerformance() {
         // 测试缓存的性能优势
         measure {
             for _ in 0..<1000 {
@@ -122,7 +124,7 @@ final class GradientCacheTests: XCTestCase {
         }
     }
     
-    func testStringFormatCachePerformance() {
+    @MainActor func testStringFormatCachePerformance() {
         // 测试字符串格式化缓存的性能优势
         measure {
             for i in 0..<1000 {
@@ -131,13 +133,12 @@ final class GradientCacheTests: XCTestCase {
         }
     }
     
-    func testCacheMissPerformance() {
+    @MainActor func testCacheMissPerformance() {
         // 测试没有缓存的性能（用于对比）
         measure {
             for _ in 0..<1000 {
-                // 不使用缓存，直接创建渐变
                 _ = LinearGradient(
-                    colors: [.formlogPrimary.opacity(0.35), .formlogPrimary.opacity(0.02)],
+                    colors: [Color(red: 48/255, green: 209/255, blue: 88/255).opacity(0.35), Color(red: 48/255, green: 209/255, blue: 88/255).opacity(0.02)],
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -147,17 +148,17 @@ final class GradientCacheTests: XCTestCase {
     
     // MARK: - 边界情况测试
     
-    func testStringFormatCache_ZeroValue() {
+    @MainActor func testStringFormatCache_ZeroValue() {
         let formatted = StringFormatCache.format(0.0, format: "%.1f")
         XCTAssertEqual(formatted, "0.0")
     }
     
-    func testStringFormatCache_NegativeValue() {
+    @MainActor func testStringFormatCache_NegativeValue() {
         let formatted = StringFormatCache.format(-1.5, format: "%.1f")
         XCTAssertEqual(formatted, "-1.5")
     }
     
-    func testStringFormatCache_LargeValue() {
+    @MainActor func testStringFormatCache_LargeValue() {
         let formatted = StringFormatCache.format(999999.999, format: "%.1f")
         XCTAssertEqual(formatted, "1000000.0")
     }

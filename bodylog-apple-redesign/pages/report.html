@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>周报 - BodyLog</title>
+    <style id="theme-vars">
+/* ═══════════════════════════════════════════════════════════
+   BodyLog — Apple HIG-Inspired Design System
+   "Calm Precision" — where health data meets beauty
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Brand Colors ── */
+  --color-primary: #30D158;
+  --color-primary-deep: #28A745;
+  --color-primary-pale: rgba(48, 209, 88, 0.08);
+  --color-primary-soft: rgba(48, 209, 88, 0.15);
+
+  /* ── Semantic ── */
+  --state-success: #30D158;
+  --state-warning: #FFD60A;
+  --state-danger: #FF453A;
+  --state-info: #0A84FF;
+
+  /* ── Surface Model (Apple HIG Grouped) ── */
+  --surface-base: #F2F2F7;
+  --surface-primary: #FFFFFF;
+  --surface-elevated: #FFFFFF;
+  --surface-secondary: #FFFFFF;
+  --surface-tertiary: #F2F2F7;
+
+  /* ── Text Hierarchy ── */
+  --text-primary: #1C1C1E;
+  --text-secondary: rgba(28, 28, 30, 0.55);
+  --text-tertiary: rgba(28, 28, 30, 0.28);
+  --text-quaternary: rgba(28, 28, 30, 0.15);
+  --text-on-color: #FFFFFF;
+
+  /* ── Separators & Fills ── */
+  --separator: rgba(60, 60, 67, 0.08);
+  --separator-opaque: #C6C6C8;
+  --fill-tertiary: rgba(118, 118, 128, 0.12);
+  --fill-quaternary: rgba(118, 118, 128, 0.08);
+  --fill-secondary: rgba(120, 120, 128, 0.16);
+
+  /* ── Chart Palette ── */
+  --chart-primary: #30D158;
+  --chart-gradient-top: rgba(48, 209, 88, 0.25);
+  --chart-gradient-bottom: rgba(48, 209, 88, 0.01);
+  --chart-danger: #FF453A;
+  --chart-warning: #FF9F0A;
+  --chart-info: #0A84FF;
+  --chart-purple: #BF5AF2;
+
+  /* ── Metric Accent Colors ── */
+  --accent-weight: #30D158;
+  --accent-bodyfat: #0A84FF;
+  --accent-muscle: #FF9F0A;
+  --accent-bmi: #FF453A;
+  --accent-waist: #BF5AF2;
+  --accent-chest: #64D2FF;
+
+  /* ── Typography (SF Pro Scale) ── */
+  --font-system: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', 'PingFang SC', 'Noto Sans CJK SC', sans-serif;
+  --font-mono: 'SF Mono', SFMono-Regular, ui-monospace, 'Cascadia Code', Menlo, monospace;
+
+  /* Dynamic Type scale */
+  --t-caption2: 0.6875rem; /* 11px */
+  --t-caption1: 0.75rem;   /* 12px */
+  --t-footnote: 0.8125rem; /* 13px */
+  --t-subhead: 0.875rem;   /* 14px */
+  --t-body: 0.9375rem;     /* 15px */
+  --t-title3: 1rem;        /* 16px */
+  --t-title2: 1.125rem;    /* 18px */
+  --t-title1: 1.375rem;    /* 22px */
+  --t-large-title: 1.625rem; /* 26px */
+  --t-display1: 2rem;      /* 32px */
+  --t-display2: 2.5rem;    /* 40px */
+  --t-display3: 3.125rem;  /* 50px — hero numbers */
+
+  /* Weights */
+  --w-regular: 400;
+  --w-medium: 500;
+  --w-semibold: 600;
+  --w-bold: 700;
+
+  /* Tracking */
+  --tracking-tight: -0.025em;
+  --tracking-normal: -0.01em;
+  --tracking-wide: 0.02em;
+
+  /* ── Spacing ── */
+  --sp-1: 2px;
+  --sp-2: 4px;
+  --sp-3: 8px;
+  --sp-4: 12px;
+  --sp-5: 16px;
+  --sp-6: 20px;
+  --sp-7: 24px;
+  --sp-8: 28px;
+  --sp-9: 32px;
+  --sp-10: 40px;
+  --sp-11: 48px;
+  --sp-12: 64px;
+
+  /* ── Radius (Apple HIG Continuum) ── */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
+  --r-2xl: 20px;
+  --r-full: 9999px;
+
+  /* ── Shadows (ultra-subtle, Apple style) ── */
+  --shadow-1: 0 0.5px 0 rgba(0,0,0,0.04);
+  --shadow-2: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.08);
+  --shadow-modal: 0 24px 80px rgba(0,0,0,0.14);
+
+  /* ── Motion ── */
+  --ease-default: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 120ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+}
+
+/* ── Dark Mode ── */
+.dark {
+  --surface-base: #000000;
+  --surface-primary: #1C1C1E;
+  --surface-elevated: #2C2C2E;
+  --surface-secondary: #1C1C1E;
+  --surface-tertiary: #2C2C2E;
+
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(235, 235, 245, 0.55);
+  --text-tertiary: rgba(235, 235, 245, 0.28);
+  --text-quaternary: rgba(235, 235, 245, 0.15);
+  --text-on-color: #FFFFFF;
+
+  --separator: rgba(235, 235, 245, 0.08);
+  --separator-opaque: #38383A;
+  --fill-tertiary: rgba(118, 118, 128, 0.24);
+  --fill-quaternary: rgba(118, 118, 128, 0.16);
+  --fill-secondary: rgba(120, 120, 128, 0.24);
+
+  --color-primary-pale: rgba(48, 209, 88, 0.12);
+  --color-primary-soft: rgba(48, 209, 88, 0.22);
+
+  --shadow-1: 0 0.5px 0 rgba(0,0,0,0.2);
+  --shadow-2: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.4);
+  --shadow-modal: 0 24px 80px rgba(0,0,0,0.5);
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-primary: var(--color-primary);
+  }
+  @layer base {
+    body { background: var(--color-background); color: var(--color-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+    <main>
+
+        <!-- 1. NAV BAR -->
+        <div style="padding-top: 56px; padding-left: 20px; padding-right: 20px; display: flex; align-items: center; justify-content: space-between;">
+            <button data-dom-id="btn-back-report" style="display: flex; align-items: center; gap: 4px; background: none; border: none; cursor: pointer; color: var(--color-primary); font-family: var(--font-system); font-size: var(--t-body); font-weight: var(--w-medium); padding: 0; -webkit-font-smoothing: antialiased;">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="flex-shrink: 0;">
+                    <path d="M12.5 15.5L7 10L12.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>返回</span>
+            </button>
+            <span style="font-size: var(--t-title2); font-weight: var(--w-semibold); color: var(--text-primary);">周报</span>
+            <button style="display: flex; align-items: center; justify-content: center; background: none; border: none; cursor: pointer; color: var(--color-primary); padding: 0;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                    <path d="M4 12V18C4 19.1 4.9 20 6 20H18C19.1 20 20 19.1 20 18V12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M16 6L12 2L8 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 2V15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- 2. DATE RANGE -->
+        <div style="margin-top: 8px; text-align: center;">
+            <span style="font-size: var(--t-body); color: var(--text-secondary);">6月17日 — 6月23日</span>
+        </div>
+
+        <!-- 3. RECORD COUNT CARD -->
+        <div style="margin-top: 16px; padding-left: 20px; padding-right: 20px;">
+            <div class="card" style="text-align: center; padding: 20px;">
+                <div style="display: flex; align-items: baseline; justify-content: center; gap: 2px;">
+                    <span style="font-size: var(--t-display1); font-weight: var(--w-bold); font-family: var(--font-mono); color: var(--color-primary); line-height: 1;">5</span>
+                    <span style="font-size: var(--t-body); color: var(--text-secondary);">/ 7 天</span>
+                </div>
+                <div style="font-size: var(--t-footnote); color: var(--text-secondary); margin-top: 4px;">本周记录</div>
+            </div>
+        </div>
+
+        <!-- 4. WEIGHT METRIC SUMMARY -->
+        <div style="margin-top: 20px; padding-left: 20px; padding-right: 20px;">
+            <div class="section-title">体重变化</div>
+            <div class="card">
+                <div class="metric-row">
+                    <span class="metric-label">本周平均</span>
+                    <span class="metric-value">72.8 kg</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">最轻</span>
+                    <span class="metric-value" style="color: var(--state-success);">72.3 kg</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">最重</span>
+                    <span class="metric-value">73.5 kg</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">趋势</span>
+                    <span class="metric-value" style="color: var(--state-success);">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="vertical-align: -1px; margin-right: 2px; flex-shrink: 0;">
+                            <path d="M6 9L2.5 5.5L5 5.5L5 3L7 3L7 5.5L9.5 5.5L6 9Z" fill="currentColor"/>
+                        </svg>
+                        0.5 kg
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. WEIGHT MINI CHART -->
+        <div style="margin-top: 16px; padding-left: 20px; padding-right: 20px;">
+            <div class="card" style="padding: 16px;">
+                <svg viewBox="0 0 295 130" width="100%" height="120" style="overflow: visible;">
+                    <defs>
+                        <linearGradient id="weightGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="var(--chart-gradient-top)"/>
+                            <stop offset="100%" stop-color="var(--chart-gradient-bottom)"/>
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Grid lines -->
+                    <line x1="20" y1="15" x2="275" y2="15" stroke="var(--separator)" stroke-width="0.5"/>
+                    <line x1="20" y1="45" x2="275" y2="45" stroke="var(--separator)" stroke-width="0.5"/>
+                    <line x1="20" y1="75" x2="275" y2="75" stroke="var(--separator)" stroke-width="0.5"/>
+
+                    <!-- Data: 73.5, 73.2, 72.8, 72.5, 72.3 — chart Y: top=15(low weight), bottom=75(high weight) -->
+                    <!-- 73.5 -> y=75, 73.2 -> y=54, 72.8 -> y=27, 72.5 -> y=15, 72.3 -> y=15 -->
+                    <!-- Recalculate: range 73.5-72.3=1.2, chart height=60px, top=15 -->
+                    <!-- 73.5 -> 75, 73.2 -> 60, 72.8 -> 40, 72.5 -> 25, 72.3 -> 15 -->
+
+                    <!-- Gradient fill -->
+                    <path d="M 57.5 75
+                             C 80 75, 95 60, 112.5 60
+                             C 130 60, 145 40, 162.5 40
+                             C 180 40, 195 25, 217.5 25
+                             C 235 25, 250 15, 262.5 15
+                             L 262.5 85 L 57.5 85 Z"
+                          fill="url(#weightGrad)"/>
+
+                    <!-- Line -->
+                    <path d="M 57.5 75
+                             C 80 75, 95 60, 112.5 60
+                             C 130 60, 145 40, 162.5 40
+                             C 180 40, 195 25, 217.5 25
+                             C 235 25, 250 15, 262.5 15"
+                          class="chart-line"/>
+
+                    <!-- Dots -->
+                    <circle cx="57.5" cy="75" r="3.5" class="chart-dot"/>
+                    <circle cx="112.5" cy="60" r="3.5" class="chart-dot"/>
+                    <circle cx="162.5" cy="40" r="3.5" class="chart-dot"/>
+                    <circle cx="217.5" cy="25" r="3.5" class="chart-dot"/>
+                    <circle cx="262.5" cy="15" r="3.5" class="chart-dot"/>
+
+                    <!-- X-axis labels -->
+                    <text x="57.5" y="102" class="chart-axis-label" text-anchor="middle">周一</text>
+                    <text x="112.5" y="102" class="chart-axis-label" text-anchor="middle">周二</text>
+                    <text x="162.5" y="102" class="chart-axis-label" text-anchor="middle">周三</text>
+                    <text x="217.5" y="102" class="chart-axis-label" text-anchor="middle">周四</text>
+                    <text x="262.5" y="102" class="chart-axis-label" text-anchor="middle">周五</text>
+                </svg>
+            </div>
+        </div>
+
+        <!-- 6. BODY FAT SECTION -->
+        <div style="margin-top: 20px; padding-left: 20px; padding-right: 20px;">
+            <div class="section-title">体脂率变化</div>
+            <div class="card">
+                <div class="metric-row">
+                    <span class="metric-label">本周平均</span>
+                    <span class="metric-value">18.6%</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">最低</span>
+                    <span class="metric-value" style="color: var(--state-success);">17.8%</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">最高</span>
+                    <span class="metric-value">19.5%</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">趋势</span>
+                    <span class="metric-value" style="color: var(--state-success);">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="vertical-align: -1px; margin-right: 2px; flex-shrink: 0;">
+                            <path d="M6 9L2.5 5.5L5 5.5L5 3L7 3L7 5.5L9.5 5.5L6 9Z" fill="currentColor"/>
+                        </svg>
+                        0.8%
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. BODY FAT MINI CHART -->
+        <div style="margin-top: 16px; padding-left: 20px; padding-right: 20px;">
+            <div class="card" style="padding: 16px;">
+                <svg viewBox="0 0 295 130" width="100%" height="120" style="overflow: visible;">
+                    <defs>
+                        <linearGradient id="bodyfatGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="rgba(10, 132, 255, 0.25)"/>
+                            <stop offset="100%" stop-color="rgba(10, 132, 255, 0.01)"/>
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Grid lines -->
+                    <line x1="20" y1="15" x2="275" y2="15" stroke="var(--separator)" stroke-width="0.5"/>
+                    <line x1="20" y1="45" x2="275" y2="45" stroke="var(--separator)" stroke-width="0.5"/>
+                    <line x1="20" y1="75" x2="275" y2="75" stroke="var(--separator)" stroke-width="0.5"/>
+
+                    <!-- Data: 19.5, 19.2, 18.8, 18.4, 17.8 — chart Y: top=15(low), bottom=75(high) -->
+                    <!-- 19.5 -> 75, 19.2 -> 60, 18.8 -> 40, 18.4 -> 25, 17.8 -> 10 -->
+                    <!-- Recalculate: range 19.5-17.8=1.7, chart height=60px, top=15 -->
+                    <!-- 19.5 -> 75, 19.2 -> 64.4, 18.8 -> 50.3, 18.4 -> 36.2, 17.8 -> 15 -->
+
+                    <!-- Gradient fill -->
+                    <path d="M 57.5 75
+                             C 80 75, 95 64, 112.5 64
+                             C 130 64, 145 50, 162.5 50
+                             C 180 50, 195 36, 217.5 36
+                             C 235 36, 250 15, 262.5 15
+                             L 262.5 85 L 57.5 85 Z"
+                          fill="url(#bodyfatGrad)"/>
+
+                    <!-- Line -->
+                    <path d="M 57.5 75
+                             C 80 75, 95 64, 112.5 64
+                             C 130 64, 145 50, 162.5 50
+                             C 180 50, 195 36, 217.5 36
+                             C 235 36, 250 15, 262.5 15"
+                          fill="none" stroke="var(--accent-bodyfat)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+                    <!-- Dots -->
+                    <circle cx="57.5" cy="75" r="3.5" fill="var(--accent-bodyfat)" stroke="var(--surface-primary)" stroke-width="2"/>
+                    <circle cx="112.5" cy="64" r="3.5" fill="var(--accent-bodyfat)" stroke="var(--surface-primary)" stroke-width="2"/>
+                    <circle cx="162.5" cy="50" r="3.5" fill="var(--accent-bodyfat)" stroke="var(--surface-primary)" stroke-width="2"/>
+                    <circle cx="217.5" cy="36" r="3.5" fill="var(--accent-bodyfat)" stroke="var(--surface-primary)" stroke-width="2"/>
+                    <circle cx="262.5" cy="15" r="3.5" fill="var(--accent-bodyfat)" stroke="var(--surface-primary)" stroke-width="2"/>
+
+                    <!-- X-axis labels -->
+                    <text x="57.5" y="102" class="chart-axis-label" text-anchor="middle">周一</text>
+                    <text x="112.5" y="102" class="chart-axis-label" text-anchor="middle">周二</text>
+                    <text x="162.5" y="102" class="chart-axis-label" text-anchor="middle">周三</text>
+                    <text x="217.5" y="102" class="chart-axis-label" text-anchor="middle">周四</text>
+                    <text x="262.5" y="102" class="chart-axis-label" text-anchor="middle">周五</text>
+                </svg>
+            </div>
+        </div>
+
+        <!-- 8. INSIGHT -->
+        <div style="margin-top: 16px; padding-left: 20px; padding-right: 20px;">
+            <div class="card" style="display: flex; align-items: flex-start; gap: 12px; padding: 16px;">
+                <div class="insight-icon-wrap">
+                    <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+                        <path d="M10 2C10 2 4 8 4 12C4 15.3 6.7 18 10 18C13.3 18 16 15.3 16 12C16 8 10 2 10 2Z" fill="var(--chart-warning)"/>
+                    </svg>
+                </div>
+                <span style="font-size: var(--t-body); color: var(--text-primary); line-height: 1.5;">本周体重持续下降，体脂也在降低，训练效果明显</span>
+            </div>
+        </div>
+
+        <!-- 9. SHARE BUTTON -->
+        <div style="margin-top: 24px; padding-left: 20px; padding-right: 20px; padding-bottom: 40px;">
+            <button class="share-btn">
+                分享周报
+            </button>
+        </div>
+
+    </main>
+
+    <style>
+      *, *::before, *::after {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      body {
+        font-family: var(--font-system);
+        background: var(--surface-base);
+        color: var(--text-primary);
+        margin: 0;
+        padding: 0;
+        max-width: 430px;
+        margin-left: auto;
+        margin-right: auto;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* White card */
+      .card {
+        background: var(--surface-primary);
+        border-radius: var(--r-xl);
+        border: 1px solid var(--separator);
+      }
+
+      /* Metric summary row */
+      .metric-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 16px;
+      }
+      .metric-row + .metric-row {
+        border-top: 1px solid var(--separator);
+      }
+      .metric-label {
+        font-size: var(--t-body);
+        color: var(--text-secondary);
+      }
+      .metric-value {
+        font-size: var(--t-body);
+        font-weight: var(--w-semibold);
+        font-family: var(--font-mono);
+        color: var(--text-primary);
+      }
+
+      /* Section title */
+      .section-title {
+        font-size: var(--t-footnote);
+        font-weight: var(--w-semibold);
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 8px;
+      }
+
+      /* SVG chart */
+      .chart-line {
+        fill: none;
+        stroke: var(--chart-primary);
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .chart-dot {
+        fill: var(--chart-primary);
+        stroke: var(--surface-primary);
+        stroke-width: 2;
+      }
+      .chart-axis-label {
+        fill: var(--text-tertiary);
+        font-family: var(--font-system);
+        font-size: 10px;
+      }
+
+      /* Insight card */
+      .insight-icon-wrap {
+        width: 32px;
+        height: 32px;
+        border-radius: var(--r-full);
+        background: var(--color-primary-pale);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      /* Share button */
+      .share-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 14px 0;
+        border-radius: var(--r-lg);
+        background: var(--surface-primary);
+        color: var(--color-primary);
+        font-size: var(--t-body);
+        font-weight: var(--w-semibold);
+        font-family: var(--font-system);
+        border: none;
+        cursor: pointer;
+        transition: opacity var(--duration-fast) var(--ease-default);
+        -webkit-font-smoothing: antialiased;
+      }
+      .share-btn:active {
+        opacity: 0.7;
+      }
+    </style>
+</body>
+</html>

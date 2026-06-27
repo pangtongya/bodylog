@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Untitled</title>
+    <style id="theme-vars">
+/* ═══════════════════════════════════════════════════════════
+   BodyLog — Apple HIG-Inspired Design System
+   "Calm Precision" — where health data meets beauty
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Brand Colors ── */
+  --color-primary: #30D158;
+  --color-primary-deep: #28A745;
+  --color-primary-pale: rgba(48, 209, 88, 0.08);
+  --color-primary-soft: rgba(48, 209, 88, 0.15);
+
+  /* ── Semantic ── */
+  --state-success: #30D158;
+  --state-warning: #FFD60A;
+  --state-danger: #FF453A;
+  --state-info: #0A84FF;
+
+  /* ── Surface Model (Apple HIG Grouped) ── */
+  --surface-base: #F2F2F7;
+  --surface-primary: #FFFFFF;
+  --surface-elevated: #FFFFFF;
+  --surface-secondary: #FFFFFF;
+  --surface-tertiary: #F2F2F7;
+
+  /* ── Text Hierarchy ── */
+  --text-primary: #1C1C1E;
+  --text-secondary: rgba(28, 28, 30, 0.55);
+  --text-tertiary: rgba(28, 28, 30, 0.28);
+  --text-quaternary: rgba(28, 28, 30, 0.15);
+  --text-on-color: #FFFFFF;
+
+  /* ── Separators & Fills ── */
+  --separator: rgba(60, 60, 67, 0.08);
+  --separator-opaque: #C6C6C8;
+  --fill-tertiary: rgba(118, 118, 128, 0.12);
+  --fill-quaternary: rgba(118, 118, 128, 0.08);
+  --fill-secondary: rgba(120, 120, 128, 0.16);
+
+  /* ── Chart Palette ── */
+  --chart-primary: #30D158;
+  --chart-gradient-top: rgba(48, 209, 88, 0.25);
+  --chart-gradient-bottom: rgba(48, 209, 88, 0.01);
+  --chart-danger: #FF453A;
+  --chart-warning: #FF9F0A;
+  --chart-info: #0A84FF;
+  --chart-purple: #BF5AF2;
+
+  /* ── Metric Accent Colors ── */
+  --accent-weight: #30D158;
+  --accent-bodyfat: #0A84FF;
+  --accent-muscle: #FF9F0A;
+  --accent-bmi: #FF453A;
+  --accent-waist: #BF5AF2;
+  --accent-chest: #64D2FF;
+
+  /* ── Typography (SF Pro Scale) ── */
+  --font-system: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', 'PingFang SC', 'Noto Sans CJK SC', sans-serif;
+  --font-mono: 'SF Mono', SFMono-Regular, ui-monospace, 'Cascadia Code', Menlo, monospace;
+
+  /* Dynamic Type scale */
+  --t-caption2: 0.6875rem; /* 11px */
+  --t-caption1: 0.75rem;   /* 12px */
+  --t-footnote: 0.8125rem; /* 13px */
+  --t-subhead: 0.875rem;   /* 14px */
+  --t-body: 0.9375rem;     /* 15px */
+  --t-title3: 1rem;        /* 16px */
+  --t-title2: 1.125rem;    /* 18px */
+  --t-title1: 1.375rem;    /* 22px */
+  --t-large-title: 1.625rem; /* 26px */
+  --t-display1: 2rem;      /* 32px */
+  --t-display2: 2.5rem;    /* 40px */
+  --t-display3: 3.125rem;  /* 50px — hero numbers */
+
+  /* Weights */
+  --w-regular: 400;
+  --w-medium: 500;
+  --w-semibold: 600;
+  --w-bold: 700;
+
+  /* Tracking */
+  --tracking-tight: -0.025em;
+  --tracking-normal: -0.01em;
+  --tracking-wide: 0.02em;
+
+  /* ── Spacing ── */
+  --sp-1: 2px;
+  --sp-2: 4px;
+  --sp-3: 8px;
+  --sp-4: 12px;
+  --sp-5: 16px;
+  --sp-6: 20px;
+  --sp-7: 24px;
+  --sp-8: 28px;
+  --sp-9: 32px;
+  --sp-10: 40px;
+  --sp-11: 48px;
+  --sp-12: 64px;
+
+  /* ── Radius (Apple HIG Continuum) ── */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
+  --r-2xl: 20px;
+  --r-full: 9999px;
+
+  /* ── Shadows (ultra-subtle, Apple style) ── */
+  --shadow-1: 0 0.5px 0 rgba(0,0,0,0.04);
+  --shadow-2: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.08);
+  --shadow-modal: 0 24px 80px rgba(0,0,0,0.14);
+
+  /* ── Motion ── */
+  --ease-default: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 120ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+}
+
+/* ── Dark Mode ── */
+.dark {
+  --surface-base: #000000;
+  --surface-primary: #1C1C1E;
+  --surface-elevated: #2C2C2E;
+  --surface-secondary: #1C1C1E;
+  --surface-tertiary: #2C2C2E;
+
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(235, 235, 245, 0.55);
+  --text-tertiary: rgba(235, 235, 245, 0.28);
+  --text-quaternary: rgba(235, 235, 245, 0.15);
+  --text-on-color: #FFFFFF;
+
+  --separator: rgba(235, 235, 245, 0.08);
+  --separator-opaque: #38383A;
+  --fill-tertiary: rgba(118, 118, 128, 0.24);
+  --fill-quaternary: rgba(118, 118, 128, 0.16);
+  --fill-secondary: rgba(120, 120, 128, 0.24);
+
+  --color-primary-pale: rgba(48, 209, 88, 0.12);
+  --color-primary-soft: rgba(48, 209, 88, 0.22);
+
+  --shadow-1: 0 0.5px 0 rgba(0,0,0,0.2);
+  --shadow-2: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.4);
+  --shadow-modal: 0 24px 80px rgba(0,0,0,0.5);
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-primary: var(--color-primary);
+  }
+  @layer base {
+    body { background: var(--color-background); color: var(--color-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased" style="background:var(--surface-base);font-family:var(--font-system);-webkit-font-smoothing:antialiased;">
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body { max-width: 430px; margin: 0 auto; position: relative; overflow-x: hidden; }
+      .page-scroll { padding-bottom: 120px; }
+      /* Status Bar */
+      .status-bar { position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 430px; z-index: 100; height: 56px; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 24px 8px; pointer-events: none; }
+      .status-time { font-size: 15px; font-weight: 600; letter-spacing: var(--tracking-tight); color: var(--text-primary); }
+      .status-icons { display: flex; gap: 6px; align-items: center; }
+      .status-icons svg { width: 16px; height: 16px; }
+      /* Greeting */
+      .greeting { margin-top: 8px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; }
+      .greeting-title { font-size: var(--t-large-title); font-weight: var(--w-bold); color: var(--text-primary); letter-spacing: var(--tracking-tight); line-height: 1.15; }
+      .greeting-sub { font-size: var(--t-title3); font-weight: var(--w-medium); color: var(--text-secondary); margin-top: 2px; }
+      .avatar { width: 36px; height: 36px; border-radius: var(--r-full); background: var(--color-primary-pale); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: var(--w-semibold); color: var(--color-primary); flex-shrink: 0; }
+      /* Achievement Card */
+      .achievement-card { margin-top: 16px; padding: 0 20px; }
+      .achievement-inner { background: var(--surface-primary); border-radius: var(--r-xl); border: 1px solid var(--separator); padding: 14px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; min-height: 52px; }
+      .achievement-icon { width: 32px; height: 32px; border-radius: var(--r-full); background: rgba(255,159,10,0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+      .achievement-icon svg { width: 16px; height: 16px; color: var(--accent-muscle); }
+      .achievement-info { flex: 1; }
+      .achievement-label { font-size: var(--t-subhead); font-weight: var(--w-semibold); color: var(--text-primary); }
+      .achievement-progress-bar { margin-top: 8px; height: 4px; border-radius: var(--r-full); background: var(--fill-quaternary); overflow: hidden; }
+      .achievement-progress-fill { height: 100%; border-radius: var(--r-full); background: var(--color-primary); width: 71%; }
+      .achievement-sub { font-size: var(--t-caption1); color: var(--text-secondary); margin-top: 2px; }
+      .achievement-chevron { color: var(--text-tertiary); display: flex; align-items: center; flex-shrink: 0; }
+      .achievement-chevron svg { width: 14px; height: 14px; }
+      /* Hero Ring */
+      .hero-ring-section { margin-top: 24px; display: flex; flex-direction: column; align-items: center; padding: 0 20px; }
+      .hero-ring { position: relative; width: 180px; height: 180px; }
+      .hero-ring svg { width: 180px; height: 180px; transform: rotate(-90deg); }
+      .hero-ring-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+      .hero-ring-value { font-size: var(--t-display2); font-weight: var(--w-bold); color: var(--text-primary); letter-spacing: var(--tracking-tight); font-family: var(--font-mono); line-height: 1; }
+      .hero-ring-unit { font-size: var(--t-footnote); color: var(--text-secondary); margin-top: 2px; }
+      .metric-pills { display: flex; gap: 8px; margin-top: 16px; width: 100%; justify-content: center; }
+      .metric-pill { background: var(--surface-primary); border: 1px solid var(--separator); border-radius: var(--r-lg); padding: 10px 14px; display: flex; align-items: center; gap: 8px; cursor: pointer; flex: 1; justify-content: center; min-height: 44px; transition: opacity var(--duration-fast) var(--ease-default); }
+      .metric-pill:active { opacity: 0.7; }
+      .metric-pill-icon { width: 12px; height: 12px; flex-shrink: 0; }
+      .metric-pill-icon svg { width: 12px; height: 12px; }
+      .metric-pill-text { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; }
+      .metric-pill-label { font-size: var(--t-caption1); color: var(--text-secondary); }
+      .metric-pill-value { font-size: var(--t-subhead); font-weight: var(--w-bold); color: var(--text-primary); }
+      /* Insight Cards */
+      .insight-cards { margin-top: 20px; padding: 0 20px; display: flex; flex-direction: column; gap: 10px; }
+      .insight-card { background: var(--surface-primary); border-radius: var(--r-lg); box-shadow: var(--shadow-1); padding: 14px 16px; border-left: 3px solid var(--color-primary); cursor: pointer; min-height: 44px; }
+      .insight-card.blue { border-left-color: var(--chart-info); }
+      .insight-title { font-size: var(--t-subhead); font-weight: var(--w-semibold); color: var(--text-primary); }
+      .insight-sub { font-size: var(--t-footnote); color: var(--text-secondary); margin-top: 4px; }
+      /* Quick Stats */
+      .quick-stats { margin-top: 20px; padding: 0 20px; }
+      .quick-stats-row { display: flex; align-items: center; }
+      .quick-stat-col { flex: 1; text-align: center; padding: 12px 0; cursor: pointer; min-height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+      .quick-stat-value { font-size: var(--t-display1); font-weight: var(--w-bold); color: var(--text-primary); font-family: var(--font-mono); letter-spacing: var(--tracking-tight); line-height: 1; }
+      .quick-stat-value.highlight { color: var(--color-primary); }
+      .quick-stat-label { font-size: var(--t-caption1); color: var(--text-secondary); margin-top: 4px; }
+      .quick-stat-divider { width: 0.5px; height: 36px; background: var(--separator); flex-shrink: 0; }
+      /* Reports Section */
+      .reports-section { margin-top: 20px; padding: 0 20px; }
+      .section-title { font-size: var(--t-title3); font-weight: var(--w-semibold); color: var(--text-primary); padding-left: 4px; }
+      .reports-row { display: flex; gap: 10px; margin-top: 10px; }
+      .report-card { flex: 1; background: var(--surface-primary); border: 1px solid var(--separator); border-radius: var(--r-lg); padding: 14px; cursor: pointer; min-height: 44px; transition: opacity var(--duration-fast) var(--ease-default); }
+      .report-card:active { opacity: 0.7; }
+      .report-icon { width: 36px; height: 36px; border-radius: var(--r-lg); display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+      .report-icon svg { width: 18px; height: 18px; }
+      .report-title { font-size: var(--t-subhead); font-weight: var(--w-semibold); color: var(--text-primary); }
+      .report-sub { font-size: var(--t-caption1); color: var(--text-secondary); margin-top: 2px; }
+      /* History Section */
+      .history-section { margin-top: 24px; padding: 0 20px; }
+      .history-card { background: var(--surface-primary); border-radius: var(--r-xl); overflow: hidden; margin-top: 10px; }
+      .history-row { display: flex; align-items: center; padding: 0 16px; height: 56px; cursor: pointer; min-height: 44px; transition: background var(--duration-fast) var(--ease-default); }
+      .history-row:active { background: var(--fill-quaternary); }
+      .history-time { width: 44px; font-size: var(--t-footnote); color: var(--text-secondary); flex-shrink: 0; font-family: var(--font-mono); }
+      .history-info { flex: 1; margin-left: 4px; }
+      .history-value { font-size: var(--t-body); font-weight: var(--w-semibold); color: var(--text-primary); }
+      .history-detail { font-size: var(--t-caption1); color: var(--text-secondary); margin-top: 1px; }
+      .history-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-left: 8px; }
+      .history-actions svg { width: 16px; height: 16px; color: var(--text-quaternary); }
+      .history-chevron svg { width: 14px; height: 14px; color: var(--text-quaternary); }
+      .history-separator { height: 0.5px; background: var(--separator); margin-left: 60px; }
+      /* FAB */
+      .fab { position: fixed; bottom: 100px; right: 20px; width: 56px; height: 56px; border-radius: var(--r-full); background: var(--color-primary); box-shadow: 0 8px 32px rgba(0,0,0,0.08), 0 4px 16px rgba(48,209,88,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 50; transition: transform var(--duration-fast) var(--ease-spring); border: none; }
+      .fab:active { transform: scale(0.92); }
+      .fab svg { width: 24px; height: 24px; color: #fff; }
+      /* Tab Bar */
+      .tab-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 430px; background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 0.5px solid var(--separator); display: flex; z-index: 100; padding-bottom: env(safe-area-inset-bottom, 34px); }
+      .tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding-top: 8px; padding-bottom: 8px; cursor: pointer; min-height: 44px; background: none; border: none; }
+      .tab-item svg { width: 22px; height: 22px; }
+      .tab-item-label { font-size: 10px; font-weight: var(--w-medium); }
+      .tab-item.active svg { color: var(--color-primary); }
+      .tab-item.active .tab-item-label { color: var(--color-primary); }
+      .tab-item:not(.active) svg { color: var(--text-tertiary); }
+      .tab-item:not(.active) .tab-item-label { color: var(--text-tertiary); }
+    </style>
+    <main class="page-scroll">
+
+      <!-- 1. Status Bar -->
+      <div class="status-bar">
+        <span class="status-time">9:41</span>
+        <div class="status-icons">
+          <svg viewBox="0 0 18 12" fill="none"><rect x="0" y="4" width="3" height="8" rx="0.5" fill="currentColor"/><rect x="4.5" y="2.5" width="3" height="9.5" rx="0.5" fill="currentColor"/><rect x="9" y="1" width="3" height="11" rx="0.5" fill="currentColor"/><rect x="13.5" y="0" width="3" height="12" rx="0.5" fill="currentColor"/></svg>
+          <svg viewBox="0 0 16 12" fill="none"><path d="M1 4.5C3.5 1.5 6.5 0 8 0s4.5 1.5 7 4.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M3.5 6.5C5 4.5 6.8 3.5 8 3.5s3 1 4.5 3" stroke="currentColor" stroke-width="1.2" fill="none"/><circle cx="8" cy="9.5" r="1.5" fill="currentColor"/></svg>
+          <svg viewBox="0 0 27 13" fill="none"><rect x="0" y="0.5" width="23" height="12" rx="2.5" stroke="currentColor" stroke-width="1" opacity="0.4"/><rect x="1.5" y="2" width="19" height="9" rx="1.5" fill="currentColor" opacity="0.4"/><rect x="24" y="3.5" width="2.5" height="7" rx="1" fill="currentColor" opacity="0.4"/><rect x="2" y="3" width="14" height="7" rx="1" fill="#30D158"/></svg>
+        </div>
+      </div>
+
+      <!-- 2. Greeting -->
+      <div class="greeting" style="position:relative;z-index:1;">
+        <div>
+          <div class="greeting-title">早上好</div>
+          <div class="greeting-sub">小明</div>
+        </div>
+        <div class="avatar">明</div>
+      </div>
+
+      <!-- 3. Achievement Progress Card -->
+      <div class="achievement-card" style="position:relative;z-index:1;">
+        <div class="achievement-inner">
+          <div class="achievement-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c.5 2.5-1 4-1 4s2.5-.5 4 1c1 1.5.5 3.5.5 3.5s1.5-1 3-.5c1.5.5 2 2 2 2-1-1-3-.5-4 .5S15 14 12 14c-3 0-5-3-4.5-5S12 2 12 2z"/><path d="M8 14s-1.5 2-2 4c-.5 2 0 4 2 4s4-2 4-4"/></svg>
+          </div>
+          <div class="achievement-info">
+            <div class="achievement-label">即将解锁: 一周坚持</div>
+            <div class="achievement-sub">5/7</div>
+            <div class="achievement-progress-bar">
+              <div class="achievement-progress-fill"></div>
+            </div>
+          </div>
+          <div class="achievement-chevron">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Hero Ring Section -->
+      <div class="hero-ring-section" style="position:relative;z-index:1;">
+        <div class="hero-ring">
+          <svg viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="85" fill="none" stroke="var(--fill-quaternary)" stroke-width="10"/>
+            <circle cx="100" cy="100" r="85" fill="none" stroke="var(--color-primary)" stroke-width="10" stroke-linecap="round"
+              stroke-dasharray="534.07"
+              stroke-dashoffset="149.54"
+              style="transition: stroke-dashoffset 1s var(--ease-default);"/>
+          </svg>
+          <div class="hero-ring-text">
+            <div class="hero-ring-value">72.5</div>
+            <div class="hero-ring-unit">kg</div>
+          </div>
+        </div>
+
+        <!-- Metric Pills -->
+        <div class="metric-pills">
+          <div class="metric-pill">
+            <div class="metric-pill-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-weight)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5.5 8C5.5 8 8 6 12 6s6.5 2 6.5 2M5.5 16c0 0 2.5-2 6.5-2s6.5 2 6.5 2"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+            </div>
+            <div class="metric-pill-text">
+              <span class="metric-pill-label">体重</span>
+              <span class="metric-pill-value">72.5 kg</span>
+            </div>
+          </div>
+          <div class="metric-pill">
+            <div class="metric-pill-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-bodyfat)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8 2 5 5 5 9v6c0 4 3 7 7 7s7-3 7-7V9c0-4-3-7-7-7z"/><path d="M12 22V15"/></svg>
+            </div>
+            <div class="metric-pill-text">
+              <span class="metric-pill-label">体脂</span>
+              <span class="metric-pill-value">18.2%</span>
+            </div>
+          </div>
+          <div class="metric-pill">
+            <div class="metric-pill-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-muscle)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18v-3M10 18v-6M14 18v-4M18 18v-2"/><circle cx="8" cy="6" r="2"/><circle cx="16" cy="8" r="2"/><line x1="10" y1="6" x2="14" y2="8"/></svg>
+            </div>
+            <div class="metric-pill-text">
+              <span class="metric-pill-label">肌肉</span>
+              <span class="metric-pill-value">35.1 kg</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Insight Cards -->
+      <div class="insight-cards" style="position:relative;z-index:1;">
+        <div class="insight-card">
+          <div class="insight-title">已连续记录 12 天</div>
+          <div class="insight-sub">继续保持，习惯正在养成</div>
+        </div>
+        <div class="insight-card blue">
+          <div class="insight-title">距离目标还差 2.5 kg</div>
+          <div class="insight-sub">体重目标：70.0 kg</div>
+        </div>
+      </div>
+
+      <!-- 6. Quick Stats -->
+      <div class="quick-stats" style="position:relative;z-index:1;">
+        <div class="quick-stats-row">
+          <div class="quick-stat-col">
+            <div class="quick-stat-value">45</div>
+            <div class="quick-stat-label">记录天数</div>
+          </div>
+          <div class="quick-stat-divider"></div>
+          <div class="quick-stat-col">
+            <div class="quick-stat-value highlight">12</div>
+            <div class="quick-stat-label">连续天数</div>
+          </div>
+          <div class="quick-stat-divider"></div>
+          <div class="quick-stat-col">
+            <div class="quick-stat-value">5</div>
+            <div class="quick-stat-label">本周记录</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. Reports Section -->
+      <div class="reports-section" style="position:relative;z-index:1;">
+        <div class="section-title">报告</div>
+        <div class="reports-row">
+          <div class="report-card" data-dom-id="card-report-weekly">
+            <div class="report-icon" style="background:var(--color-primary-pale);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 2v4M16 2v4"/><circle cx="12" cy="16" r="1.5" fill="var(--color-primary)" stroke="none"/><line x1="12" y1="14" x2="12" y2="11" stroke="var(--color-primary)" stroke-width="1.8"/></svg>
+            </div>
+            <div class="report-title">周报</div>
+            <div class="report-sub">本周数据总结</div>
+          </div>
+          <div class="report-card">
+            <div class="report-icon" style="background:rgba(10,132,255,0.08);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--chart-info)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 2v4M16 2v4"/><rect x="7" y="14" width="4" height="4" rx="0.5" stroke="none" fill="var(--chart-info)" opacity="0.6"/><rect x="13" y="12" width="4" height="6" rx="0.5" stroke="none" fill="var(--chart-info)"/></svg>
+            </div>
+            <div class="report-title">月报</div>
+            <div class="report-sub">本月里程碑</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. History Section -->
+      <div class="history-section" style="position:relative;z-index:1;">
+        <div class="section-title">历史记录</div>
+        <div class="history-card">
+          <div class="history-row" data-dom-id="row-entry-1">
+            <div class="history-time">09:30</div>
+            <div class="history-info">
+              <div class="history-value">72.5 kg</div>
+              <div class="history-detail">体脂 18.2% · 肌肉 35.1 kg</div>
+            </div>
+            <div class="history-actions">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 00-2 2v9a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            </div>
+            <div class="history-chevron">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+            </div>
+          </div>
+          <div class="history-separator"></div>
+          <div class="history-row">
+            <div class="history-time">08:15</div>
+            <div class="history-info">
+              <div class="history-value">73.1 kg</div>
+              <div class="history-detail">体脂 18.8%</div>
+            </div>
+            <div class="history-actions"></div>
+            <div class="history-chevron">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+            </div>
+          </div>
+          <div class="history-separator"></div>
+          <div class="history-row">
+            <div class="history-time">09:00</div>
+            <div class="history-info">
+              <div class="history-value">73.8 kg</div>
+              <div class="history-detail">体脂 19.1% · 肌肉 34.8 kg</div>
+            </div>
+            <div class="history-actions"></div>
+            <div class="history-chevron">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9. Floating Action Button -->
+      <button class="fab" data-dom-id="cta-log" aria-label="记录数据">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+
+      <!-- 10. Bottom Tab Bar -->
+      <nav class="tab-bar">
+        <button class="tab-item active" data-dom-id="tab-home" style="visibility:hidden;">
+          <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M3.5 12.5l8-8 8 8" opacity="0"/><path d="M4 11l8-8 8 8"/><rect x="6" y="11" width="12" height="10" rx="1"/><rect x="9" y="14" width="6" height="7" rx="0.5"/></svg>
+          <span class="tab-item-label">首页</span>
+        </button>
+        <button class="tab-item" data-dom-id="tab-trend">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20l5-7 4 4 9-11"/></svg>
+          <span class="tab-item-label">趋势</span>
+        </button>
+        <button class="tab-item" data-dom-id="tab-goals">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>
+          <span class="tab-item-label">目标</span>
+        </button>
+        <button class="tab-item" data-dom-id="tab-settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          <span class="tab-item-label">设置</span>
+        </button>
+      </nav>
+
+    </main>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

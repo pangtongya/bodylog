@@ -2,6 +2,7 @@
 // 备份数据迁移管理器
 
 import Foundation
+import os.log
 
 /// 备份数据迁移管理器
 /// 负责处理不同版本之间的数据迁移逻辑
@@ -9,6 +10,8 @@ import Foundation
 final class BackupMigrationManager {
 
     static let shared = BackupMigrationManager()
+
+    private static let logger = Logger(subsystem: "com.pangtong.formlog", category: "BackupMigrationManager")
 
     /// 当前支持的版本
     static let currentVersion = "1.0"
@@ -22,7 +25,7 @@ final class BackupMigrationManager {
     ///   - json: 备份数据（ inout 允许修改）
     /// - Returns: 迁移是否成功
     func migrateBackup(from fromVersion: String, to toVersion: String, json: inout [String: Any]) -> Bool {
-        print("[BackupMigrationManager] Migrating from \(fromVersion) to \(toVersion)")
+        Self.logger.info("Migrating from \(fromVersion) to \(toVersion)")
 
         // 版本相同，无需迁移
         if fromVersion == toVersion {
@@ -31,7 +34,7 @@ final class BackupMigrationManager {
 
         // 不支持的版本
         guard isSupportedVersion(fromVersion) else {
-            print("[BackupMigrationManager] Unsupported backup version: \(fromVersion)")
+            Self.logger.warning("Unsupported backup version: \(fromVersion)")
             return false
         }
 
@@ -41,9 +44,9 @@ final class BackupMigrationManager {
         if success {
             // 更新版本号
             json["version"] = toVersion
-            print("[BackupMigrationManager] Migration successful")
+            Self.logger.info("Migration successful")
         } else {
-            print("[BackupMigrationManager] Migration failed")
+            Self.logger.error("Migration failed")
         }
 
         return success
@@ -89,7 +92,7 @@ final class BackupMigrationManager {
         }
 
         // 未知版本组合
-        print("[BackupMigrationManager] Unknown migration path: \(fromVersion) -> \(toVersion)")
+        Self.logger.warning("Unknown migration path: \(fromVersion) -> \(toVersion)")
         return false
     }
 
@@ -98,7 +101,7 @@ final class BackupMigrationManager {
     /// 1.0 -> 1.1 迁移
     /// 示例：添加新字段或修改数据结构
     private func migrateFromV1_0(toV1_1 json: inout [String: Any]) -> Bool {
-        print("[BackupMigrationManager] Performing 1.0 -> 1.1 migration")
+        Self.logger.info("Performing 1.0 -> 1.1 migration")
 
         // 示例：为 BodyEntry 添加新字段
         if var entriesData = json["entries"] as? Data {
@@ -117,7 +120,7 @@ final class BackupMigrationManager {
 
                 return true
             } catch {
-                print("[BackupMigrationManager] 1.0 -> 1.1 migration error: \(error)")
+                Self.logger.error("1.0 -> 1.1 migration error: \(error)")
                 return false
             }
         }
@@ -128,7 +131,7 @@ final class BackupMigrationManager {
     /// 1.1 -> 1.2 迁移
     /// 示例：修改数据结构
     private func migrateFromV1_1(toV1_2 json: inout [String: Any]) -> Bool {
-        print("[BackupMigrationManager] Performing 1.1 -> 1.2 migration")
+        Self.logger.info("Performing 1.1 -> 1.2 migration")
 
         // 示例：重命名字段或改变数据结构
         // 实际实现取决于具体的版本差异

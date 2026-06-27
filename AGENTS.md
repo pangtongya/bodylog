@@ -42,3 +42,24 @@ This project is indexed by GitNexus as **bodylog** (941 symbols, 2409 relationsh
 | Index, status, clean, wiki CLI commands | `.claude/skills/gitnexus/gitnexus-cli/SKILL.md` |
 
 <!-- gitnexus:end -->
+
+## Developer Info
+
+- **Name:** 庞通 (Pang Tong)
+- **Email:** pongtom@qq.com
+- **App:** FormLog (身体数据追踪)
+- **Bundle ID:** com.pangtong.formlog
+- **App Store:** Global market (zh-Hans + en)
+
+## App Store Submission Checklist
+
+When the user asks for App Store submission materials, automatically include:
+1. Privacy policy URL: https://pangtongya.github.io/bodylog/privacy.html
+2. Support URL: https://pangtongya.github.io/bodylog/support.html
+3. Developer name: 庞通 (Pang Tong), Email: pongtom@qq.com
+4. PrivacyInfo.xcprivacy already configured
+5. InfoPlist.strings for zh-Hans and en (permission descriptions)
+6. Localizable.strings for zh-Hans and en (all UI strings)
+7. App Store listing text (zh-Hans + en) in `/AppStore/` directory
+8. App Icon 1024x1024 (AppIcon-1024.png, 59.5KB, present)
+9. Screenshots (user needs to provide)

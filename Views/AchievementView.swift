@@ -1,5 +1,5 @@
 // AchievementView.swift
-// 成就/里程碑展示视图
+// 成就/里程碑展示视图 — Premium Apple HIG Style
 
 import SwiftUI
 
@@ -13,69 +13,105 @@ struct AchievementView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 24) {
-                    // Summary header
-                    achievementSummary
-                        .padding(.horizontal, 20)
+                    // Ring progress summary
+                    summaryCard
+                        .padding(.horizontal, 16)
 
-                    // Achievement grid by category
+                    // Achievement categories
                     ForEach(AchievementType.Category.allCases, id: \.rawValue) { category in
                         categorySection(category)
-                            .padding(.horizontal, 20)
+                            .padding(.horizontal, 16)
                     }
                 }
                 .padding(.vertical, 16)
             }
-            .background(Color.systemGroupedBackground)
-            .navigationTitle(L10n.string("成就"))
+            .background(Color.formlogBgGrouped)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 16, weight: .semibold))
+                            Text(L10n.string("返回"))
+                                .font(.system(size: 17))
+                        }
+                    }
+                    .foregroundColor(.formlogPrimary)
+                }
+
+                ToolbarItem(placement: .principal) {
+                    Text(L10n.string("成就"))
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundColor(.formlogTextPrimary)
+                }
+
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(L10n.string("完成")) { dismiss() }
                         .foregroundColor(.formlogPrimary)
+                        .font(.system(size: 17))
                 }
             }
         }
     }
 
-    // MARK: - Summary Header
+    // MARK: - Summary Card
 
-    private var achievementSummary: some View {
-        VStack(spacing: 12) {
-            // Progress circle
+    private var summaryCard: some View {
+        VStack(spacing: 16) {
+            // SVG-style ring progress
             ZStack {
+                // Track ring
                 Circle()
-                    .stroke(Color.systemGray5, lineWidth: 8)
-                    .frame(width: 100, height: 100)
+                    .stroke(Color.formlogFillTertiary, lineWidth: 10)
+                    .frame(width: 120, height: 120)
 
+                // Progress ring with trim
                 Circle()
                     .trim(from: 0, to: progressFraction)
-                    .stroke(Color.formlogPrimary, style: StrokeStyle(lineWidth: 8, lineCap: .round))
-                    .frame(width: 100, height: 100)
+                    .stroke(
+                        Color.formlogPrimary,
+                        style: StrokeStyle(lineWidth: 10, lineCap: .round)
+                    )
+                    .frame(width: 120, height: 120)
                     .rotationEffect(.degrees(-90))
-                    .animation(.easeOut(duration: 0.5), value: progressFraction)
+                    .animation(.easeOut(duration: 0.8), value: progressFraction)
 
+                // Center text
                 VStack(spacing: 2) {
                     Text("\(appState.achievements.count)")
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .font(.system(size: 32, weight: .bold, design: .rounded))
                         .foregroundColor(.formlogPrimary)
-                    Text("/ \(AchievementType.allCases.count)")
-                        .font(.system(size: 13))
-                        .foregroundColor(.secondary)
+
+                    Text("\(AchievementType.allCases.count)")
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(.formlogTextSecondary)
+                        .textCase(.uppercase)
                 }
             }
 
-            Text(L10n.string("已解锁成就"))
+            // Unlocked count label
+            Text(L10n.string("\(appState.achievements.count)/\(AchievementType.allCases.count) 已解锁"))
                 .font(.system(size: 15, weight: .medium))
-                .foregroundColor(.secondary)
+                .foregroundColor(.formlogTextSecondary)
         }
-        .padding(24)
-        .background(Color.systemBackground)
-        .cornerRadius(16)
+        .padding(.horizontal, 24)
+        .padding(.vertical, 28)
+        .frame(maxWidth: .infinity)
+        .background(Color.formlogCard)
+        .clipShape(RoundedRectangle(cornerRadius: .radiusXl))
+        .overlay(
+            RoundedRectangle(cornerRadius: .radiusXl)
+                .stroke(Color.formlogSeparator, lineWidth: 1)
+        )
     }
 
     private var progressFraction: CGFloat {
-        guard !AchievementType.allCases.isEmpty else { return 0 }
-        return CGFloat(appState.achievements.count) / CGFloat(AchievementType.allCases.count)
+        let total = AchievementType.allCases.count
+        guard total > 0 else { return 0 }
+        return CGFloat(appState.achievements.count) / CGFloat(total)
     }
 
     // MARK: - Category Section
@@ -84,11 +120,21 @@ struct AchievementView: View {
         let achievementsInCategory = AchievementType.allCases.filter { $0.category == category }
 
         return VStack(alignment: .leading, spacing: 12) {
+            // Section label
             Text(category.localizedName)
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(.secondary)
+                .font(.system(size: 13, weight: .medium))
+                .foregroundColor(.formlogTextSecondary)
+                .textCase(.uppercase)
+                .padding(.leading, 4)
 
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+            // 2x2 grid
+            LazyVGrid(
+                columns: [
+                    GridItem(.flexible(), spacing: 12),
+                    GridItem(.flexible(), spacing: 12)
+                ],
+                spacing: 12
+            ) {
                 ForEach(achievementsInCategory) { type in
                     achievementCard(type)
                 }
@@ -96,68 +142,79 @@ struct AchievementView: View {
         }
     }
 
+    // MARK: - Achievement Card
+
     private func achievementCard(_ type: AchievementType) -> some View {
         let isUnlocked = appState.isAchievementUnlocked(type)
         let progress = AchievementManager.shared.progress(for: type, entryStore: entryStore, goalStore: goalStore)
+        let isInProgress = !isUnlocked && progress != nil && progress!.current > 0
 
-        return VStack(spacing: 8) {
-            // Icon
+        return VStack(spacing: 10) {
+            // Icon circle — 48px
             ZStack {
                 Circle()
-                    .fill(isUnlocked ? Color.formlogPrimary.opacity(0.1) : Color.systemGray6)
+                    .fill(isUnlocked ? Color.formlogPrimaryPale : Color.formlogFillTertiary)
                     .frame(width: 48, height: 48)
 
                 Image(systemName: type.icon)
-                    .font(.system(size: 22))
-                    .foregroundColor(isUnlocked ? .formlogPrimary : .systemGray3)
+                    .font(.system(size: 22, weight: .medium))
+                    .foregroundColor(isUnlocked ? .formlogPrimary : .formlogTextSecondary)
             }
 
-            // Name
+            // Achievement name — 14pt medium
             Text(type.displayName)
-                .font(.system(size: 13, weight: .medium))
-                .foregroundColor(isUnlocked ? .primary : .secondary)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(isUnlocked ? .formlogTextPrimary : (isInProgress ? .formlogTextSecondary : .formlogTextSecondary))
                 .lineLimit(1)
 
-            // Status or progress
+            // Status indicator
             if isUnlocked {
-                HStack(spacing: 2) {
+                // Unlocked state
+                HStack(spacing: 3) {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 10))
-                    Text(L10n.string("已解锁"))
                         .font(.system(size: 11))
+                    Text(L10n.string("已解锁"))
+                        .font(.system(size: 11, weight: .medium))
                 }
-                .foregroundColor(.formlogPrimary)
-            } else if let prog = progress {
-                // Progress bar
-                                    let progressFraction = prog.target > 0 ? CGFloat(prog.current) / CGFloat(prog.target) : 0
-
+                .foregroundColor(.green)
+            } else if isInProgress, let prog = progress {
+                // In-progress state — progress bar + fraction text
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
-                        RoundedRectangle(cornerRadius: 2)
-                            .fill(Color.systemGray5)
+                        // Track
+                        RoundedRectangle(cornerRadius: .radiusFull)
+                            .fill(Color.formlogFillTertiary)
                             .frame(height: 4)
-                        RoundedRectangle(cornerRadius: 2)
-                            .fill(Color.formlogPrimary.opacity(0.6))
-                            .frame(width: geo.size.width * min(max(progressFraction, 0), 1), height: 4)
+
+                        // Fill
+                        let fraction = prog.target > 0 ? CGFloat(prog.current) / CGFloat(prog.target) : 0
+                        RoundedRectangle(cornerRadius: .radiusFull)
+                            .fill(Color.formlogPrimary)
+                            .frame(width: geo.size.width * min(max(fraction, 0), 1), height: 4)
                     }
                 }
                 .frame(height: 4)
 
                 Text("\(prog.current)/\(prog.target)")
-                    .font(.system(size: 10))
-                    .foregroundColor(.secondary)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundColor(.formlogTextSecondary)
             } else {
+                // Locked state
                 Text(L10n.string("未开始"))
-                    .font(.system(size: 11))
-                    .foregroundColor(.secondary)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundColor(.formlogTextTertiary)
             }
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 14)
         .padding(.horizontal, 12)
-        .background(Color.systemBackground)
-        .cornerRadius(12)
-        .opacity(isUnlocked ? 1.0 : 0.7)
+        .background(Color.formlogCard)
+        .clipShape(RoundedRectangle(cornerRadius: .radiusMd))
+        .overlay(
+            RoundedRectangle(cornerRadius: .radiusMd)
+                .stroke(Color.formlogSeparator, lineWidth: 1)
+        )
+        .opacity(isUnlocked ? 1.0 : (isInProgress ? 0.85 : 0.6))
     }
 }
 
@@ -174,7 +231,7 @@ struct AchievementNotificationBanner: View {
                     // Icon with animation
                     ZStack {
                         Circle()
-                            .fill(Color.formlogPrimary.opacity(0.1))
+                            .fill(Color.formlogPrimaryPale)
                             .frame(width: 44, height: 44)
 
                         Image(systemName: achievement.type.icon)
@@ -185,12 +242,13 @@ struct AchievementNotificationBanner: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(L10n.string("🎉 成就解锁！"))
                             .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(.formlogPrimary)
                         Text(achievement.type.displayName)
                             .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(.primary)
+                            .foregroundColor(.formlogTextPrimary)
                         Text(achievement.type.description)
                             .font(.system(size: 12))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.formlogTextSecondary)
                     }
 
                     Spacer()
@@ -198,13 +256,15 @@ struct AchievementNotificationBanner: View {
                     Button(action: { isPresented = false }) {
                         Image(systemName: "xmark.circle.fill")
                             .font(.system(size: 18))
-                            .foregroundColor(.systemGray3)
+                            .foregroundColor(.formlogFillTertiary)
                     }
+                    .accessibilityLabel(L10n.string("关闭"))
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
-                .background(Color.systemBackground)
+                .background(Color.formlogCard)
             }
+            .clipShape(RoundedRectangle(cornerRadius: .radiusMd))
             .shadow(color: .black.opacity(0.08), radius: 10, x: 0, y: 4)
             .transition(.move(edge: .top).combined(with: .opacity))
             .onAppear {

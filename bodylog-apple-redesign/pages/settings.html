@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设置 - BodyLog</title>
+    <style id="theme-vars">
+/* ═══════════════════════════════════════════════════════════
+   BodyLog — Apple HIG-Inspired Design System
+   "Calm Precision" — where health data meets beauty
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Brand Colors ── */
+  --color-primary: #30D158;
+  --color-primary-deep: #28A745;
+  --color-primary-pale: rgba(48, 209, 88, 0.08);
+  --color-primary-soft: rgba(48, 209, 88, 0.15);
+
+  /* ── Semantic ── */
+  --state-success: #30D158;
+  --state-warning: #FFD60A;
+  --state-danger: #FF453A;
+  --state-info: #0A84FF;
+
+  /* ── Surface Model (Apple HIG Grouped) ── */
+  --surface-base: #F2F2F7;
+  --surface-primary: #FFFFFF;
+  --surface-elevated: #FFFFFF;
+  --surface-secondary: #FFFFFF;
+  --surface-tertiary: #F2F2F7;
+
+  /* ── Text Hierarchy ── */
+  --text-primary: #1C1C1E;
+  --text-secondary: rgba(28, 28, 30, 0.55);
+  --text-tertiary: rgba(28, 28, 30, 0.28);
+  --text-quaternary: rgba(28, 28, 30, 0.15);
+  --text-on-color: #FFFFFF;
+
+  /* ── Separators & Fills ── */
+  --separator: rgba(60, 60, 67, 0.08);
+  --separator-opaque: #C6C6C8;
+  --fill-tertiary: rgba(118, 118, 128, 0.12);
+  --fill-quaternary: rgba(118, 118, 128, 0.08);
+  --fill-secondary: rgba(120, 120, 128, 0.16);
+
+  /* ── Chart Palette ── */
+  --chart-primary: #30D158;
+  --chart-gradient-top: rgba(48, 209, 88, 0.25);
+  --chart-gradient-bottom: rgba(48, 209, 88, 0.01);
+  --chart-danger: #FF453A;
+  --chart-warning: #FF9F0A;
+  --chart-info: #0A84FF;
+  --chart-purple: #BF5AF2;
+
+  /* ── Metric Accent Colors ── */
+  --accent-weight: #30D158;
+  --accent-bodyfat: #0A84FF;
+  --accent-muscle: #FF9F0A;
+  --accent-bmi: #FF453A;
+  --accent-waist: #BF5AF2;
+  --accent-chest: #64D2FF;
+
+  /* ── Typography (SF Pro Scale) ── */
+  --font-system: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', 'PingFang SC', 'Noto Sans CJK SC', sans-serif;
+  --font-mono: 'SF Mono', SFMono-Regular, ui-monospace, 'Cascadia Code', Menlo, monospace;
+
+  /* Dynamic Type scale */
+  --t-caption2: 0.6875rem; /* 11px */
+  --t-caption1: 0.75rem;   /* 12px */
+  --t-footnote: 0.8125rem; /* 13px */
+  --t-subhead: 0.875rem;   /* 14px */
+  --t-body: 0.9375rem;     /* 15px */
+  --t-title3: 1rem;        /* 16px */
+  --t-title2: 1.125rem;    /* 18px */
+  --t-title1: 1.375rem;    /* 22px */
+  --t-large-title: 1.625rem; /* 26px */
+  --t-display1: 2rem;      /* 32px */
+  --t-display2: 2.5rem;    /* 40px */
+  --t-display3: 3.125rem;  /* 50px — hero numbers */
+
+  /* Weights */
+  --w-regular: 400;
+  --w-medium: 500;
+  --w-semibold: 600;
+  --w-bold: 700;
+
+  /* Tracking */
+  --tracking-tight: -0.025em;
+  --tracking-normal: -0.01em;
+  --tracking-wide: 0.02em;
+
+  /* ── Spacing ── */
+  --sp-1: 2px;
+  --sp-2: 4px;
+  --sp-3: 8px;
+  --sp-4: 12px;
+  --sp-5: 16px;
+  --sp-6: 20px;
+  --sp-7: 24px;
+  --sp-8: 28px;
+  --sp-9: 32px;
+  --sp-10: 40px;
+  --sp-11: 48px;
+  --sp-12: 64px;
+
+  /* ── Radius (Apple HIG Continuum) ── */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
+  --r-2xl: 20px;
+  --r-full: 9999px;
+
+  /* ── Shadows (ultra-subtle, Apple style) ── */
+  --shadow-1: 0 0.5px 0 rgba(0,0,0,0.04);
+  --shadow-2: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.08);
+  --shadow-modal: 0 24px 80px rgba(0,0,0,0.14);
+
+  /* ── Motion ── */
+  --ease-default: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 120ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+}
+
+/* ── Dark Mode ── */
+.dark {
+  --surface-base: #000000;
+  --surface-primary: #1C1C1E;
+  --surface-elevated: #2C2C2E;
+  --surface-secondary: #1C1C1E;
+  --surface-tertiary: #2C2C2E;
+
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(235, 235, 245, 0.55);
+  --text-tertiary: rgba(235, 235, 245, 0.28);
+  --text-quaternary: rgba(235, 235, 245, 0.15);
+  --text-on-color: #FFFFFF;
+
+  --separator: rgba(235, 235, 245, 0.08);
+  --separator-opaque: #38383A;
+  --fill-tertiary: rgba(118, 118, 128, 0.24);
+  --fill-quaternary: rgba(118, 118, 128, 0.16);
+  --fill-secondary: rgba(120, 120, 128, 0.24);
+
+  --color-primary-pale: rgba(48, 209, 88, 0.12);
+  --color-primary-soft: rgba(48, 209, 88, 0.22);
+
+  --shadow-1: 0 0.5px 0 rgba(0,0,0,0.2);
+  --shadow-2: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.4);
+  --shadow-modal: 0 24px 80px rgba(0,0,0,0.5);
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-primary: var(--color-primary);
+  }
+  @layer base {
+    body { background: var(--color-background); color: var(--color-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body>
+<main>
+
+    <!-- ── Header ── -->
+    <header style="padding: 56px 20px 8px;">
+        <h1 style="font-size: var(--t-display1); font-weight: var(--w-bold); letter-spacing: var(--tracking-tight); color: var(--text-primary);">设置</h1>
+    </header>
+
+    <!-- ── Section: 个人信息 ── -->
+    <section class="section">
+        <p class="section-label">个人信息</p>
+        <div class="card">
+            <div class="row">
+                <span class="row-label">名字</span>
+                <div class="row-right-group">
+                    <span class="row-value">小明</span>
+                    <i class="chevron"></i>
+                </div>
+            </div>
+            <div class="row">
+                <span class="row-label">身高</span>
+                <div class="row-right-group">
+                    <span class="row-value">175 cm</span>
+                    <i class="chevron"></i>
+                </div>
+            </div>
+            <div class="row">
+                <span class="row-label">性别</span>
+                <div class="row-right-group">
+                    <span class="row-value">男</span>
+                    <i class="chevron"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── Section: 单位 ── -->
+    <section class="section">
+        <p class="section-label">单位</p>
+        <div class="card">
+            <div class="row">
+                <span class="row-label">重量单位</span>
+                <div class="row-right-group">
+                    <span class="row-value">kg</span>
+                    <i class="chevron"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── Section: 追踪指标 ── -->
+    <section class="section">
+        <p class="section-label">追踪指标</p>
+        <div class="card">
+            <div class="row">
+                <span class="row-label">管理指标</span>
+                <div class="row-right-group">
+                    <span class="row-value">5 个</span>
+                    <i class="chevron"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── Section: 每日提醒 ── -->
+    <section class="section">
+        <p class="section-label">每日提醒</p>
+        <div class="card">
+            <div class="row">
+                <span class="row-label">开启提醒</span>
+                <div class="toggle-wrapper">
+                    <input type="checkbox" id="toggle-reminder" class="toggle-input" checked>
+                    <label for="toggle-reminder" class="toggle-track"></label>
+                </div>
+            </div>
+            <div class="row">
+                <span class="row-label">提醒时间</span>
+                <div class="row-right-group">
+                    <span class="row-value">08:00</span>
+                    <i class="chevron"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── Section: 数据 ── -->
+    <section class="section">
+        <p class="section-label">数据</p>
+        <div class="card">
+            <div class="row">
+                <span class="row-label">导出 CSV</span>
+                <div class="row-right-group">
+                    <svg class="icon-svg lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    <i class="chevron"></i>
+                </div>
+            </div>
+            <div class="row">
+                <span class="row-label">备份数据</span>
+                <div class="row-right-group">
+                    <i class="chevron"></i>
+                </div>
+            </div>
+            <div class="row">
+                <span class="row-label">恢复数据</span>
+                <div class="row-right-group">
+                    <i class="chevron"></i>
+                </div>
+            </div>
+            <div class="row">
+                <span class="row-label">总记录数</span>
+                <div class="row-right-group">
+                    <span class="row-value">45</span>
+                </div>
+            </div>
+            <div class="row">
+                <span class="row-label">记录天数</span>
+                <div class="row-right-group">
+                    <span class="row-value">45 天</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── Section: Pro ── -->
+    <section class="section">
+        <p class="section-label">Pro</p>
+        <div class="card">
+            <div class="row">
+                <span class="row-label">解锁 Pro 版本</span>
+                <div class="row-right-group">
+                    <span class="pro-badge">
+                        <svg class="icon-svg pro-crown" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M5 3l2 4h-3l2.5 3L3 16l7-3 7 3-3.5-6L16 7h-3l2-4-5 2z"/>
+                            <rect x="3" y="17" width="18" height="3" rx="1"/>
+                        </svg>
+                        已解锁
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── Section: 关于 ── -->
+    <section class="section">
+        <p class="section-label">关于</p>
+        <div class="card">
+            <div class="row">
+                <span class="row-label">版本</span>
+                <div class="row-right-group">
+                    <span class="row-value">1.0 (1)</span>
+                </div>
+            </div>
+            <div class="row">
+                <span class="row-label">隐私政策</span>
+                <div class="row-right-group">
+                    <i class="chevron"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── Bottom Tab Bar ── -->
+    <nav class="tab-bar">
+        <a class="tab-item" data-dom-id="tab-home">
+            <span class="tab-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z"/>
+                </svg>
+            </span>
+            <span>首页</span>
+        </a>
+        <a class="tab-item" data-dom-id="tab-trend">
+            <span class="tab-icon">
+                <svg viewBox="0 0 24 24">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                </svg>
+            </span>
+            <span>趋势</span>
+        </a>
+        <a class="tab-item" data-dom-id="tab-goals">
+            <span class="tab-icon">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="9"/>
+                    <circle cx="12" cy="12" r="5"/>
+                    <circle cx="12" cy="12" r="1"/>
+                </svg>
+            </span>
+            <span>目标</span>
+        </a>
+        <a class="tab-item active" data-dom-id="tab-settings">
+            <span class="tab-icon active">
+                <svg viewBox="0 0 24 24">
+                    <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+            </span>
+            <span>设置</span>
+        </a>
+    </nav>
+
+</main>
+
+    <style id="page-styles">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: var(--font-system);
+            background: var(--surface-base);
+            color: var(--text-primary);
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }
+
+        /* ── Section Label ── */
+        .section-label {
+            font-size: var(--t-footnote);
+            font-weight: var(--w-medium);
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            padding-left: 4px;
+            margin-bottom: 8px;
+            letter-spacing: var(--tracking-wide);
+        }
+
+        .section {
+            margin-top: 28px;
+            padding: 0 20px;
+        }
+
+        .section:first-of-type {
+            margin-top: 16px;
+        }
+
+        /* ── Grouped Card ── */
+        .card {
+            background: var(--surface-primary);
+            border-radius: var(--r-xl);
+            border: 1px solid var(--separator);
+            overflow: hidden;
+        }
+
+        /* ── Row ── */
+        .row {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            min-height: 44px;
+            position: relative;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .row:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 16px;
+            right: 0;
+            height: 1px;
+            background: var(--separator);
+        }
+
+        .row-label {
+            font-size: var(--t-body);
+            font-weight: var(--w-regular);
+            color: var(--text-primary);
+            flex: 1;
+        }
+
+        .row-value {
+            font-size: var(--t-body);
+            color: var(--text-secondary);
+            margin-right: 8px;
+        }
+
+        .row-icon {
+            display: flex;
+            align-items: center;
+            margin-right: 8px;
+        }
+
+        .row-right-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        /* ── Chevron ── */
+        .chevron {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-right: 1.5px solid var(--text-quaternary);
+            border-bottom: 1.5px solid var(--text-quaternary);
+            transform: rotate(-45deg);
+            flex-shrink: 0;
+        }
+
+        /* ── iOS Toggle Switch ── */
+        .toggle-wrapper {
+            margin-left: auto;
+            position: relative;
+            display: inline-block;
+        }
+
+        .toggle-input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-track {
+            display: block;
+            width: 51px;
+            height: 31px;
+            border-radius: var(--r-full);
+            background: var(--fill-tertiary);
+            position: relative;
+            cursor: pointer;
+            transition: background var(--duration-normal) var(--ease-default);
+        }
+
+        .toggle-track::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 27px;
+            height: 27px;
+            border-radius: var(--r-full);
+            background: #FFFFFF;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15), 0 0 0 0.5px rgba(0, 0, 0, 0.04);
+            transition: transform var(--duration-normal) var(--ease-default);
+        }
+
+        .toggle-input:checked + .toggle-track {
+            background: var(--color-primary);
+        }
+
+        .toggle-input:checked + .toggle-track::after {
+            transform: translateX(20px);
+        }
+
+        /* ── Pro Row ── */
+        .pro-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: var(--t-subhead);
+            font-weight: var(--w-medium);
+            color: var(--color-primary);
+            margin-left: auto;
+            margin-right: 4px;
+        }
+
+        .pro-crown {
+            display: inline-block;
+            color: var(--chart-warning);
+        }
+
+        /* ── Lock icon ── */
+        .lock-icon {
+            display: inline-flex;
+            width: 12px;
+            height: 12px;
+            color: var(--text-tertiary);
+            margin-right: 4px;
+        }
+
+        /* ── SVG Icon utility ── */
+        .icon-svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        /* ── Bottom Tab Bar ── */
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
+            padding: 8px 0 60px;
+            background: var(--surface-elevated);
+            border-top: 1px solid var(--separator);
+            z-index: 100;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+            color: var(--text-quaternary);
+            font-size: var(--t-caption1);
+            font-weight: var(--w-regular);
+            transition: color var(--duration-fast) var(--ease-default);
+            cursor: pointer;
+        }
+
+        .tab-item.active {
+            color: var(--color-primary);
+        }
+
+        .tab-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .tab-icon.active svg {
+            fill: var(--color-primary);
+            color: var(--color-primary);
+        }
+
+        .tab-icon:not(.active) svg {
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+    </style>
+</body>
+</html>
