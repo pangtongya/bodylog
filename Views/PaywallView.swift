@@ -37,15 +37,15 @@ struct PaywallView: View {
                     }
                     .padding(.top, 20)
 
-                    // ── Features card ──
+                    // ── Features card (emotionally ordered) ──
                     VStack(spacing: 0) {
-                        proFeatureRow(icon: "photo.compare", title: L10n.string("形体照片对比"), desc: L10n.string("拍照记录，对比身形变化"))
+                        proFeatureRow(icon: "photo.compare", title: L10n.string("形体照片对比"), desc: L10n.string("看到两周前的自己，对比今天的改变"))
                         featureSeparator
-                        proFeatureRow(icon: "arrow.down.doc", title: L10n.string("CSV 数据导出导入"), desc: L10n.string("随时导出导入数据"))
+                        proFeatureRow(icon: "bell.fill", title: L10n.string("每日提醒"), desc: L10n.string("再也不会忘记记录，养成习惯就这么简单"))
                         featureSeparator
-                        proFeatureRow(icon: "bell.fill", title: L10n.string("每日提醒"), desc: L10n.string("自定义时间提醒记录"))
+                        proFeatureRow(icon: "target", title: L10n.string("无限目标"), desc: L10n.string("体重、体脂、腰围……同时追踪所有目标"))
                         featureSeparator
-                        proFeatureRow(icon: "target", title: L10n.string("无限目标"), desc: L10n.string("设置任意数量的健康目标"))
+                        proFeatureRow(icon: "arrow.down.doc", title: L10n.string("CSV 数据导出导入"), desc: L10n.string("你的数据永远属于你，随时可以带走"))
                     }
                     .background(Color.formlogCard)
                     .clipShape(RoundedRectangle(cornerRadius: .radiusXl))
@@ -98,8 +98,25 @@ struct PaywallView: View {
                     }
                     .padding(.top, 28)
 
-                    // ── Price + CTA ──
+                    // ── Social proof ──
+                    HStack(spacing: 6) {
+                        Image(systemName: "flame.fill")
+                            .font(.system(size: 13))
+                            .foregroundColor(.formlogPrimary)
+                        Text(L10n.string("已有用户坚持记录 100+ 天"))
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(.formlogTextSecondary)
+                    }
+                    .padding(.top, 8)
+
+                    // ── Price anchoring + CTA ──
                     VStack(spacing: 16) {
+                        // Comparison line (price anchoring)
+                        Text(L10n.string("同类 App 每月 ¥18-28，FormLog 一次买断永久使用"))
+                            .font(.system(size: 13))
+                            .foregroundColor(.formlogTextSecondary)
+                            .multilineTextAlignment(.center)
+
                         VStack(spacing: 6) {
                             Text(purchaseManager.formattedPrice)
                                 .font(.system(size: 36, weight: .bold, design: .rounded).monospacedDigit())
@@ -107,6 +124,10 @@ struct PaywallView: View {
                             Text(L10n.string("一次性购买 · 永久使用"))
                                 .font(.system(size: 14))
                                 .foregroundColor(.formlogTextSecondary)
+                            // Price anchor subtitle
+                            Text(L10n.string("≈ 一杯奶茶的价格 · 终身使用"))
+                                .font(.system(size: 13, weight: .medium))
+                                .foregroundColor(.formlogPrimary)
                         }
 
                         Button(action: {
@@ -119,7 +140,7 @@ struct PaywallView: View {
                                         .progressViewStyle(.circular)
                                         .tint(.white)
                                 } else {
-                                    Text(L10n.string("解锁全部功能"))
+                                    Text(L10n.string("立即解锁 · 一次买断"))
                                         .font(.system(size: 17, weight: .bold, design: .rounded))
                                 }
                             }

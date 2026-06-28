@@ -29,6 +29,8 @@ struct LogEntryView: View {
     @State private var prefillCompleted: Bool = false
     @State private var isSaving: Bool = false
     @State private var showDatePicker: Bool = false
+    @State private var showCelebration: Bool = false
+    @State private var isFirstRecord: Bool = false
 
     @FocusState private var focusedField: FocusableField?
 
@@ -73,6 +75,30 @@ struct LogEntryView: View {
                 }
                 .background(Color.formlogBgGrouped)
                 .scrollDismissesKeyboard(.interactively)
+
+                // First entry celebration overlay
+                if showCelebration {
+                    ZStack {
+                        Color.black.opacity(0.3)
+                            .ignoresSafeArea()
+                        VStack(spacing: 16) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.system(size: 64))
+                                .foregroundColor(.formlogPrimary)
+                            Text(L10n.string("第一次记录成功！"))
+                                .font(.system(size: 20, weight: .bold, design: .rounded))
+                                .foregroundColor(.white)
+                            Text(L10n.string("坚持 7 天解锁成就徽章 🏅"))
+                                .font(.system(size: 15))
+                                .foregroundColor(.white.opacity(0.8))
+                        }
+                        .padding(32)
+                        .background(Color.formlogCard)
+                        .cornerRadius(20)
+                    }
+                    .transition(.opacity)
+                    .animation(.easeInOut(duration: 0.3), value: showCelebration)
+                }
 
                 // Loading overlay during save
                 if isSaving {
@@ -563,6 +589,9 @@ struct LogEntryView: View {
             }
         }
 
+        // Capture whether this is the first entry before saving
+        isFirstRecord = entryStore.entries.isEmpty
+
         if isEditing, var entry = editingEntry {
             entry.metrics = parsedMetrics
             entry.note = note.isEmpty ? nil : note
@@ -598,7 +627,15 @@ struct LogEntryView: View {
         goalStore.checkAndMarkAchieved(using: entryStore)
 
         BodyLogHaptics.heavy()
-        isPresented = false
+
+        if isFirstRecord {
+            showCelebration = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                isPresented = false
+            }
+        } else {
+            isPresented = false
+        }
     }
 
     // MARK: - Prefill (Editing)

@@ -440,6 +440,36 @@ struct HomeView: View {
                             color: index == 0 ? .formlogPrimary : .formlogBlue
                         )
                     }
+
+                    // Pro discovery nudge
+                    if !appState.isPro && entryStore.entries.count >= 3 {
+                        let hasPhotos = entryStore.entries.contains { $0.hasPhoto }
+                        if hasPhotos {
+                            insightCard(
+                                (
+                                    title: L10n.string("📸 你已拍了照片，对比查看你的变化"),
+                                    subtitle: L10n.string("解锁照片对比，见证形体变化 →")
+                                ),
+                                color: .formlogPurple
+                            )
+                            .onTapGesture {
+                                BodyLogHaptics.light()
+                                showPaywall = true
+                            }
+                        } else if !insights.contains(where: { $0.title.contains(L10n.string("🔥")) }) {
+                            insightCard(
+                                (
+                                    title: L10n.string("设置提醒，养成记录习惯"),
+                                    subtitle: L10n.string("Pro 用户可自定义每日提醒时间 →")
+                                ),
+                                color: .formlogPurple
+                            )
+                            .onTapGesture {
+                                BodyLogHaptics.light()
+                                showPaywall = true
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -712,9 +742,14 @@ struct HomeView: View {
             Image(systemName: "chart.line.flattrend.xyaxis")
                 .font(.system(size: 28))
                 .foregroundColor(.formlogTextTertiary)
-            Text(L10n.string("暂无记录"))
-                .font(.system(size: 15))
-                .foregroundColor(.formlogTextSecondary)
+            VStack(spacing: 8) {
+                Text(L10n.string("暂无记录"))
+                    .font(.system(size: 15))
+                    .foregroundColor(.formlogTextSecondary)
+                Text(L10n.string("点击右下角 + 开始你的第一次记录"))
+                    .font(.system(size: 13))
+                    .foregroundColor(.formlogTextTertiary)
+            }
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 48)

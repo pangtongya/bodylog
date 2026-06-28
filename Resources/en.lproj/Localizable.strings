@@ -191,16 +191,24 @@
 "用数据和照片，见证你的身体变化" = "Track your body changes with data and photos";
 "形体照片对比" = "Progress Photo Comparison";
 "拍照记录，对比身形变化" = "Capture photos, compare your transformation";
+"看到两周前的自己，对比今天的改变" = "See yourself from two weeks ago, compare today's change";
 "CSV 数据导出/导入" = "CSV Export/Import";
 "随时导出导入数据" = "Export and import your data anytime";
+"你的数据永远属于你，随时可以带走" = "Your data always belongs to you, take it anywhere";
 "每日提醒" = "Daily Reminders";
 "自定义时间提醒记录" = "Custom reminder notifications";
+"再也不会忘记记录，养成习惯就这么简单" = "Never forget to log again, building habits is that easy";
 "无限目标" = "Unlimited Goals";
 "设置任意数量的健康目标" = "Set as many health goals as you want";
+"体重、体脂、腰围……同时追踪所有目标" = "Weight, body fat, waistline... track all goals at once";
 "100% 隐私优先 · 数据本地存储 · 无订阅" = "100% Privacy First · Local Storage · No Subscription";
 "一次购买，永久使用 · 支持多设备登录同一 Apple ID" = "One purchase, yours forever · Works across devices with the same Apple ID";
 "无订阅 · 无隐藏费用 · 数据始终在你的设备上" = "No subscription · No hidden fees · Your data stays on your device";
 "购买" = "Buy";
+"同类 App 每月 ¥18-28，FormLog 一次买断永久使用" = "Other apps charge ¥18-28/month. FormLog: one-time, forever.";
+"≈ 一杯奶茶的价格 · 终身使用" = "≈ The price of a bubble tea · Lifetime access";
+"立即解锁 · 一次买断" = "Unlock Now · One-Time Purchase";
+"已有用户坚持记录 100+ 天" = "Users have logged 100+ consecutive days";
 
 // MARK: - Photo Compare
 "对比" = "Compare";
@@ -416,6 +424,7 @@
 "创建目标" = "Create Goal";
 "Pro" = "Pro";
 "用心守护你的健康" = "Made with love for your health";
+"Pro 功能" = "Pro Feature";
 
 // MARK: - Accessibility Additions
 "数值验证范围 %@ 在 %@ 到 %@ 之间" = "%@ value should be between %@ and %@";
@@ -473,6 +482,8 @@
 
 // LogEntryView
 "保存中..." = "Saving...";
+"第一次记录成功！" = "First entry recorded!";
+"坚持 7 天解锁成就徽章 🏅" = "Log for 7 days to unlock achievement badges 🏅";
 "选择日期" = "Select Date";
 "照片过大（%.1fMB），最大支持 5MB" = "Photo too large (%.1fMB), max 5MB supported";
 
@@ -577,3 +588,10 @@
 // SettingsView misc
 "分享" = "Share";
 "个" = "";
+
+// MARK: - Pro Discovery (HomeView)
+"📸 你已拍了照片，对比查看你的变化" = "📸 You've taken photos. Compare and see your changes";
+"解锁照片对比，见证形体变化 →" = "Unlock Photo Compare to see your body transformation →";
+"设置提醒，养成记录习惯" = "Set reminders, build a logging habit";
+"Pro 用户可自定义每日提醒时间 →" = "Pro users can customize daily reminder times →";
+"点击右下角 + 开始你的第一次记录" = "Tap the + button below to start your first entry";

@@ -25,6 +25,7 @@ struct SettingsView: View {
     @State private var showShareCardView: Bool = false
     @State private var showCSVTemplate: Bool = false
     @State private var showRestoreConfirm: Bool = false
+    @State private var pendingReminderToggle: Bool = false
 
     // MARK: - Import / Export / Backup States
 
@@ -170,14 +171,14 @@ struct SettingsView: View {
 
                             Spacer()
 
-                            Toggle("", isOn: $appState.reminderEnabled)
-                                .labelsHidden()
-                                .tint(.formlogPrimary)
-                                .onChange(of: appState.reminderEnabled) { enabled in
+                            Toggle("", isOn: Binding(
+                                get: { appState.reminderEnabled },
+                                set: { newValue in
                                     BodyLogHaptics.light()
-                                    appState.save()
-                                    if enabled {
+                                    if newValue {
                                         if appState.isPro {
+                                            appState.reminderEnabled = true
+                                            appState.save()
                                             let hour = appState.reminderHour
                                             let minute = appState.reminderMinute
                                             NotificationManager.shared.requestAuthorization { granted in
@@ -193,17 +194,37 @@ struct SettingsView: View {
                                                 }
                                             }
                                         } else {
-                                            appState.reminderEnabled = false
+                                            // Don't change the setting yet — show paywall and let purchase handler enable it
+                                            pendingReminderToggle = true
                                             showPaywall = true
                                         }
                                     } else {
+                                        appState.reminderEnabled = false
+                                        appState.save()
                                         NotificationManager.shared.cancelDailyReminder()
                                     }
                                 }
+                            ))
+                                .labelsHidden()
+                                .tint(.formlogPrimary)
                         }
                         .frame(height: 44)
                         .padding(.horizontal, 16)
                         .contentShape(Rectangle())
+
+                        // Pro hint for free users
+                        if !appState.isPro {
+                            HStack(spacing: 6) {
+                                Spacer()
+                                Text(L10n.string("Pro 功能"))
+                                    .font(.blCaption1)
+                                    .foregroundColor(.formlogTextTertiary)
+                                Spacer()
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.top, 2)
+                            .padding(.bottom, 4)
+                        }
 
                         // Permission denied warning
                         if notificationStatus == .denied {
@@ -450,13 +471,39 @@ struct SettingsView: View {
             .onAppear {
                 checkNotificationStatus()
             }
+            .onChange(of: appState.isPro) { isPro in
+                if isPro && pendingReminderToggle {
+                    pendingReminderToggle = false
+                    appState.reminderEnabled = true
+                    appState.save()
+                    let hour = appState.reminderHour
+                    let minute = appState.reminderMinute
+                    NotificationManager.shared.requestAuthorization { granted in
+                        Task { @MainActor in
+                            if granted {
+                                NotificationManager.shared.scheduleDailyReminder(hour: hour, minute: minute)
+                                AchievementManager.shared.markReminderSet()
+                            } else {
+                                appState.reminderEnabled = false
+                                appState.save()
+                                notificationStatus = .denied
+                            }
+                        }
+                    }
+                }
+            }
             .overlay {
                 if isImporting {
                     importingOverlay
                 }
             }
         }
-        .sheet(isPresented: $showPaywall) {
+        .sheet(isPresented: $showPaywall, onDismiss: {
+            // If paywall closed without purchasing, clear pending reminder toggle
+            if pendingReminderToggle {
+                pendingReminderToggle = false
+            }
+        }) {
             PaywallView(isPresented: $showPaywall)
                 .environmentObject(appState)
                 .environmentObject(purchaseManager)
