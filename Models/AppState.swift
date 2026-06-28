@@ -294,20 +294,26 @@ class AppState: ObservableObject {
         enabledMetrics = enabledMetrics.compactMap { validateMetricType($0) }
         let cleanedCount = enabledMetrics.count
 
-        // 更新禁用指标列表
+        // 检测 enabled 和 disabled 之间是否有重叠
+        let overlap = enabledMetrics.contains { disabledMetrics.contains($0) }
+
+        // 更新禁用指标列表（从 enabledMetrics 派生）
         disabledMetrics = BodyMetricType.allCases.filter { !enabledMetrics.contains($0) }
 
         // 确保至少保留两个默认指标
-        if enabledMetrics.isEmpty {
+        let defaultsInjected = enabledMetrics.isEmpty
+        if defaultsInjected {
             enabledMetrics = [.weight, .bodyFat]
+            disabledMetrics = BodyMetricType.allCases.filter { !enabledMetrics.contains($0) }
         }
 
-        // 如果数据被清理过，保存到持久化存储
-        if previousCount != cleanedCount {
+        // 检测是否有任何不一致：无效指标被清除、存在重叠、或默认值被注入
+        let changed = previousCount != cleanedCount || overlap || defaultsInjected
+        if changed {
             save()
         }
 
-        return previousCount == cleanedCount
+        return !changed
     }
 
     private func migrateFromSchema(_ fromVersion: Int, to toVersion: Int, decoded: CodableData) {
@@ -341,6 +347,11 @@ class AppState: ObservableObject {
     }
 
     // MARK: - Safe BodyMetricType Decoding
+
+    /// Wrapper for decoding only the achievements array from backup JSON
+    private struct AchievementBackupWrapper: Codable {
+        var achievements: [Achievement]
+    }
 
     /// Wrapper that decodes `[BodyMetricType]` safely by first reading `[String]`
     /// and then mapping each raw value to a `BodyMetricType`. Invalid names are
@@ -419,38 +430,25 @@ class AppState: ObservableObject {
             if !safe.isEmpty { enabledMetrics = safe }
         }
 
-        // --- Decode simple keyed values with UserDefaults-style do-catch safety ---
-        func safeDecode<T: Decodable>(_ key: String, as type: T.Type, fallback: T) -> T {
-            guard let value = json[key] else { return fallback }
-            do {
-                let rawData = try JSONSerialization.data(withJSONObject: value)
-                return try JSONDecoder().decode(T.self, from: rawData)
-            } catch {
-                Self.logger.warning("Backup field '\(key)' decode failed: \(error.localizedDescription). Using fallback.")
-                return fallback
-            }
-        }
+        // --- Decode simple keyed values directly from dictionary ---
+        let hasCompletedOnboarding = (json["hasCompletedOnboarding"] as? NSNumber)?.boolValue ?? false
+        let userName              = json["userName"] as? String ?? ""
+        let userHeight            = (json["userHeight"] as? NSNumber)?.doubleValue ?? 0.0
+        let userGender: Gender    = (json["userGender"] as? String).flatMap(Gender.init(rawValue:)) ?? .notSet
+        let weightUnit: WeightUnit = (json["weightUnit"] as? String).flatMap(WeightUnit.init(rawValue:)) ?? .kg
+        let theme: AppTheme       = (json["theme"] as? String).flatMap(AppTheme.init(rawValue:)) ?? .system
+        let reminderEnabled       = (json["reminderEnabled"] as? NSNumber)?.boolValue ?? false
+        let reminderHour          = (json["reminderHour"] as? NSNumber)?.intValue ?? 8
+        let reminderMinute        = (json["reminderMinute"] as? NSNumber)?.intValue ?? 0
+        let isPro                 = (json["isPro"] as? NSNumber)?.boolValue ?? false
 
-        let hasCompletedOnboarding = safeDecode("hasCompletedOnboarding", as: Bool.self, fallback: false)
-        let userName              = safeDecode("userName",              as: String.self, fallback: "")
-        let userHeight            = safeDecode("userHeight",            as: Double.self, fallback: 0.0)
-        let userGender            = safeDecode("userGender",            as: Gender.self,  fallback: .notSet)
-        let weightUnit            = safeDecode("weightUnit",            as: WeightUnit.self, fallback: .kg)
-        let theme                 = safeDecode("theme",                 as: AppTheme.self, fallback: .system)
-        let reminderEnabled       = safeDecode("reminderEnabled",       as: Bool.self,    fallback: false)
-        let reminderHour          = safeDecode("reminderHour",          as: Int.self,     fallback: 8)
-        let reminderMinute        = safeDecode("reminderMinute",        as: Int.self,     fallback: 0)
-        let isPro                 = safeDecode("isPro",                 as: Bool.self,    fallback: false)
-
-        // --- Decode achievements (array of Codable objects) ---
+        // --- Decode achievements: re-serialize the full JSON dict (minus enabledMetrics
+        //     which may contain invalid strings) and attempt Codable decoding ---
         var achievements: [Achievement] = []
-        if let achArray = json["achievements"] as? [[String: Any]] {
-            do {
-                let achData = try JSONSerialization.data(withJSONObject: achArray)
-                achievements = (try? JSONDecoder().decode([Achievement].self, from: achData)) ?? []
-            } catch {
-                Self.logger.warning("Backup achievements decode failed: \(error.localizedDescription)")
-            }
+        var safeJSON = json
+        safeJSON.removeValue(forKey: "enabledMetrics")
+        if let safeData = try? JSONSerialization.data(withJSONObject: safeJSON, options: .fragmentsAllowed) {
+            achievements = (try? JSONDecoder().decode(AchievementBackupWrapper.self, from: safeData))?.achievements ?? []
         }
 
         // Apply everything through the validated path

@@ -16,6 +16,7 @@ final class AppStateTests: XCTestCase {
             appState.enabledMetrics.removeAll()
             appState.disabledMetrics.removeAll()
             appState.weightUnit = .kg
+            appState.isPro = false
         }
     }
     
@@ -28,7 +29,8 @@ final class AppStateTests: XCTestCase {
     
     @MainActor func testInitialState() {
         XCTAssertTrue(appState.enabledMetrics.isEmpty)
-        XCTAssertEqual(appState.disabledMetrics.count, BodyMetricType.allCases.count)
+        // setUp() clears both arrays, so disabledMetrics is also empty
+        XCTAssertTrue(appState.disabledMetrics.isEmpty)
         XCTAssertEqual(appState.weightUnit, .kg)
         XCTAssertFalse(appState.isPro)
     }
@@ -188,14 +190,16 @@ final class AppStateTests: XCTestCase {
     }
     
     @MainActor func testRestoreFromBackup_Invalid() {
-        // 创建包含无效数据的备份（corrupt JSON that fails decoding）
+        // 创建包含无效指标名称的备份
+        // BodyMetricType decoding fails for "invalid_metric" in fast path,
+        // but the slow path safely ignores unknown metric names and succeeds.
         let invalidBackupData = Data("{\"schemaVersion\":1,\"enabledMetrics\":[\"invalid_metric\"],\"weightUnit\":\"kg\"}".utf8)
 
-        // 尝试恢复应该失败
-        // Note: BodyMetricType decoding will fail for "invalid_metric",
-        // causing JSONDecoder to throw, so restoreFromBackup returns false.
+        // 慢路径安全解码，丢弃无效指标后恢复默认值，返回 true
         let success = appState.restoreFromBackup(invalidBackupData)
-        XCTAssertFalse(success)
+        XCTAssertTrue(success)
+        // 无效指标被丢弃后，enabledMetrics 恢复为默认值
+        XCTAssertEqual(appState.enabledMetrics.count, 2) // [.weight, .bodyFat] defaults
     }
     
     @MainActor func testRestoreFromBackup_WithValidation() {

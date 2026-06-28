@@ -43,6 +43,12 @@ struct GradientCache {
     @MainActor static func clearCache() {
         gradientCache.removeAll()
     }
+
+    #if DEBUG
+    @MainActor static var cacheCount: Int {
+        gradientCache.count
+    }
+    #endif
 }
 
 /// 字符串格式化缓存
@@ -78,4 +84,10 @@ struct StringFormatCache {
     @MainActor static func clearCache() {
         formatCache.removeAll()
     }
+
+    #if DEBUG
+    @MainActor static var cacheCount: Int {
+        formatCache.count
+    }
+    #endif
 }

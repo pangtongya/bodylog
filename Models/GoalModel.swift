@@ -78,6 +78,13 @@ struct GoalModel: Identifiable, Codable, Equatable {
 
     /// Check if goal value is reached
     func isReached(currentValue: Double) -> Bool {
-        abs(currentValue - targetValue) < tolerance
+        switch direction {
+        case .decrease:
+            return currentValue <= targetValue + 0.001
+        case .increase:
+            return currentValue >= targetValue - 0.001
+        case .maintain:
+            return abs(currentValue - targetValue) <= tolerance
+        }
     }
 }

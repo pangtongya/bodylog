@@ -164,20 +164,12 @@ final class GradientCacheTests: XCTestCase {
     }
     
     // MARK: - 私有辅助方法
-    
-    private func getGradientCacheCount() -> Int {
-        // 通过反射访问私有缓存（仅用于测试）
-        return Mirror(reflecting: GradientCache.self)
-            .children
-            .compactMap { $0.label == "gradientCache" ? $0.value as? [String: Any] : nil }
-            .first?.count ?? 0
+
+    @MainActor private func getGradientCacheCount() -> Int {
+        return GradientCache.cacheCount
     }
-    
-    private func getStringFormatCacheCount() -> Int {
-        // 通过反射访问私有缓存（仅用于测试）
-        return Mirror(reflecting: StringFormatCache.self)
-            .children
-            .compactMap { $0.label == "formatCache" ? $0.value as? [String: Any] : nil }
-            .first?.count ?? 0
+
+    @MainActor private func getStringFormatCacheCount() -> Int {
+        return StringFormatCache.cacheCount
     }
 }
