@@ -391,7 +391,12 @@ class AppState: ObservableObject {
             enabledMetrics: enabledMetrics,
             achievements: achievements
         )
-        return (try? JSONEncoder().encode(data)) ?? Data()
+        do {
+            return try JSONEncoder().encode(data)
+        } catch {
+            Self.logger.error("Failed to encode backup data: \(error.localizedDescription)")
+            return Data()
+        }
     }
 
     /// 从备份数据恢复状态

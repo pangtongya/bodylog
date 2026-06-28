@@ -438,3 +438,142 @@
 "这条记录和照片将被永久删除，无法恢复。" = "This entry and its photos will be permanently deleted and cannot be recovered.";
 "总记录" = "Total Entries";
 "暂无照片" = "No Photos";
+
+// MARK: - Batch L10n Fix (110 keys)
+
+// BodyEntryStore
+"%@ 已存在相同日期的记录，已跳过" = "%@ entry for this date already exists, skipped";
+"%@ 格式错误: %@" = "%@ format error: %@";
+"%@ 值超出合理范围 (%.1f-%.1f): %.1f" = "%@ value out of reasonable range (%.1f-%.1f): %.1f";
+"CSV 文件缺少日期列" = "CSV file is missing a date column";
+"\n...还有 %d 个错误" = "\n...and %d more errors";
+"未找到有效的指标列" = "No valid metric column found";
+"预览的所有行都包含无效数据" = "All preview rows contain invalid data";
+"第 %d 行：缺少日期字段" = "Line %d: Missing date field";
+"第 %d 行：重复日期: %@" = "Line %d: Duplicate date: %@";
+"第 %d 行 (%@): %@" = "Line %d (%@): %@";
+"加载数据失败：%@\n\n提示：将使用空数据开始。" = "Failed to load data: %@\n\nTip: Will start with empty data.";
+"保存数据失败：%@\n\n提示：您的数据已被写入备份文件，但无法保存到主存储。" = "Failed to save data: %@\n\nTip: Your data has been written to a backup file, but could not be saved to primary storage.";
+
+// PurchaseManager
+"购买处理失败，请联系支持。" = "Purchase processing failed, please contact support.";
+"购买的商品ID不匹配，请联系支持。" = "Purchased product ID mismatch, please contact support.";
+"购买请求超时，请检查网络后重试。" = "Purchase request timed out. Please check your network and try again.";
+"购买验证失败：%@。可能原因：设备时间不正确、App Store 连接异常。请检查设备时间与网络后重试。" = "Purchase verification failed: %@. Possible causes: incorrect device time, App Store connection issue. Please check device time and network, then retry.";
+"恢复购买重试次数已达上限（%d次），请稍后再试或联系支持。" = "Purchase restore retry limit reached (%d times). Please try again later or contact support.";
+
+// SettingsView
+"成功导入 %d 条记录\n\n以下行被跳过：\n%@" = "Successfully imported %d entries\n\nThe following rows were skipped:\n%@";
+"未导入任何记录" = "No entries imported";
+"无法读取备份文件信息" = "Unable to read backup file info";
+"读取备份文件失败：%@" = "Failed to read backup file: %@";
+"导入失败：文件编码不支持，请将CSV文件转换为UTF-8编码" = "Import failed: File encoding not supported. Please convert the CSV file to UTF-8 encoding.";
+"查看 CSV 格式示例" = "View CSV Format Example";
+"第 %d 行：无法解析日期: %@" = "Line %d: Unable to parse date: %@";
+
+// LogEntryView
+"保存中..." = "Saving...";
+"选择日期" = "Select Date";
+"照片过大（%.1fMB），最大支持 5MB" = "Photo too large (%.1fMB), max 5MB supported";
+
+// HomeView
+"今天继续吗？" = "Continue today?";
+"昨天记录了" = "Logged yesterday";
+"好久不见！" = "Long time no see!";
+"记录一下今天的变化吧" = "Log today's changes";
+"今天开始吧" = "Start today";
+"点击右下角按钮开始记录" = "Tap the button in the bottom right to start logging";
+"继续保持，习惯正在养成" = "Keep going, a habit is forming";
+"继续保持，好的开始是成功的一半" = "Keep going, a good start is half the battle";
+"继续保持良好的状态" = "Keep up the good work";
+"本周数据总结" = "This Week's Summary";
+"本月里程碑" = "Monthly Milestones";
+"报告" = "Reports";
+"周报" = "Weekly Report";
+"月报" = "Monthly Report";
+"首页" = "Home";
+"即将解锁: " = "Unlocking soon: ";
+"，" = ",";
+"%@目标：%@%@" = "%@ Goal: %@%@";
+"%d/%d 已解锁" = "%d/%d unlocked";
+"🔥 已连续记录%d天" = "🔥 Logged %d days in a row";
+"🔥 已连续记录%d天！太棒了！" = "🔥 Logged %d days in a row! Awesome!";
+"💪 已连续记录%d天" = "💪 Logged %d days in a row";
+"📝 本周记录了%d次" = "📝 Logged %d times this week";
+
+// TrendView
+"平均值" = "Average";
+"起始值" = "Starting Value";
+"去记录" = "Log Now";
+"进度" = "Progress";
+"开始记录你的身体数据\n用图表见证你的变化" = "Start logging your body data\nSee your changes with charts";
+"继续保持，进步明显" = "Keep going, great progress";
+"保持现状也很重要" = "Maintaining your current state is also important";
+"做得好，继续坚持" = "Great job, keep it up";
+"继续保持这个节奏" = "Keep this pace going";
+"好的开始" = "Good Start";
+"习惯正在养成，太棒了" = "A habit is forming, awesome!";
+"一步一步来，你可以的" = "Step by step, you've got this";
+"目标已达成" = "Goal Achieved";
+
+// WeeklyReportView
+"本周变化" = "This Week's Change";
+"本周趋势" = "Weekly Trend";
+"本周洞察" = "Weekly Insights";
+"分享周报" = "Share Weekly Report";
+"体重统计" = "Weight Stats";
+"平均体重" = "Avg Weight";
+"最低体重" = "Lowest Weight";
+"最高体重" = "Highest Weight";
+"需要至少2条记录才能显示趋势" = "At least 2 entries are needed to show trends";
+"距离目标" = "Distance to Goal";
+"体重保持稳定，状态不错！" = "Weight is stable, looking good!";
+"这周减了%@%@，继续加油！💪" = "Lost %@%@ this week, keep going! 💪";
+"这周体重增加了%@%@，注意饮食哦" = "Gained %@%@ this week, watch your diet";
+"这周留下了珍贵的照片 ✨" = "Captured precious photos this week ✨";
+"记录每一天，见证每一步改变 ✨" = "Log every day, see every step of change ✨";
+"👍 开始养成习惯了！" = "👍 A habit is forming!";
+
+// MonthlyReportView
+"本月记录" = "This Month's Entries";
+"本月变化" = "This Month's Change";
+"本月趋势" = "Monthly Trend";
+"本月最高连续" = "Monthly Best Streak";
+"分享月报" = "Share Monthly Report";
+"体脂率统计" = "Body Fat % Stats";
+"平均体脂率" = "Avg Body Fat %";
+"最低体脂率" = "Lowest Body Fat %";
+"最高体脂率" = "Highest Body Fat %";
+"记录完成率" = "Logging Completion Rate";
+"天" = "d";
+"张" = "";
+
+// PhotoCompareView
+"指标变化" = "Metric Changes";
+"相差 %d 天" = "%d days apart";
+"与上次对比" = "Compare with previous";
+
+// EntryDetailView
+"隐私优先 · 数据本地存储" = "Privacy First · Local Data Storage";
+
+// GoalsView
+"刚刚起步" = "Just Getting Started";
+"继续加油！" = "Keep pushing!";
+"起始" = "Start";
+"增加" = "Increase";
+"降低" = "Decrease";
+"维持" = "Maintain";
+"免费版还可创建 %d 个目标" = "You can create %d more goals in the free version";
+"当前：%@" = "Current: %@";
+"设置你的第一个目标" = "Set Your First Goal";
+
+// PaywallView
+"解锁 Pro 版本" = "Unlock Pro Version";
+"CSV 数据导出导入" = "CSV Data Export/Import";
+
+// OnboardingView
+"跳过" = "Skip";
+
+// SettingsView misc
+"分享" = "Share";
+"个" = "";

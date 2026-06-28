@@ -3,8 +3,11 @@
 
 import SwiftUI
 import UserNotifications
+import os
 
 struct SettingsView: View {
+    private let logger = Logger(subsystem: "com.pangtong.formlog", category: "SettingsView")
+
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var entryStore: BodyEntryStore
     @EnvironmentObject var goalStore: GoalStore
@@ -889,15 +892,23 @@ struct SettingsView: View {
                 var summaryParts: [String] = []
                 if let entriesArray = json["entries"] as? [[String: Any]] {
                     let entriesData = try? JSONSerialization.data(withJSONObject: entriesArray)
-                    if let entriesData = entriesData,
-                       let entries = try? JSONDecoder().decode([BodyEntry].self, from: entriesData) {
-                        summaryParts.append(String(format: L10n.string("记录数量：%d"), entries.count))
-                        let dates = entries.map { $0.recordedAt }.sorted()
-                        if let earliest = dates.first, let latest = dates.last {
-                            let fmt = ISO8601DateFormatter()
-                            summaryParts.append(String(format: L10n.string("日期范围：%@ 至 %@"),
-                                String(fmt.string(from: earliest).prefix(10)),
-                                String(fmt.string(from: latest).prefix(10))))
+                    if let entriesData = entriesData {
+                        let entries: [BodyEntry]
+                        do {
+                            entries = try JSONDecoder().decode([BodyEntry].self, from: entriesData)
+                        } catch {
+                            logger.error("Failed to decode entries for restore preview: \(error.localizedDescription)")
+                            entries = []
+                        }
+                        if !entries.isEmpty {
+                            summaryParts.append(String(format: L10n.string("记录数量：%d"), entries.count))
+                            let dates = entries.map { $0.recordedAt }.sorted()
+                            if let earliest = dates.first, let latest = dates.last {
+                                let fmt = ISO8601DateFormatter()
+                                summaryParts.append(String(format: L10n.string("日期范围：%@ 至 %@"),
+                                    String(fmt.string(from: earliest).prefix(10)),
+                                    String(fmt.string(from: latest).prefix(10))))
+                            }
                         }
                     }
                 }
@@ -941,18 +952,34 @@ struct SettingsView: View {
 
             if let entriesArray = json["entries"] as? [[String: Any]] {
                 let entriesData = try? JSONSerialization.data(withJSONObject: entriesArray)
-                if let entriesData = entriesData,
-                   let entries = try? JSONDecoder().decode([BodyEntry].self, from: entriesData) {
-                    entryStore.replaceEntries(entries)
+                if let entriesData = entriesData {
+                    let entries: [BodyEntry]
+                    do {
+                        entries = try JSONDecoder().decode([BodyEntry].self, from: entriesData)
+                    } catch {
+                        logger.error("Failed to decode entries from backup: \(error.localizedDescription)")
+                        entries = []
+                    }
+                    if !entries.isEmpty {
+                        entryStore.replaceEntries(entries)
+                    }
                 }
             }
 
             if let goalsArray = json["goals"] as? [[String: Any]] {
                 let goalsData = try? JSONSerialization.data(withJSONObject: goalsArray)
-                if let goalsData = goalsData,
-                   let goals = try? JSONDecoder().decode([GoalModel].self, from: goalsData) {
-                    goalStore.goals = goals
-                    goalStore.save()
+                if let goalsData = goalsData {
+                    let goals: [GoalModel]
+                    do {
+                        goals = try JSONDecoder().decode([GoalModel].self, from: goalsData)
+                    } catch {
+                        logger.error("Failed to decode goals from backup: \(error.localizedDescription)")
+                        goals = []
+                    }
+                    if !goals.isEmpty {
+                        goalStore.goals = goals
+                        goalStore.save()
+                    }
                 }
             }
 

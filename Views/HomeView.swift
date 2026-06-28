@@ -272,7 +272,11 @@ struct HomeView: View {
                 goalStore: goalStore
             ) {
                 let p = Double(progress.current) / Double(progress.target)
-                if closest == nil || p > closest!.progress {
+                if let currentClosest = closest {
+                    if p > currentClosest.progress {
+                        closest = (type, progress.current, progress.target, p)
+                    }
+                } else {
                     closest = (type, progress.current, progress.target, p)
                 }
             }
@@ -705,7 +709,7 @@ struct HomeView: View {
 
     private var emptyHistoryView: some View {
         VStack(spacing: 12) {
-            Image(systemName: "chart.line.uptrend.xyaxis")
+            Image(systemName: "chart.line.flattrend.xyaxis")
                 .font(.system(size: 28))
                 .foregroundColor(.formlogTextTertiary)
             Text(L10n.string("暂无记录"))

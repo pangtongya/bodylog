@@ -3,8 +3,11 @@
 
 import SwiftUI
 import Photos
+import os
 
 struct ShareCardView: View {
+    private let logger = Logger(subsystem: "com.pangtong.formlog", category: "ShareCardView")
+
     @EnvironmentObject var entryStore: BodyEntryStore
     @EnvironmentObject var appState: AppState
     @Environment(\.dismiss) private var dismiss
@@ -307,9 +310,9 @@ struct ShareCardView: View {
                 if status == .authorized || status == .limited {
                     UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
                     BodyLogHaptics.success()
-                    print("[ShareCardView] Photo saved successfully")
+                    logger.info("Photo saved successfully")
                 } else {
-                    print("[ShareCardView] Photo library access denied")
+                    logger.warning("Photo library access denied")
                     // TODO: Show error alert to user
                 }
             }

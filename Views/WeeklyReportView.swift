@@ -165,9 +165,9 @@ struct WeeklyReportView: View {
 
         let streak = entryStore.currentStreak
         if streak >= 7 {
-            parts.append(L10n.string("🔥 连续记录\(streak)天！太棒了！"))
+            parts.append(String(format: L10n.string("🔥 已连续记录%d天！太棒了！"), streak))
         } else if streak >= 3 {
-            parts.append(L10n.string("💪 连续记录\(streak)天，继续保持！"))
+            parts.append(String(format: L10n.string("💪 已连续记录%d天，继续保持！"), streak))
         } else if streak > 0 {
             parts.append(L10n.string("👍 开始养成习惯了！"))
         }
@@ -380,7 +380,7 @@ struct WeeklyReportView: View {
     private var miniChartCard: some View {
         VStack(alignment: .leading, spacing: .spacingMd) {
             HStack(spacing: 6) {
-                Image(systemName: "chart.line.uptrend.xyaxis")
+                Image(systemName: "chart.line.flattrend.xyaxis")
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundColor(Color.formlogBlue)
                 Text(L10n.string("本周趋势"))
@@ -395,7 +395,7 @@ struct WeeklyReportView: View {
                     .clipShape(RoundedRectangle(cornerRadius: .radiusMd))
             } else {
                 VStack(spacing: .spacingSm) {
-                    Image(systemName: "chart.line.uptrend.xyaxis")
+                    Image(systemName: "chart.line.flattrend.xyaxis")
                         .font(.system(size: 28))
                         .foregroundColor(Color.formlogTextQuaternary)
                     Text(L10n.string("需要至少2条记录才能显示趋势"))
@@ -556,13 +556,13 @@ struct WeeklyReportView: View {
     private var streakMessage: String {
         let streak = entryStore.currentStreak
         if streak >= 7 {
-            return L10n.string("🔥 连续记录\(streak)天！太棒了！")
+            return String(format: L10n.string("🔥 已连续记录%d天！太棒了！"), streak)
         } else if streak >= 3 {
-            return L10n.string("💪 连续记录\(streak)天，继续保持！")
+            return String(format: L10n.string("💪 已连续记录%d天，继续保持！"), streak)
         } else if streak > 0 {
             return L10n.string("👍 开始养成习惯了！")
         } else {
-            return L10n.string("📝 本周记录了\(weekEntries.count)次")
+            return String(format: L10n.string("📝 本周记录了%d次"), weekEntries.count)
         }
     }
 }

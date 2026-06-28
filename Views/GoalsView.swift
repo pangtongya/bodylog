@@ -435,7 +435,7 @@ struct GoalCardView: View {
             // Row 2: Current value
             if !isAchieved, let current = currentValue {
                 HStack(spacing: 6) {
-                    Image(systemName: "chart.line.upward")
+                    Image(systemName: "arrow.up.right")
                         .font(.system(size: 12))
                         .foregroundColor(.formlogTextTertiary)
                     Text(String(format: L10n.string("当前：%@"), formatVal(current)))

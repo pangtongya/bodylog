@@ -188,7 +188,7 @@ struct OnboardingView: View {
                     Divider()
                         .padding(.leading, 56)
                     differentiatorRow(
-                        icon: "chart.line",
+                        icon: "chart.line.flattrend.xyaxis",
                         title: L10n.string("智能洞察"),
                         subtitle: L10n.string("自动分析你的变化趋势")
                     )

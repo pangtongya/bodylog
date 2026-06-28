@@ -93,7 +93,7 @@ struct AchievementView: View {
             }
 
             // Unlocked count label
-            Text(L10n.string("\(appState.achievements.count)/\(AchievementType.allCases.count) 已解锁"))
+            Text(String(format: L10n.string("%d/%d 已解锁"), appState.achievements.count, AchievementType.allCases.count))
                 .font(.system(size: 15, weight: .medium))
                 .foregroundColor(.formlogTextSecondary)
         }
@@ -147,7 +147,12 @@ struct AchievementView: View {
     private func achievementCard(_ type: AchievementType) -> some View {
         let isUnlocked = appState.isAchievementUnlocked(type)
         let progress = AchievementManager.shared.progress(for: type, entryStore: entryStore, goalStore: goalStore)
-        let isInProgress = !isUnlocked && progress != nil && progress!.current > 0
+        let isInProgress: Bool
+        if !isUnlocked, let prog = progress, prog.current > 0 {
+            isInProgress = true
+        } else {
+            isInProgress = false
+        }
 
         return VStack(spacing: 10) {
             // Icon circle — 48px

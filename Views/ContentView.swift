@@ -29,7 +29,7 @@ struct ContentView: View {
         var icon: String {
             switch self {
             case .home: return "house.fill"
-            case .trend: return "chart.line.uptrend.xyaxis"
+            case .trend: return "chart.line.flattrend.xyaxis"
             case .goals: return "target"
             case .settings: return "gearshape.fill"
             }

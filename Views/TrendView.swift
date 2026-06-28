@@ -577,7 +577,7 @@ struct TrendView: View {
                 Circle()
                     .fill(Color.formlogPrimary.opacity(0.04))
                     .frame(width: 120, height: 120)
-                Image(systemName: "chart.line.uptrend.xyaxis")
+                Image(systemName: "chart.line.flattrend.xyaxis")
                     .font(.system(size: 36, weight: .medium))
                     .foregroundColor(.formlogPrimary.opacity(0.7))
             }

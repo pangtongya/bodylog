@@ -456,7 +456,7 @@ struct MonthlyReportView: View {
     private var miniChartCard: some View {
         VStack(alignment: .leading, spacing: .spacingMd) {
             HStack(spacing: 6) {
-                Image(systemName: "chart.line.uptrend.xyaxis")
+                Image(systemName: "chart.line.flattrend.xyaxis")
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundColor(Color.formlogBlue)
                 Text(L10n.string("本月趋势"))
@@ -471,7 +471,7 @@ struct MonthlyReportView: View {
                     .clipShape(RoundedRectangle(cornerRadius: .radiusMd))
             } else {
                 VStack(spacing: .spacingSm) {
-                    Image(systemName: "chart.line.uptrend.xyaxis")
+                    Image(systemName: "chart.line.flattrend.xyaxis")
                         .font(.system(size: 28))
                         .foregroundColor(Color.formlogTextQuaternary)
                     Text(L10n.string("需要至少2条记录才能显示趋势"))
